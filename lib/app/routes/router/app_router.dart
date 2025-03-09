@@ -1,0 +1,42 @@
+import 'package:auto_route/auto_route.dart';
+import 'package:flutter/material.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+import 'package:turbo/app/routes/guards/authentication_guards.dart';
+import 'package:turbo/app/routes/router/app_router.gr.dart';
+import 'package:turbo/authentication/presentation/screens/aut_screens.dart';
+
+import '../../../authentication/presentation/screens/splash_screen.dart';
+import '../../../favorites/presentation/screens/favorite_screen.dart';
+import '../../../places/place_repository/models/place/place.dart';
+import '../../../places/presentation/screens/business_detail.dart';
+import '../../../places/presentation/screens/feed_screen.dart';
+import '../../../users/presentation/screens/profile.dart';
+
+@AutoRouterConfig(replaceInRouteName: 'Screen|Page,Route')
+class AppRouter extends RootStackRouter {
+  final AuthGuard authGuard;
+
+  AppRouter({required this.authGuard});
+
+  @override
+  RouteType get defaultRouteType => RouteType.adaptive();
+
+  @override
+  List<AutoRoute> get routes => [
+    AutoRoute(page: SignUpRoute.page, path: '/sign-up'),
+    AutoRoute(page: SignInRoute.page, path: '/sign-in'),
+    AutoRoute(page: SplashRoute.page, path: '/splash-screen'),
+    AutoRoute(page: BusinessDetailsRoute.page, path: '/business-detail'),
+    AutoRoute(
+      path: '/',
+      page: BottomNavShellWidget.page,
+      guards: [authGuard],
+      children: [
+        AutoRoute(path: 'feed', page: FeedRoute.page, initial: true),
+        AutoRoute(path: 'favorites', page: FavoritesRoute.page),
+        AutoRoute(path: 'profile', page: ProfileRoute.page),
+      ],
+    ),
+  ];
+}

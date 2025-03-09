@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "626963970726",
+    "project_id": "turbo-16770",
+    "storage_bucket": "turbo-16770.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:626963970726:android:9df9c6d393f51a155a1267",
+        "android_client_info": {
+          "package_name": "com.example.turbo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA0VnO4AEfcS_NbCYMHR9KBZOn6UWEFynM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:626963970726:android:db2c477036a4b2c15a1267",
+        "android_client_info": {
+          "package_name": "com.turbo.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA0VnO4AEfcS_NbCYMHR9KBZOn6UWEFynM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
