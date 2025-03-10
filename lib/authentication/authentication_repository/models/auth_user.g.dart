@@ -11,12 +11,14 @@ _AuthUser _$AuthUserFromJson(Map<String, dynamic> json) => _AuthUser(
   email: json['email'] as String,
   displayName: json['displayName'] as String?,
   photoUrl: json['photoUrl'] as String?,
+  createdAt: DateTime.parse(json['createdAt'] as String),
+  phoneNumber: json['phoneNumber'] as String?,
+  authProvider: json['authProvider'] as String?,
   favorites:
       (json['favorites'] as List<dynamic>?)
           ?.map((e) => (e as num).toInt())
           .toList() ??
       const [],
-  createdAt: DateTime.parse(json['createdAt'] as String),
 );
 
 Map<String, dynamic> _$AuthUserToJson(_AuthUser instance) => <String, dynamic>{
@@ -24,6 +26,8 @@ Map<String, dynamic> _$AuthUserToJson(_AuthUser instance) => <String, dynamic>{
   'email': instance.email,
   'displayName': instance.displayName,
   'photoUrl': instance.photoUrl,
-  'favorites': instance.favorites,
   'createdAt': instance.createdAt.toIso8601String(),
+  'phoneNumber': instance.phoneNumber,
+  'authProvider': instance.authProvider,
+  'favorites': instance.favorites,
 };

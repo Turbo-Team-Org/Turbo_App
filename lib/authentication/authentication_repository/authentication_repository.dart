@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:turbo/authentication/authentication_repository/models/auth_user.dart';
 
 import 'service/authentication_service.dart';
@@ -24,8 +25,13 @@ class AuthenticationRepository {
   Future<AuthUser?> signUpWithEmail({
     required String email,
     required String password,
+    String? displayName,
   }) async {
-    return await authService.signUpWithEmail(email: email, password: password);
+    return await authService.signUpWithEmail(
+      email: email,
+      password: password,
+      displayName: displayName,
+    );
   }
 
   //TODO implement Change Password in Services

@@ -51,6 +51,7 @@ dependencies:
   sembast: ^3.8.2
   firebase_core: ^3.12.1
   google_sign_in: ^6.3.0
+  uuid: ^4.5.1
 dev_dependencies:
   flutter_test:
     sdk: flutter

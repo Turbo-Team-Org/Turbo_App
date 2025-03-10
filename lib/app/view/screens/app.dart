@@ -42,7 +42,6 @@ class AppView extends StatelessWidget {
     final appRouter = AppRouter(authGuard: AuthGuard(authCubit));
 
     return MaterialApp.router(
-      theme: TurboTheme.darkTheme,
       debugShowCheckedModeBanner: false,
       routerConfig: appRouter.config(),
     );

@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'auth_user.freezed.dart';
@@ -11,8 +10,10 @@ sealed class AuthUser with _$AuthUser {
     required String email,
     String? displayName,
     String? photoUrl,
-    @Default([]) List<int> favorites, // Lista de IDs de lugares favoritos
     required DateTime createdAt,
+    String? phoneNumber,
+    String? authProvider,
+    @Default([]) List<int> favorites,
   }) = _AuthUser;
 
   factory AuthUser.fromJson(Map<String, dynamic> json) =>

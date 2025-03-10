@@ -1,12 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:turbo/app/utils/app_preferences.dart';
 import 'package:turbo/authentication/authentication_repository/interface/authentication_interface.dart';
 import 'package:turbo/authentication/authentication_repository/models/auth_user.dart';
 
 class AuthenticationService implements AuthenticationInterface {
   final FirebaseAuth _firebaseAuth;
   final FirebaseFirestore firestore;
+  final _preferences = AppPreferences();
 
   AuthenticationService({
     FirebaseAuth? firebaseAuth,
@@ -30,6 +32,7 @@ class AuthenticationService implements AuthenticationInterface {
   Future<AuthUser?> signUpWithEmail({
     required String email,
     required String password,
+    String? displayName,
   }) async {
     final userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
       email: email,
@@ -40,15 +43,21 @@ class AuthenticationService implements AuthenticationInterface {
       final newUser = AuthUser(
         uid: user.uid,
         email: user.email!,
-        displayName: user.displayName,
+        displayName: displayName,
         photoUrl: user.photoURL,
         favorites: [],
         createdAt: DateTime.now(),
       );
       await firestore.collection('users').doc(user.uid).set(newUser.toJson());
+      await savePreferencesData(newUser);
       return newUser;
     }
     return null;
+  }
+
+  Future<void> savePreferencesData(AuthUser user) async {
+    await _preferences.setUserId(user.uid);
+    await _preferences.setUserName(user.displayName!);
   }
 
   @override

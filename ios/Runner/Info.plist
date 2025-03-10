@@ -45,5 +45,25 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.626963970726-b0sarf72k4g69r5fji22ad6425gin927</string>
+			</array>
+		</dict>
+	</array>
+
+	<key>GoogleService-Info</key>
+	<string>GoogleService-Info.plist</string>
+
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>googlechrome</string>
+		<string>googlechromes</string>
+		<string>googlechrome-universal-link</string>
+		<string>googlechromes-universal-link</string>
+	</array>
 </dict>
 </plist>

@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:turbo/app/core/no_params.dart';
 import 'package:turbo/authentication/module/sign_in_with_email_use_case.dart';
 import 'package:turbo/authentication/module/sign_with_google_use_case.dart';
 import 'package:turbo/authentication/module/use_case_params_models/sign_in_use_case_params.dart';
@@ -16,12 +17,10 @@ class SignInCubit extends Cubit<SignInState> {
     required this.signInWithEmailUseCase,
   }) : super(const SignInState.initial());
 
-  Future<void> signInWithGoogle(String email, String password) async {
+  Future<void> signInWithGoogle() async {
     emit(const Loading());
     try {
-      final user = await signInWithGoogleUseCase(
-        SignInParams(email: email, password: password),
-      );
+      final user = await signInWithGoogleUseCase(NoParams());
       emit(Success(user!));
     } catch (error) {
       emit(Error(error: error.toString()));

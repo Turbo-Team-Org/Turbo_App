@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:turbo/app/routes/router/app_router.gr.dart';
 import 'package:turbo/app/utils/theme/style.dart';
 import 'package:turbo/authentication/presentation/widgets/widgets.dart';
-import '../../../app/utils/global/global_vars.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:turbo/authentication/state_managament/sign_in_cubit/cubit/sign_in_cubit.dart';
 
 @RoutePage()
 class SignInScreen extends StatelessWidget {
@@ -14,34 +15,42 @@ class SignInScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      //appBar: AppBar(backgroundColor: Colors.white, elevation: 0),
       body: Padding(
-        padding: const EdgeInsets.all(12.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const LoginHeader(),
-            const SizedBox(height: 20),
+            const SizedBox(height: 30),
             CustomTextfield(
-              label: emailText,
-              textInputType: TextInputType.text,
+              label: 'Email',
+              textInputType: TextInputType.emailAddress,
               textController: email,
-              hint: emailHintFormText,
+              hint: 'Enter your email',
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 12),
             CustomTextfield(
-              label: passwordText,
+              label: 'Password',
               textInputType: TextInputType.visiblePassword,
               textController: password,
-              hint: passwordHintText,
+              hint: 'Enter your password',
+              //obscureText: true,
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              style: const ButtonStyle(
-                backgroundColor: WidgetStatePropertyAll(Styles.turboRed),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Styles.turboRed,
+                minimumSize: const Size(double.infinity, 50),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
               ),
               onPressed: () {
-                context.router.navigate(const FeedRoute());
+                context.read<SignInCubit>().signInWithEmail(
+                  email.text,
+                  password.text,
+                );
               },
               child: const Text(
                 'Sign In',
@@ -53,12 +62,38 @@ class SignInScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 10),
-            const Text(noaccount, style: Styles.textTitleMedium),
-            TextButton(
+            const Text('Or continue with', style: Styles.textTitleMedium),
+            const SizedBox(height: 10),
+            ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                minimumSize: const Size(double.infinity, 50),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
               onPressed: () {
-                context.router.navigate(SignUpRoute());
+                context.read<SignInCubit>().signInWithGoogle();
               },
-              child: const Text('Sign Up', style: Styles.textBodyMedium),
+              icon: Image.asset('assets/images/google_logo.png', height: 24),
+              label: const Text(
+                'Sign in with Google',
+                style: TextStyle(color: Colors.black, fontSize: 16),
+              ),
+            ),
+            const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  "Don't have an account?",
+                  style: Styles.textBodyMedium,
+                ),
+                TextButton(
+                  onPressed: () => context.replaceRoute(SignUpRoute()),
+                  child: const Text('Sign Up', style: Styles.textBodyMedium),
+                ),
+              ],
             ),
           ],
         ),

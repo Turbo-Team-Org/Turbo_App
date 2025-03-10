@@ -1,11 +1,10 @@
+import 'package:turbo/app/core/no_params.dart';
 import 'package:turbo/app/core/use_case.dart';
 import 'package:turbo/authentication/authentication_repository/models/auth_user.dart';
 
 import '../authentication_repository/authentication_repository.dart';
-import 'use_case_params_models/sign_in_use_case_params.dart';
 
-class SignInWithGoogleUseCase
-    implements UseCase<Future<AuthUser?>, SignInParams> {
+class SignInWithGoogleUseCase implements UseCase<Future<AuthUser?>, NoParams> {
   final AuthenticationRepository authenticationRepository;
   SignInWithGoogleUseCase({required this.authenticationRepository});
   @override

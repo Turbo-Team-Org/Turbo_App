@@ -12,7 +12,20 @@
           "package_name": "com.example.turbo"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "626963970726-26tauoegk56quk50gc7u8sdbhi4vdrfb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.turbo",
+            "certificate_hash": "13724be01b2d219a287e7f001808c3b191631144"
+          }
+        },
+        {
+          "client_id": "626963970726-usla3t984552i80ilpqafj6stf7i171l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyA0VnO4AEfcS_NbCYMHR9KBZOn6UWEFynM"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "626963970726-usla3t984552i80ilpqafj6stf7i171l.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "626963970726-b0sarf72k4g69r5fji22ad6425gin927.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.turbo"
+              }
+            }
+          ]
         }
       }
     },
@@ -31,7 +56,12 @@
           "package_name": "com.turbo.app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "626963970726-usla3t984552i80ilpqafj6stf7i171l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyA0VnO4AEfcS_NbCYMHR9KBZOn6UWEFynM"
@@ -39,7 +69,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "626963970726-usla3t984552i80ilpqafj6stf7i171l.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "626963970726-b0sarf72k4g69r5fji22ad6425gin927.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.turbo"
+              }
+            }
+          ]
         }
       }
     }

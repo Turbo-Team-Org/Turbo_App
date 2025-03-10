@@ -34,14 +34,14 @@ import '../../reviews/review_repository/service/review_service.dart';
 import '../../reviews/state_management/cubit/review_cubit.dart';
 import '../utils/app_preferences.dart';
 
+///The init order of dependencies is Service/Repository/Use Cases (Module)/State Managament(Cubit or Bloc)
+
 FutureOr<void> initCore(GetIt sl) async {
   await AppPreferences.init();
   //final db = DatabaseHelper();
   final firebaseInstance = await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
-  ///The init order of dependencies is Service/Repository/Use Cases (Module)/State Managament(Cubit or Bloc)
   sl
     ..registerSingleton<FirebaseFirestore>(
       FirebaseFirestore.instanceFor(app: firebaseInstance),

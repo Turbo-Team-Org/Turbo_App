@@ -9,17 +9,32 @@ part 'sign_up_cubit.freezed.dart';
 
 class SignUpCubit extends Cubit<SignUpState> {
   final SignUpWithEmailUseCase signUpWithEmailUseCase;
+
   SignUpCubit({required this.signUpWithEmailUseCase})
     : super(SignUpState.initial());
-  Future<void> signUpWithEmail(String email, String password) async {
+  Future<AuthUser?> signUpWithEmail(
+    String email,
+    String password,
+    String? displayName,
+  ) async {
     emit(Loading());
     try {
       final user = await signUpWithEmailUseCase(
-        SignInParams(email: email, password: password),
+        SignInParams(
+          email: email,
+          password: password,
+          displayName: displayName,
+        ),
       );
-      emit(Success(user!));
+      if (user != null) {
+        emit(Success(user));
+        return user;
+      } else {
+        return null;
+      }
     } catch (e) {
-      emit(Error());
+      emit(Error(e.toString()));
+      return null;
     }
   }
 }

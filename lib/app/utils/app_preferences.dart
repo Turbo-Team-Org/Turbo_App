@@ -12,8 +12,8 @@ class AppPreferences {
     _preferences = await SharedPreferences.getInstance();
   }
 
-  int? getUserId() {
-    final userId = _preferences.getInt(_userIdKey);
+  String? getUserId() {
+    final userId = _preferences.getString(_userIdKey);
     return userId;
   }
 
@@ -27,8 +27,8 @@ class AppPreferences {
   }
 
   // Guarda el ID del usuario autenticado
-  Future<void> setUserId(int userId) async {
-    await _preferences.setInt(_userIdKey, userId);
+  Future<void> setUserId(String userId) async {
+    await _preferences.setString(_userIdKey, userId);
   }
 
   // Limpia el ID del usuario
