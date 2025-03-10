@@ -6,6 +6,8 @@ import 'package:turbo/authentication/presentation/widgets/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:turbo/authentication/state_managament/sign_in_cubit/cubit/sign_in_cubit.dart';
 
+import '../../../app/view/widgets/global_widgets.dart';
+
 @RoutePage()
 class SignInScreen extends StatelessWidget {
   final TextEditingController email = TextEditingController();
@@ -14,88 +16,119 @@ class SignInScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      //appBar: AppBar(backgroundColor: Colors.white, elevation: 0),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const LoginHeader(),
-            const SizedBox(height: 30),
-            CustomTextfield(
-              label: 'Email',
-              textInputType: TextInputType.emailAddress,
-              textController: email,
-              hint: 'Enter your email',
-            ),
-            const SizedBox(height: 12),
-            CustomTextfield(
-              label: 'Password',
-              textInputType: TextInputType.visiblePassword,
-              textController: password,
-              hint: 'Enter your password',
-              //obscureText: true,
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Styles.turboRed,
-                minimumSize: const Size(double.infinity, 50),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
+    return BlocListener<SignInCubit, SignInState>(
+      listener: (context, signinstate) {
+        switch (signinstate) {
+          case Success(:final user):
+            showDialog(
+              context: context,
+              builder:
+                  (_) => SuccessDialog(
+                    title: "¡Registro Exitoso!",
+                    message: "Bienvenido, ${user.displayName ?? 'Usuario'}",
+                  ),
+            );
+            Future.delayed(const Duration(seconds: 2), () {
+              context.replaceRoute(const FeedRoute());
+            });
+            break;
+          case Error(:final error):
+            showDialog(
+              context: context,
+              builder: (_) => ErrorDialog(title: "¡Error!", message: error),
+            );
+            break;
+
+          case Loading():
+            {
+              CircularProgressIndicator.adaptive();
+            }
+          default:
+            break;
+        }
+      },
+      child: Scaffold(
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const LoginHeader(),
+              const SizedBox(height: 30),
+              CustomTextfield(
+                label: 'Correo',
+                textInputType: TextInputType.emailAddress,
+                textController: email,
+                hint: 'Escriba su correo',
+              ),
+              const SizedBox(height: 12),
+              CustomTextfield(
+                label: 'Contraseña',
+                textInputType: TextInputType.visiblePassword,
+                textController: password,
+                hint: 'Escriba su contraseña',
+                //obscureText: true,
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Styles.turboRed,
+                  minimumSize: const Size(double.infinity, 50),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                onPressed: () {
+                  context.read<SignInCubit>().signInWithEmail(
+                    email.text,
+                    password.text,
+                  );
+                },
+                child: const Text(
+                  'Inicia Sesión',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                    fontSize: 16,
+                  ),
                 ),
               ),
-              onPressed: () {
-                context.read<SignInCubit>().signInWithEmail(
-                  email.text,
-                  password.text,
-                );
-              },
-              child: const Text(
-                'Sign In',
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                  fontSize: 16,
+              const SizedBox(height: 10),
+              const Text('O continua con', style: Styles.textTitleMedium),
+              const SizedBox(height: 10),
+              ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  minimumSize: const Size(double.infinity, 50),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                onPressed: () {
+                  context.read<SignInCubit>().signInWithGoogle();
+                },
+                icon: Image.asset('assets/images/google_logo.png', height: 24),
+                label: const Text(
+                  'Inicia Sesión con Google',
+                  style: TextStyle(color: Colors.black, fontSize: 16),
                 ),
               ),
-            ),
-            const SizedBox(height: 10),
-            const Text('Or continue with', style: Styles.textTitleMedium),
-            const SizedBox(height: 10),
-            ElevatedButton.icon(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                minimumSize: const Size(double.infinity, 50),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
+              const SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    "No tienes una cuenta ?",
+                    style: Styles.textBodyMedium,
+                  ),
+                  TextButton(
+                    onPressed: () => context.replaceRoute(SignUpRoute()),
+                    child: const Text('Sign Up', style: Styles.textBodyMedium),
+                  ),
+                ],
               ),
-              onPressed: () {
-                context.read<SignInCubit>().signInWithGoogle();
-              },
-              icon: Image.asset('assets/images/google_logo.png', height: 24),
-              label: const Text(
-                'Sign in with Google',
-                style: TextStyle(color: Colors.black, fontSize: 16),
-              ),
-            ),
-            const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text(
-                  "Don't have an account?",
-                  style: Styles.textBodyMedium,
-                ),
-                TextButton(
-                  onPressed: () => context.replaceRoute(SignUpRoute()),
-                  child: const Text('Sign Up', style: Styles.textBodyMedium),
-                ),
-              ],
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

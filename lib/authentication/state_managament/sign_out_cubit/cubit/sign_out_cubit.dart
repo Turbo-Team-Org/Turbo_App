@@ -16,7 +16,7 @@ class SignOutCubit extends Cubit<SignOutState> {
       await signOutUseCase(NoParams());
       emit(Success());
     } catch (e) {
-      emit(Error());
+      emit(Error(e.toString()));
     }
   }
 }

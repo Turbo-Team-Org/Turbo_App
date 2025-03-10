@@ -23,7 +23,7 @@ import 'package:turbo/favorites/presentation/screens/favorite_screen.dart'
 import 'package:turbo/places/place_repository/models/place/place.dart' as _i11;
 import 'package:turbo/places/presentation/screens/business_detail.dart' as _i2;
 import 'package:turbo/places/presentation/screens/feed_screen.dart' as _i4;
-import 'package:turbo/users/presentation/screens/profile.dart' as _i5;
+import 'package:turbo/users/presentation/screens/profile_screen.dart' as _i5;
 
 /// generated route for
 /// [_i1.BottomNavShellWidget]

@@ -9,6 +9,10 @@ class SignUpWithEmailUseCase
   SignUpWithEmailUseCase({required this.authenticationRepository});
 
   @override
-  Future<AuthUser?> call(params) async => await authenticationRepository
-      .signUpWithEmail(email: params.email, password: params.password);
+  Future<AuthUser?> call(params) async =>
+      await authenticationRepository.signUpWithEmail(
+        email: params.email,
+        password: params.password,
+        displayName: params.displayName,
+      );
 }

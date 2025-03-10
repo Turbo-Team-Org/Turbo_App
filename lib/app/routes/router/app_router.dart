@@ -11,7 +11,7 @@ import '../../../favorites/presentation/screens/favorite_screen.dart';
 import '../../../places/place_repository/models/place/place.dart';
 import '../../../places/presentation/screens/business_detail.dart';
 import '../../../places/presentation/screens/feed_screen.dart';
-import '../../../users/presentation/screens/profile.dart';
+import '../../../users/presentation/screens/profile_screen.dart';
 
 @AutoRouterConfig(replaceInRouteName: 'Screen|Page,Route')
 class AppRouter extends RootStackRouter {

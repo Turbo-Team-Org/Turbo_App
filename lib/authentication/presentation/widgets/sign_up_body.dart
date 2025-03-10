@@ -75,7 +75,7 @@ class SignUpBody extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 10),
-            const Text('Or', style: Styles.textTitleMedium),
+            const Text('O', style: Styles.textTitleMedium),
             const SizedBox(height: 10),
             const Padding(padding: EdgeInsets.all(4), child: Divider()),
             const SizedBox(height: 10),
@@ -122,14 +122,16 @@ class SignUpBody extends StatelessWidget {
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text("Email and password cannot be empty"),
+                      content: Text(
+                        "El correo y la contraseña no pueden estar vacia",
+                      ),
                       backgroundColor: Colors.red,
                     ),
                   );
                 }
               },
               child: const Text(
-                'Sign Up',
+                'Registarse',
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
                   color: Colors.white,
@@ -143,7 +145,7 @@ class SignUpBody extends StatelessWidget {
               onPressed: () {
                 context.router.navigate(SignInRoute());
               },
-              child: const Text('Login', style: Styles.textBodyMedium),
+              child: const Text('Iniciar Sesión', style: Styles.textBodyMedium),
             ),
           ],
         ),
