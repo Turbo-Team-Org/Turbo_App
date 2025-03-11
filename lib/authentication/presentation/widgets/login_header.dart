@@ -11,19 +11,15 @@ class LoginHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        SvgPicture.asset(turboIconLogIn,
-            height: 60,
-            width: 60,
-            colorFilter:
-                const ColorFilter.mode(Styles.turboRed, BlendMode.srcIn)),
-        const SizedBox(
-          height: 10,
+        SvgPicture.asset(
+          turboIconLogIn,
+          height: 60,
+          width: 60,
+          colorFilter: const ColorFilter.mode(Styles.turboRed, BlendMode.srcIn),
         ),
+        const SizedBox(height: 10),
         const Center(
-          child: Text(
-            loginHeaderText,
-            style: Styles.textBodyMedium,
-          ),
+          child: Text(loginHeaderText, style: Styles.textLabelLarge),
         ),
       ],
     );

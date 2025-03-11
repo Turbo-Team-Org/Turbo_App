@@ -61,10 +61,10 @@ class FavoritesScreen extends StatelessWidget {
                                   (fav) => fav.placeId == place.id,
                                 ),
                                 onFavoritePressed: () {
-                                  context.read<FavoriteCubit>().toggleFavorite(
-                                    place.id,
-                                    1,
-                                  );
+                                  //        context.read<FavoriteCubit>().toggleFavorite(
+                                  //          place.id,
+                                  //          1,
+                                  //       );
                                 },
                               );
                             },

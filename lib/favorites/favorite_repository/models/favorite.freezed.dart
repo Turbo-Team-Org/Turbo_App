@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Favorite {
 
- int get placeId; int get userId;
+ int get placeId; String get userId;
 /// Create a copy of Favorite
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -49,7 +49,7 @@ abstract mixin class $FavoriteCopyWith<$Res>  {
   factory $FavoriteCopyWith(Favorite value, $Res Function(Favorite) _then) = _$FavoriteCopyWithImpl;
 @useResult
 $Res call({
- int placeId, int userId
+ int placeId, String userId
 });
 
 
@@ -70,7 +70,7 @@ class _$FavoriteCopyWithImpl<$Res>
   return _then(_self.copyWith(
 placeId: null == placeId ? _self.placeId : placeId // ignore: cast_nullable_to_non_nullable
 as int,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
-as int,
+as String,
   ));
 }
 
@@ -85,7 +85,7 @@ class _Favorite implements Favorite {
   factory _Favorite.fromJson(Map<String, dynamic> json) => _$FavoriteFromJson(json);
 
 @override final  int placeId;
-@override final  int userId;
+@override final  String userId;
 
 /// Create a copy of Favorite
 /// with the given fields replaced by the non-null parameter values.
@@ -120,7 +120,7 @@ abstract mixin class _$FavoriteCopyWith<$Res> implements $FavoriteCopyWith<$Res>
   factory _$FavoriteCopyWith(_Favorite value, $Res Function(_Favorite) _then) = __$FavoriteCopyWithImpl;
 @override @useResult
 $Res call({
- int placeId, int userId
+ int placeId, String userId
 });
 
 
@@ -141,7 +141,7 @@ class __$FavoriteCopyWithImpl<$Res>
   return _then(_Favorite(
 placeId: null == placeId ? _self.placeId : placeId // ignore: cast_nullable_to_non_nullable
 as int,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
-as int,
+as String,
   ));
 }
 

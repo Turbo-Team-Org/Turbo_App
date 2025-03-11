@@ -65,11 +65,9 @@ class ProfileScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(16),
                   child: Column(
                     children: [
-                      // Avatar del usuario
                       ProfileAvatar(),
                       const SizedBox(height: 20),
 
-                      // Nombre y email del usuario
                       Text(
                         user.displayName ?? "Usuario",
                         style: const TextStyle(
@@ -88,10 +86,9 @@ class ProfileScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 20),
 
-                      // Botón de editar perfil
                       ElevatedButton.icon(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blueAccent,
+                          backgroundColor: Colors.red,
                           minimumSize: const Size(double.infinity, 50),
                         ),
                         icon: const Icon(Icons.edit, color: Colors.white),
@@ -106,7 +103,6 @@ class ProfileScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 10),
 
-                      // Configuración de modo oscuro
                       ListTile(
                         leading: const Icon(
                           Icons.dark_mode,
@@ -117,6 +113,7 @@ class ProfileScreen extends StatelessWidget {
                           style: TextStyle(color: Colors.black),
                         ),
                         trailing: Switch(
+                          activeColor: Colors.red,
                           value: true,
                           // context.read<ThemeCubit>().isDarkMode,
                           onChanged: (value) {
@@ -125,7 +122,6 @@ class ProfileScreen extends StatelessWidget {
                         ),
                       ),
 
-                      // Opción de cerrar sesión
                       ListTile(
                         leading: const Icon(Icons.logout, color: Colors.red),
                         title: const Text(

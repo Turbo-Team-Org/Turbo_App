@@ -5,7 +5,7 @@ part 'favorite.g.dart';
 
 @Freezed()
 sealed class Favorite with _$Favorite {
-  const factory Favorite({required int placeId, required int userId}) =
+  const factory Favorite({required int placeId, required String userId}) =
       _Favorite;
 
   factory Favorite.fromJson(Map<String, dynamic> json) =>

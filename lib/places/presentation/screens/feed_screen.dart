@@ -3,6 +3,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:turbo/app/routes/router/app_router.gr.dart';
+import 'package:turbo/app/utils/app_preferences.dart';
 import 'package:turbo/authentication/state_managament/auth_cubit/cubit/auth_cubit_cubit.dart';
 
 import 'package:turbo/favorites/state_management/cubit/favorite_cubit.dart';
@@ -20,12 +21,7 @@ class FeedScreen extends StatefulWidget {
 }
 
 class _FeedScreenState extends State<FeedScreen> {
-  @override
-  void initState() {
-    super.initState();
-    // Cargar los favoritos cuando se inicia la pantalla
-    context.read<FavoriteCubit>().getFavorites(1);
-  }
+  final _preferences = AppPreferences();
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +37,7 @@ class _FeedScreenState extends State<FeedScreen> {
 
             case Authenticated(:final user):
               {
+                context.read<FavoriteCubit>().getFavorites(user.uid);
                 return SafeArea(
                   child: Container(
                     decoration: const BoxDecoration(
@@ -138,7 +135,7 @@ class _FeedScreenState extends State<FeedScreen> {
                                                                 >()
                                                                 .toggleFavorite(
                                                                   place.id,
-                                                                  1,
+                                                                  user.uid,
                                                                 );
                                                           },
                                                         ),

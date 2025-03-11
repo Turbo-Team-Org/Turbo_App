@@ -31,14 +31,13 @@ class FavoriteService implements IFavorite {
   }
 
   @override
-  Future<List<Favorite>> getFavorites(int userId) async {
-    final doc =
-        await firestore.collection('users').doc(userId.toString()).get();
+  Future<List<Favorite>> getFavorites(String userId) async {
+    final doc = await firestore.collection('users').doc(userId).get();
 
     if (!doc.exists) return [];
 
     // Obtener lista de IDs favoritos del usuario
-    List<int> favoriteIds = List<int>.from(doc['favoritesId'] ?? []);
+    List<int> favoriteIds = List<int>.from(doc['favorites'] ?? []);
 
     if (favoriteIds.isEmpty) return [];
 

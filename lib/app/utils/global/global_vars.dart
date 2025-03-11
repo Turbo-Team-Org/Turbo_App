@@ -1,7 +1,7 @@
 import '../../../places/place_repository/models/place/place.dart';
 import '../../../reviews/review_repository/models/review.dart';
 
-const String loginHeaderText = 'Register to meet people from you niche';
+const String loginHeaderText = 'Todo lo que buscas, en un solo lugar.';
 const String googleSignInText = 'Register with Google';
 const String turboIconLogIn = 'assets/images/Turbo Marca 7.svg';
 const String emailText = 'Email';
@@ -23,7 +23,7 @@ final List<Place> places = [
     averagePrice: 25.0,
     imageUrls: [
       "https://www.istockphoto.com/br/foto/coliseu-em-roma-e-o-sol-da-manh%C3%A3-it%C3%A1lia-gm539115110-96048731",
-      "https://images.unsplash.com/photo-1593394886166-bbde9bda2d72?crop=entropy&cs=tinysrgb&fit=max&ixid=MnwzNjUyOXwwfDF8c2VhY2h8NXx8bWFjaHUlMjBwaWNjaHUlMjBhdH0%3D&ixlib=rb-1.2.1&q=80&w=1080"
+      "https://images.unsplash.com/photo-1593394886166-bbde9bda2d72?crop=entropy&cs=tinysrgb&fit=max&ixid=MnwzNjUyOXwwfDF8c2VhY2h8NXx8bWFjaHUlMjBwaWNjaHUlMjBhdH0%3D&ixlib=rb-1.2.1&q=80&w=1080",
     ],
     reviews: [
       Review(
@@ -54,7 +54,7 @@ final List<Place> places = [
     averagePrice: 15.0,
     imageUrls: [
       "https://images.unsplash.com/photo-1594596335666-e19a69f8e216?crop=entropy&cs=tinysrgb&fit=max&ixid=MnwzNjUyOXwwfDF8c2VhY2h8MjN8fHBsYXphJTIwbWF5b3J8ZW58MHx8fHwxNjc4NzA3NTc1&ixlib=rb-1.2.1&q=80&w=1080",
-      "https://images.unsplash.com/photo-1618951130933-b649084f44fc?crop=entropy&cs=tinysrgb&fit=max&ixid=MnwzNjUyOXwwfDF8c2VhY2h8MjN8fHBsYXphJTIwbWF5b3J8ZW58MHx8fHwxNjc4NzA3NTc1&ixlib=rb-1.2.1&q=80&w=1080"
+      "https://images.unsplash.com/photo-1618951130933-b649084f44fc?crop=entropy&cs=tinysrgb&fit=max&ixid=MnwzNjUyOXwwfDF8c2VhY2h8MjN8fHBsYXphJTIwbWF5b3J8ZW58MHx8fHwxNjc4NzA3NTc1&ixlib=rb-1.2.1&q=80&w=1080",
     ],
     reviews: [
       Review(
@@ -87,7 +87,7 @@ final List<Place> places = [
     averagePrice: 0.0, // Es una playa pública
     imageUrls: [
       "https://images.unsplash.com/photo-1534404989302-ffb2ff12a27c?crop=entropy&cs=tinysrgb&fit=max&ixid=MnwzNjUyOXwwfDF8c2VhY2h8MXx8dG9ycmUlMjBlZmZlbHxlbnwwfHx8fDE2Nzg3MDEwNzE&ixlib=rb-1.2.1&q=80&w=1080",
-      "https://images.unsplash.com/photo-1594700531398-c95c3a9c9e1d?crop=entropy&cs=tinysrgb&fit=max&ixid=MnwzNjUyOXwwfDF8c2VhY2h8MXx8dG9ycmUlMjBlZmZlbHxlbnwwfHx8fDE2Nzg3MDEwNzE&ixlib=rb-1.2.1&q=80&w=1080"
+      "https://images.unsplash.com/photo-1594700531398-c95c3a9c9e1d?crop=entropy&cs=tinysrgb&fit=max&ixid=MnwzNjUyOXwwfDF8c2VhY2h8MXx8dG9ycmUlMjBlZmZlbHxlbnwwfHx8fDE2Nzg3MDEwNzE&ixlib=rb-1.2.1&q=80&w=1080",
     ],
     reviews: [
       Review(

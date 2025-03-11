@@ -11,7 +11,7 @@ class FavoriteRepository {
     await favoriteService.toggleFavorite(favorite);
   }
 
-  Future<List<Favorite>> getFavorites(int userId) async {
+  Future<List<Favorite>> getFavorites(String userId) async {
     return await favoriteService.getFavorites(userId);
   }
 }

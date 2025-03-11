@@ -20,6 +20,10 @@ class SignInScreen extends StatelessWidget {
       listener: (context, signinstate) {
         switch (signinstate) {
           case Success(:final user):
+            {
+              context.router.navigate(const FeedRoute());
+            }
+            /*
             showDialog(
               context: context,
               builder:
@@ -28,10 +32,9 @@ class SignInScreen extends StatelessWidget {
                     message: "Bienvenido, ${user.displayName ?? 'Usuario'}",
                   ),
             );
-            Future.delayed(const Duration(seconds: 2), () {
-              context.replaceRoute(const FeedRoute());
-            });
+            */
             break;
+
           case Error(:final error):
             showDialog(
               context: context,

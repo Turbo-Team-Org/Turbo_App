@@ -23,6 +23,14 @@ class AuthCubit extends Cubit<AuthCubitState> {
       }
     });
   }
+  Future<void> checkAuthStatus() async {
+    final user = await authenticationModule.call(NoParams()).first;
+    if (user != null) {
+      emit(Authenticated(user));
+    } else {
+      emit(Unauthenticated());
+    }
+  }
 
   @override
   Future<void> close() {

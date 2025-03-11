@@ -59,10 +59,7 @@ class Styles {
 
   static const textH2 = TextStyle(fontSize: 18.0, color: Colors.black);
 
-  static const textAttribute = TextStyle(
-    fontSize: 10,
-    color: colorMeta,
-  );
+  static const textAttribute = TextStyle(fontSize: 10, color: colorMeta);
 
   static const textListDivider = TextStyle(
     fontSize: 12,
@@ -123,8 +120,11 @@ class Styles {
     height: 1.42,
   );
 
-  static const textBodyMedium =
-      TextStyle(fontSize: 16, fontFamily: 'Roboto', color: Styles.turboRed);
+  static const textBodyMedium = TextStyle(
+    fontSize: 16,
+    fontFamily: 'Roboto',
+    color: Styles.turboRed,
+  );
 
   static const textDisplayMedium = TextStyle(
     fontSize: 32,
@@ -139,9 +139,10 @@ class Styles {
   );
 
   static const textLabelLarge = TextStyle(
-    fontSize: 22,
+    fontSize: 17,
     fontWeight: FontWeight.w500,
-    color: Colors.white,
+
+    color: Styles.turboRed,
     fontFamily: 'Roboto',
   );
 
@@ -190,8 +191,11 @@ class Styles {
     dividerColor: Colors.black12,
   );
 
-  static const textBodySmall =
-      TextStyle(fontSize: 12, fontFamily: 'Roboto', color: colorLightOutline);
+  static const textBodySmall = TextStyle(
+    fontSize: 12,
+    fontFamily: 'Roboto',
+    color: colorLightOutline,
+  );
 
   static final textFieldDecoration = InputDecoration(
     isDense: true,
@@ -244,9 +248,7 @@ class Styles {
     ),
   );
 
-  static const kHintTextStyle = TextStyle(
-    color: colorMeta,
-  );
+  static const kHintTextStyle = TextStyle(color: colorMeta);
 
   static const kLabelStyle = TextStyle(
     fontWeight: FontWeight.bold,
@@ -265,13 +267,17 @@ class Styles {
   );
 
   static const nameLabelStyle = TextStyle(
-      fontWeight: FontWeight.bold, fontFamily: 'OpenSans', fontSize: 20);
+    fontWeight: FontWeight.bold,
+    fontFamily: 'OpenSans',
+    fontSize: 20,
+  );
 
   static const headerLabelStyle = TextStyle(
-      color: colorPrimaryVariant,
-      fontWeight: FontWeight.bold,
-      fontFamily: 'OpenSans',
-      fontSize: 20);
+    color: colorPrimaryVariant,
+    fontWeight: FontWeight.bold,
+    fontFamily: 'OpenSans',
+    fontSize: 20,
+  );
 
   static BoxDecoration kBoxDecorationStyle = BoxDecoration(
     color: Colors.white,
@@ -301,12 +307,8 @@ class Styles {
     fontFamily: 'MuseoSans',
 
     switchTheme: SwitchThemeData(
-      thumbColor: WidgetStateProperty.all(
-        Styles.colorLightSecondary,
-      ),
-      trackColor: WidgetStateProperty.all(
-        Styles.colorLightSecondaryContainer,
-      ),
+      thumbColor: WidgetStateProperty.all(Styles.colorLightSecondary),
+      trackColor: WidgetStateProperty.all(Styles.colorLightSecondaryContainer),
     ),
   );
 }

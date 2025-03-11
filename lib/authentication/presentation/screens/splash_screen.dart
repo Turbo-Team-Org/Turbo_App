@@ -15,33 +15,31 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   @override
-  void initState() {
-    super.initState();
-    //  context.read<AuthCubitCubit>().isAuthenticated();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return BlocListener<AuthCubit, AuthCubitState>(
-      listener: (context, state) {
-        switch (state) {
-          case AuthCubitState.initial:
-            // Acción para el estado "initial"
-            break;
-          case AuthCubitState.authenticated:
-            context.router.replace(const FeedRoute());
-            break;
-          case AuthCubitState.unauthenticated:
-            context.router.replace(SignInRoute());
-            break;
-          default:
-            // Acción predeterminada si es necesario
-            break;
-        }
-      },
-      child: Scaffold(
-        appBar: AppBar(),
-        body: const Column(children: [Center(child: LoginHeader())]),
+    return Scaffold(
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          LoginHeader(),
+          SizedBox(height: 10),
+          BlocListener<AuthCubit, AuthCubitState>(
+            listener: (context, state) {
+              Future.delayed(Duration(seconds: 1), () {
+                switch (state) {
+                  case Initial():
+                    Center(child: CircularProgressIndicator.adaptive());
+                    break;
+                  case Authenticated():
+                    context.router.replace(BottomNavShellWidget());
+
+                  default:
+                    break;
+                }
+              });
+            },
+            child: SizedBox.shrink(),
+          ),
+        ],
       ),
     );
   }

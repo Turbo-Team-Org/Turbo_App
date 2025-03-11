@@ -11,7 +11,6 @@ import '../../../boostrap.dart';
 import '../../../favorites/state_management/cubit/favorite_cubit.dart';
 import '../../../reviews/state_management/cubit/review_cubit.dart';
 import '../../routes/router/app_router.dart';
-import '../../utils/theme/turbo_theme.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

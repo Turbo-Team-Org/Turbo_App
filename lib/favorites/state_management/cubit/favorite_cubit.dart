@@ -18,7 +18,7 @@ class FavoriteCubit extends Cubit<FavoriteState> {
     required this.toggleFavoriteUseCase,
   }) : super(const FavoriteState.initial());
 
-  Future<void> getFavorites(int userId) async {
+  Future<void> getFavorites(String userId) async {
     emit(const FavoriteState.loading());
     try {
       final favorites = await getFavoritesUseCase(userId);
@@ -28,7 +28,7 @@ class FavoriteCubit extends Cubit<FavoriteState> {
     }
   }
 
-  Future<void> toggleFavorite(int placeId, int userId) async {
+  Future<void> toggleFavorite(int placeId, String userId) async {
     try {
       final favorite = Favorite(userId: userId, placeId: placeId);
       await toggleFavoriteUseCase(favorite);
