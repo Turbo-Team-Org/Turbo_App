@@ -15,7 +15,7 @@ const String noaccount = 'Do not have an account?';
 final List<Place> places = [
   Place(
     rating: 4,
-    id: 1,
+    id: '1',
     name: "La Guarida",
     description:
         "Uno de los restaurantes más icónicos de La Habana, famoso por su cocina gourmet y su ambiente elegante.",
@@ -27,7 +27,7 @@ final List<Place> places = [
     ],
     reviews: [
       Review(
-        id: 1,
+        id: '1',
         userName: "Carlos Pérez",
         userAvatar: "https://randomuser.me/api/portraits/men/1.jpg",
         comment: "Excelente comida y una vista impresionante de La Habana.",
@@ -35,7 +35,7 @@ final List<Place> places = [
         date: DateTime(2024, 1, 15),
       ),
       Review(
-        id: 2,
+        id: '2',
         userName: "Ana Rodríguez",
         userAvatar: "https://randomuser.me/api/portraits/women/2.jpg",
         comment: "La atención fue de primera y el ambiente mágico.",
@@ -45,7 +45,7 @@ final List<Place> places = [
     ],
   ),
   Place(
-    id: 2,
+    id: '2',
     rating: 5,
     name: "Fábrica de Arte Cubano",
     description:
@@ -58,7 +58,7 @@ final List<Place> places = [
     ],
     reviews: [
       Review(
-        id: 3,
+        id: '3',
         userName: "Luis Fernández",
         userAvatar: "https://randomuser.me/api/portraits/men/3.jpg",
         comment:
@@ -67,7 +67,7 @@ final List<Place> places = [
         date: DateTime(2024, 3, 5),
       ),
       Review(
-        id: 4,
+        id: '4',
         userName: "María Gómez",
         userAvatar: "https://randomuser.me/api/portraits/women/4.jpg",
         comment:
@@ -78,7 +78,7 @@ final List<Place> places = [
     ],
   ),
   Place(
-    id: 3,
+    id: '3',
     rating: 3.5,
     name: "Varadero Beach",
     description:
@@ -91,7 +91,7 @@ final List<Place> places = [
     ],
     reviews: [
       Review(
-        id: 5,
+        id: '5',
         userName: "José Martínez",
         userAvatar: "https://randomuser.me/api/portraits/men/5.jpg",
         comment: "El agua es simplemente increíble, perfecta para relajarse.",
@@ -99,7 +99,7 @@ final List<Place> places = [
         date: DateTime(2024, 4, 1),
       ),
       Review(
-        id: 6,
+        id: '6',
         userName: "Elena Sánchez",
         userAvatar: "https://randomuser.me/api/portraits/women/6.jpg",
         comment: "Una de las mejores playas que he visitado en mi vida.",

@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:auto_route/auto_route.dart';
+import 'package:turbo/app/core/theme/app_themes.dart';
+import 'package:turbo/app/core/theme/theme_cubit.dart';
+import 'package:turbo/app/core/theme/theme_state.dart';
 import 'package:turbo/app/routes/guards/authentication_guards.dart';
 import 'package:turbo/authentication/state_managament/auth_cubit/cubit/auth_cubit_cubit.dart';
 import 'package:turbo/authentication/state_managament/sign_in_cubit/cubit/sign_in_cubit.dart';
@@ -17,6 +21,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    print("🚀 MyApp - Iniciando aplicación");
     return MultiBlocProvider(
       providers: [
         BlocProvider.value(value: sl<SignInCubit>()),
@@ -26,8 +31,15 @@ class MyApp extends StatelessWidget {
         BlocProvider.value(value: sl<FavoriteCubit>()),
         BlocProvider.value(value: sl<SignOutCubit>()),
         BlocProvider.value(value: sl<SignUpCubit>()),
+        BlocProvider(create: (_) => ThemeCubit()),
       ],
-      child: const AppView(),
+      child: BlocListener<AuthCubit, AuthCubitState>(
+        listenWhen: (previous, current) => previous != current,
+        listener: (context, state) {
+          print("🚀 MyApp - AuthCubit cambió de estado: $state");
+        },
+        child: const AppView(),
+      ),
     );
   }
 }
@@ -37,12 +49,67 @@ class AppView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print("🚀 AppView - Construyendo AppView");
     final authCubit = context.read<AuthCubit>();
+    print("🚀 AppView - Estado actual de AuthCubit: ${authCubit.state}");
+
     final appRouter = AppRouter(authGuard: AuthGuard(authCubit));
 
-    return MaterialApp.router(
-      debugShowCheckedModeBanner: false,
-      routerConfig: appRouter.config(),
+    return BlocBuilder<ThemeCubit, ThemeState>(
+      builder: (context, themeState) {
+        final themeMode =
+            (themeState is ThemeLoaded)
+                ? (themeState.isDarkMode ? ThemeMode.dark : ThemeMode.light)
+                : ThemeMode.system;
+
+        return MaterialApp.router(
+          debugShowCheckedModeBanner: false,
+          theme: AppThemes.lightTheme(),
+          darkTheme: AppThemes.darkTheme(),
+          themeMode: themeMode,
+          routerConfig: appRouter.config(
+            // Habilita registros de depuración para el router
+            navigatorObservers: () => [_NavigationObserver()],
+          ),
+          builder: (context, child) {
+            print("🚀 AppView - Builder llamado");
+            return child ?? const SizedBox();
+          },
+        );
+      },
     );
+  }
+}
+
+// Observador para registrar eventos de navegación
+class _NavigationObserver extends NavigatorObserver {
+  @override
+  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    print(
+      '🧭 Navegación: Pushed ${route.settings.name} (from: ${previousRoute?.settings.name})',
+    );
+    super.didPush(route, previousRoute);
+  }
+
+  @override
+  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    print(
+      '🧭 Navegación: Popped ${route.settings.name} (to: ${previousRoute?.settings.name})',
+    );
+    super.didPop(route, previousRoute);
+  }
+
+  @override
+  void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) {
+    print(
+      '🧭 Navegación: Replaced ${oldRoute?.settings.name} → ${newRoute?.settings.name}',
+    );
+    super.didReplace(newRoute: newRoute, oldRoute: oldRoute);
+  }
+
+  @override
+  void didRemove(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    print('🧭 Navegación: Removed ${route.settings.name}');
+    super.didRemove(route, previousRoute);
   }
 }

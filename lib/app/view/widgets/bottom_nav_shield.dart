@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:animate_do/animate_do.dart';
 import 'package:turbo/app/routes/router/app_router.gr.dart';
 
 @RoutePage()
@@ -10,33 +11,104 @@ class BottomNavShellWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return AutoTabsScaffold(
       animationDuration: const Duration(milliseconds: 300),
-      transitionBuilder:
-          (context, child, animation) =>
-              FadeTransition(opacity: animation, child: child),
-      routes: const [FeedRoute(), FavoritesRoute(), ProfileRoute()],
-      bottomNavigationBuilder: (context, tabsRouter) {
-        return BottomNavigationBar(
-          currentIndex: tabsRouter.activeIndex,
-          onTap: (index) => tabsRouter.setActiveIndex(index),
-          selectedItemColor: const Color.fromARGB(255, 243, 33, 61),
-          unselectedItemColor: Colors.grey,
-          showUnselectedLabels: false,
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home, size: 32),
-              label: "Inicio",
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.favorite_border, size: 32),
-              label: "Favoritos",
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person, size: 32),
-              label: "Perfil",
-            ),
-          ],
+      transitionBuilder: (context, child, animation) {
+        return FadeTransition(
+          opacity: animation,
+          child: SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(0.1, 0),
+              end: Offset.zero,
+            ).animate(animation),
+            child: child,
+          ),
         );
       },
+      routes: const [FeedRoute(), FavoritesRoute(), ProfileRoute()],
+      bottomNavigationBuilder: (context, tabsRouter) {
+        return Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.08),
+                blurRadius: 15,
+                spreadRadius: 1,
+              ),
+            ],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.only(top: 8, bottom: 8),
+            child: SafeArea(
+              top: false,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _buildNavItem(
+                    context,
+                    Icons.explore,
+                    "Explorar",
+                    0,
+                    tabsRouter,
+                  ),
+                  _buildNavItem(
+                    context,
+                    Icons.favorite,
+                    "Favoritos",
+                    1,
+                    tabsRouter,
+                  ),
+                  _buildNavItem(context, Icons.person, "Perfil", 2, tabsRouter),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildNavItem(
+    BuildContext context,
+    IconData icon,
+    String label,
+    int index,
+    TabsRouter tabsRouter,
+  ) {
+    final isSelected = tabsRouter.activeIndex == index;
+
+    return InkWell(
+      onTap: () => tabsRouter.setActiveIndex(index),
+      highlightColor: Colors.transparent,
+      splashColor: Colors.transparent,
+      child: Container(
+        width: 70,
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              color:
+                  isSelected
+                      ? const Color.fromARGB(255, 243, 33, 61)
+                      : Colors.grey,
+              size: 24,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                color:
+                    isSelected
+                        ? const Color.fromARGB(255, 243, 33, 61)
+                        : Colors.grey,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

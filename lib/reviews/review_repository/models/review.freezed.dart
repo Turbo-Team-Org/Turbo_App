@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Review {
 
- int get id; String get userName; String get userAvatar; String get comment; double get rating; DateTime get date;
+ String get id; String get userName; String get userAvatar; String get comment; double get rating; DateTime get date; DateTime? get createdAt;
 /// Create a copy of Review
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -29,16 +29,16 @@ $ReviewCopyWith<Review> get copyWith => _$ReviewCopyWithImpl<Review>(this as Rev
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Review&&(identical(other.id, id) || other.id == id)&&(identical(other.userName, userName) || other.userName == userName)&&(identical(other.userAvatar, userAvatar) || other.userAvatar == userAvatar)&&(identical(other.comment, comment) || other.comment == comment)&&(identical(other.rating, rating) || other.rating == rating)&&(identical(other.date, date) || other.date == date));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Review&&(identical(other.id, id) || other.id == id)&&(identical(other.userName, userName) || other.userName == userName)&&(identical(other.userAvatar, userAvatar) || other.userAvatar == userAvatar)&&(identical(other.comment, comment) || other.comment == comment)&&(identical(other.rating, rating) || other.rating == rating)&&(identical(other.date, date) || other.date == date)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,userName,userAvatar,comment,rating,date);
+int get hashCode => Object.hash(runtimeType,id,userName,userAvatar,comment,rating,date,createdAt);
 
 @override
 String toString() {
-  return 'Review(id: $id, userName: $userName, userAvatar: $userAvatar, comment: $comment, rating: $rating, date: $date)';
+  return 'Review(id: $id, userName: $userName, userAvatar: $userAvatar, comment: $comment, rating: $rating, date: $date, createdAt: $createdAt)';
 }
 
 
@@ -49,7 +49,7 @@ abstract mixin class $ReviewCopyWith<$Res>  {
   factory $ReviewCopyWith(Review value, $Res Function(Review) _then) = _$ReviewCopyWithImpl;
 @useResult
 $Res call({
- int id, String userName, String userAvatar, String comment, double rating, DateTime date
+ String id, String userName, String userAvatar, String comment, double rating, DateTime date, DateTime? createdAt
 });
 
 
@@ -66,15 +66,16 @@ class _$ReviewCopyWithImpl<$Res>
 
 /// Create a copy of Review
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? userName = null,Object? userAvatar = null,Object? comment = null,Object? rating = null,Object? date = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? userName = null,Object? userAvatar = null,Object? comment = null,Object? rating = null,Object? date = null,Object? createdAt = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as int,userName: null == userName ? _self.userName : userName // ignore: cast_nullable_to_non_nullable
+as String,userName: null == userName ? _self.userName : userName // ignore: cast_nullable_to_non_nullable
 as String,userAvatar: null == userAvatar ? _self.userAvatar : userAvatar // ignore: cast_nullable_to_non_nullable
 as String,comment: null == comment ? _self.comment : comment // ignore: cast_nullable_to_non_nullable
 as String,rating: null == rating ? _self.rating : rating // ignore: cast_nullable_to_non_nullable
 as double,date: null == date ? _self.date : date // ignore: cast_nullable_to_non_nullable
-as DateTime,
+as DateTime,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,
   ));
 }
 
@@ -85,15 +86,16 @@ as DateTime,
 @JsonSerializable()
 
 class _Review implements Review {
-  const _Review({required this.id, required this.userName, required this.userAvatar, required this.comment, required this.rating, required this.date});
+  const _Review({required this.id, required this.userName, required this.userAvatar, required this.comment, required this.rating, required this.date, this.createdAt});
   factory _Review.fromJson(Map<String, dynamic> json) => _$ReviewFromJson(json);
 
-@override final  int id;
+@override final  String id;
 @override final  String userName;
 @override final  String userAvatar;
 @override final  String comment;
 @override final  double rating;
 @override final  DateTime date;
+@override final  DateTime? createdAt;
 
 /// Create a copy of Review
 /// with the given fields replaced by the non-null parameter values.
@@ -108,16 +110,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Review&&(identical(other.id, id) || other.id == id)&&(identical(other.userName, userName) || other.userName == userName)&&(identical(other.userAvatar, userAvatar) || other.userAvatar == userAvatar)&&(identical(other.comment, comment) || other.comment == comment)&&(identical(other.rating, rating) || other.rating == rating)&&(identical(other.date, date) || other.date == date));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Review&&(identical(other.id, id) || other.id == id)&&(identical(other.userName, userName) || other.userName == userName)&&(identical(other.userAvatar, userAvatar) || other.userAvatar == userAvatar)&&(identical(other.comment, comment) || other.comment == comment)&&(identical(other.rating, rating) || other.rating == rating)&&(identical(other.date, date) || other.date == date)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,userName,userAvatar,comment,rating,date);
+int get hashCode => Object.hash(runtimeType,id,userName,userAvatar,comment,rating,date,createdAt);
 
 @override
 String toString() {
-  return 'Review(id: $id, userName: $userName, userAvatar: $userAvatar, comment: $comment, rating: $rating, date: $date)';
+  return 'Review(id: $id, userName: $userName, userAvatar: $userAvatar, comment: $comment, rating: $rating, date: $date, createdAt: $createdAt)';
 }
 
 
@@ -128,7 +130,7 @@ abstract mixin class _$ReviewCopyWith<$Res> implements $ReviewCopyWith<$Res> {
   factory _$ReviewCopyWith(_Review value, $Res Function(_Review) _then) = __$ReviewCopyWithImpl;
 @override @useResult
 $Res call({
- int id, String userName, String userAvatar, String comment, double rating, DateTime date
+ String id, String userName, String userAvatar, String comment, double rating, DateTime date, DateTime? createdAt
 });
 
 
@@ -145,15 +147,16 @@ class __$ReviewCopyWithImpl<$Res>
 
 /// Create a copy of Review
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? userName = null,Object? userAvatar = null,Object? comment = null,Object? rating = null,Object? date = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? userName = null,Object? userAvatar = null,Object? comment = null,Object? rating = null,Object? date = null,Object? createdAt = freezed,}) {
   return _then(_Review(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as int,userName: null == userName ? _self.userName : userName // ignore: cast_nullable_to_non_nullable
+as String,userName: null == userName ? _self.userName : userName // ignore: cast_nullable_to_non_nullable
 as String,userAvatar: null == userAvatar ? _self.userAvatar : userAvatar // ignore: cast_nullable_to_non_nullable
 as String,comment: null == comment ? _self.comment : comment // ignore: cast_nullable_to_non_nullable
 as String,rating: null == rating ? _self.rating : rating // ignore: cast_nullable_to_non_nullable
 as double,date: null == date ? _self.date : date // ignore: cast_nullable_to_non_nullable
-as DateTime,
+as DateTime,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,
   ));
 }
 

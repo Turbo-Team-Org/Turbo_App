@@ -33,6 +33,7 @@ import '../../reviews/review_repository/review_repository.dart';
 import '../../reviews/review_repository/service/review_service.dart';
 import '../../reviews/state_management/cubit/review_cubit.dart';
 import '../utils/app_preferences.dart';
+import 'package:turbo/app/core/theme/theme_cubit.dart';
 
 ///The init order of dependencies is Service/Repository/Use Cases (Module)/State Managament(Cubit or Bloc)
 
@@ -150,5 +151,6 @@ FutureOr<void> initCore(GetIt sl) async {
         getFavoritesUseCase: sl<GetFavoritesUseCase>(),
         toggleFavoriteUseCase: sl<ToggleFavoriteUseCase>(),
       ),
-    );
+    )
+    ..registerLazySingleton(() => ThemeCubit());
 }

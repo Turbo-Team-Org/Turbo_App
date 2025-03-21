@@ -12,6 +12,9 @@ sealed class Offer with _$Offer {
     double? offerPrice,
     String? offerConditions,
     String? offerImage,
+    @Default('') String name,
+    @Default('') String description,
+    @Default('') String image,
   }) = _Offer;
 
   factory Offer.fromJson(Map<String, dynamic> json) => _$OfferFromJson(json);
@@ -20,12 +23,20 @@ sealed class Offer with _$Offer {
   factory Offer.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
     return Offer(
-      offerTitle: data['offerTitle'],
-      offerDescription: data['offerDescription'],
-      offerValidUntil: (data['offerValidUntil'] as Timestamp).toDate(),
-      offerPrice: (data['offerPrice'] as num).toDouble() ?? 0,
+      offerTitle: data['offerTitle'] ?? '',
+      offerDescription: data['offerDescription'] ?? '',
+      offerValidUntil:
+          (data['offerValidUntil'] as Timestamp?)?.toDate() ??
+          DateTime.now().add(const Duration(days: 30)),
+      offerPrice:
+          data['offerPrice'] != null
+              ? (data['offerPrice'] as num).toDouble()
+              : 0,
       offerConditions: data['offerConditions'] ?? '',
       offerImage: data['offerImage'] ?? '',
+      name: data['name'] ?? data['offerTitle'] ?? '',
+      description: data['description'] ?? data['offerDescription'] ?? '',
+      image: data['image'] ?? data['offerImage'] ?? '',
     );
   }
 }

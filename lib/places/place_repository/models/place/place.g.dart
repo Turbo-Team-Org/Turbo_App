@@ -7,7 +7,7 @@ part of 'place.dart';
 // **************************************************************************
 
 _Place _$PlaceFromJson(Map<String, dynamic> json) => _Place(
-  id: (json['id'] as num).toInt(),
+  id: json['id'] as String,
   name: json['name'] as String,
   description: json['description'] as String,
   address: json['address'] as String,
@@ -19,10 +19,22 @@ _Place _$PlaceFromJson(Map<String, dynamic> json) => _Place(
       (json['reviews'] as List<dynamic>)
           .map((e) => Review.fromJson(e as Map<String, dynamic>))
           .toList(),
-  offer:
-      json['offer'] == null
-          ? null
-          : Offer.fromJson(json['offer'] as Map<String, dynamic>),
+  offers:
+      (json['offers'] as List<dynamic>?)
+          ?.map((e) => Offer.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      const [],
+  tags:
+      (json['tags'] as List<dynamic>?)?.map((e) => e as String).toList() ??
+      const [],
+  isOpen: json['isOpen'] as bool? ?? false,
+  schedules:
+      (json['schedules'] as List<dynamic>?)
+          ?.map((e) => Schedule.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      const [],
+  mainImage: json['mainImage'] as String? ?? "",
+  favoriteCount: (json['favoriteCount'] as num?)?.toInt() ?? 0,
 );
 
 Map<String, dynamic> _$PlaceToJson(_Place instance) => <String, dynamic>{
@@ -34,5 +46,10 @@ Map<String, dynamic> _$PlaceToJson(_Place instance) => <String, dynamic>{
   'imageUrls': instance.imageUrls,
   'rating': instance.rating,
   'reviews': instance.reviews,
-  'offer': instance.offer,
+  'offers': instance.offers,
+  'tags': instance.tags,
+  'isOpen': instance.isOpen,
+  'schedules': instance.schedules,
+  'mainImage': instance.mainImage,
+  'favoriteCount': instance.favoriteCount,
 };

@@ -1,16 +1,18 @@
 import 'package:auto_route/auto_route.dart';
-
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:turbo/app/core/theme/text_styles.dart';
+import 'package:turbo/app/core/theme/theme_cubit.dart';
 import 'package:turbo/app/routes/router/app_router.gr.dart';
-import 'package:turbo/app/utils/app_preferences.dart';
 import 'package:turbo/authentication/state_managament/auth_cubit/cubit/auth_cubit_cubit.dart';
-
 import 'package:turbo/favorites/state_management/cubit/favorite_cubit.dart';
-
+import 'package:turbo/places/place_repository/models/place/place.dart';
 import 'package:turbo/places/state_management/place_bloc/cubit/place_cubit.dart';
-
 import '../widgets/feed_widgets.dart';
+import 'package:turbo/app/core/theme/app_theme_switch.dart';
 
 @RoutePage()
 class FeedScreen extends StatefulWidget {
@@ -20,174 +22,926 @@ class FeedScreen extends StatefulWidget {
   State<FeedScreen> createState() => _FeedScreenState();
 }
 
-class _FeedScreenState extends State<FeedScreen> {
-  final _preferences = AppPreferences();
+class _FeedScreenState extends State<FeedScreen> with TickerProviderStateMixin {
+  late TabController _tabController;
+  final ScrollController _scrollController = ScrollController();
+  bool _isHeaderCollapsed = false;
+  String _userName = "explorador";
+  String _userPhotoUrl = "";
+
+  final List<String> _categories = [
+    'Populares',
+    'Mejores Ofertas',
+    'Trending',
+    'Precio-Calidad',
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: _categories.length, vsync: this);
+
+    // Añadir listener para detectar scroll
+    _scrollController.addListener(_onScroll);
+
+    // Cargar datos del usuario
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final userName = prefs.getString('userName');
+      final userPhotoUrl = prefs.getString('userPhotoUrl');
+
+      if (mounted) {
+        setState(() {
+          if (userName != null && userName.isNotEmpty) {
+            _userName = userName;
+          }
+
+          if (userPhotoUrl != null && userPhotoUrl.isNotEmpty) {
+            _userPhotoUrl = userPhotoUrl;
+          }
+        });
+      }
+    } catch (e) {
+      debugPrint('Error cargando datos de usuario: $e');
+    }
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    final isCollapsed = _scrollController.offset > 180;
+    if (isCollapsed != _isHeaderCollapsed) {
+      setState(() {
+        _isHeaderCollapsed = isCollapsed;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: BlocBuilder<AuthCubit, AuthCubitState>(
-        builder: (context, userstate) {
-          switch (userstate) {
-            case Unauthenticated():
-              {
-                context.replaceRoute(SignInRoute());
-              }
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [AppColors.backgroundLight, AppColors.backgroundWhite],
+            stops: [0.0, 0.3],
+          ),
+        ),
+        child: BlocBuilder<PlaceCubit, PlaceState>(
+          builder: (context, placeState) {
+            return BlocBuilder<FavoriteCubit, FavoriteState>(
+              builder: (context, favoriteState) {
+                return RefreshIndicator(
+                  color: AppColors.primaryRed,
+                  onRefresh: () async {
+                    await context.read<PlaceCubit>().getPlaces();
+                  },
+                  child: CustomScrollView(
+                    controller: _scrollController,
+                    physics: const BouncingScrollPhysics(),
+                    slivers: [
+                      _buildAppBar(context),
+                      SliverToBoxAdapter(
+                        child: Column(
+                          children: [
+                            _buildWelcomeSection(),
+                            _buildSearchBar(),
+                            _buildCategoryTabs(),
+                            _buildPromoSection(),
+                          ],
+                        ),
+                      ),
+                      _buildPlacesList(context, placeState, favoriteState),
+                    ],
+                  ),
+                );
+              },
+            );
+          },
+        ),
+      ),
+    );
+  }
 
-            case Authenticated(:final user):
-              {
-                context.read<FavoriteCubit>().getFavorites(user.uid);
-                return SafeArea(
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      color: Color.fromRGBO(245, 245, 247, 0.6),
+  SliverAppBar _buildAppBar(BuildContext context) {
+    return SliverAppBar(
+      expandedHeight: 70,
+      floating: true,
+      pinned: true,
+      snap: false,
+      elevation: _isHeaderCollapsed ? 4 : 0,
+      backgroundColor:
+          _isHeaderCollapsed
+              ? Theme.of(context).colorScheme.surface
+              : Colors.transparent,
+      centerTitle: false,
+      leading: BlocBuilder<AuthCubit, AuthCubitState>(
+        builder: (context, state) {
+          String profileImageUrl = "";
+
+          if (state is Authenticated) {
+            if (state.user is Map) {
+              profileImageUrl =
+                  (state.user as Map)['photoURL'] ?? _userPhotoUrl;
+            } else {
+              profileImageUrl = _userPhotoUrl;
+            }
+          }
+
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: CircleAvatar(
+              backgroundColor: AppColors.primaryRed.withOpacity(0.1),
+              backgroundImage:
+                  profileImageUrl.isNotEmpty
+                      ? NetworkImage(profileImageUrl)
+                      : null,
+              child:
+                  profileImageUrl.isEmpty
+                      ? Text(
+                        _userName.isNotEmpty ? _userName[0].toUpperCase() : "T",
+                        style: TextStyle(
+                          color: AppColors.primaryRed,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      )
+                      : null,
+            ),
+          );
+        },
+      ),
+      title:
+          _isHeaderCollapsed
+              ? ElasticIn(
+                duration: const Duration(milliseconds: 400),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryRed.withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.explore_outlined,
+                        color: AppColors.primaryRed,
+                        size: 24,
+                      ),
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SearchBarWidget(),
-                          const SizedBox(height: 16),
-                          Text(
-                            "Bienvenido ${user.displayName ?? 'Usuario'}, Explora \n Los mejores lugares y negocios",
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black87,
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          CategoryTabs(
-                            categories: const [
-                              "Populares",
-                              "Mejores Ofertas",
-                              "Trending",
-                              "Precio-Calidad",
-                            ],
-                            onCategorySelected: (index) {
-                              print("Seleccionado: $index");
-                            },
-                          ),
-                          const SizedBox(height: 20),
-                          BlocBuilder<PlaceCubit, PlaceState>(
-                            builder: (context, placeState) {
-                              switch (placeState) {
-                                case PlacesLoading():
-                                  return const Center(
-                                    child: CircularProgressIndicator(),
-                                  );
+                    const SizedBox(width: 10),
+                    Text(
+                      'Turbo',
+                      style: TextStyle(
+                        color: AppColors.primaryRed,
+                        fontWeight: FontWeight.bold,
+                        fontSize: AppTextStyles.fontSizeLg,
+                      ),
+                    ),
+                  ],
+                ),
+              )
+              : null,
+      actions: [
+        IconButton(
+          icon: Icon(
+            Icons.notifications_outlined,
+            color: _isHeaderCollapsed ? AppColors.primaryRed : Colors.white,
+            size: 26,
+          ),
+          onPressed: () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  'Notificaciones no implementadas aún',
+                  style: AppTextStyles.bodyMedium(
+                    context,
+                  ).copyWith(color: Colors.white),
+                ),
+                backgroundColor: AppColors.primaryDarkRed,
+                duration: const Duration(seconds: 2),
+              ),
+            );
+          },
+        ),
+        IconButton(
+          icon: BlocBuilder<ThemeCubit, dynamic>(
+            builder: (context, state) {
+              return Icon(
+                state?.isDarkMode ?? false ? Icons.light_mode : Icons.dark_mode,
+                color: _isHeaderCollapsed ? AppColors.primaryRed : Colors.white,
+                size: 26,
+              );
+            },
+          ),
+          onPressed: () {
+            context.read<ThemeCubit>().toggleDarkMode();
+          },
+        ),
+        const SizedBox(width: 8),
+      ],
+      flexibleSpace: FlexibleSpaceBar(
+        background:
+            _isHeaderCollapsed
+                ? null
+                : Container(
+                  decoration: const BoxDecoration(
+                    gradient: AppColors.redGradient,
+                  ),
+                  height: 100,
+                ),
+      ),
+    );
+  }
 
-                                case PlacesInitial():
-                                  return const Center(
-                                    child: CircularProgressIndicator(),
-                                  );
+  Widget _buildWelcomeSection() {
+    return FadeInDown(
+      duration: const Duration(milliseconds: 700),
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [AppColors.primaryRed, AppColors.primaryDarkRed],
+          ),
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.primaryRed.withOpacity(0.3),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            BlocBuilder<AuthCubit, AuthCubitState>(
+              builder: (context, state) {
+                String displayName = _userName;
 
-                                case PlacesLoaded():
-                                  return Expanded(
-                                    child: ListView(
-                                      children: [
-                                        SizedBox(
-                                          height: 300,
-                                          child: BlocBuilder<
-                                            FavoriteCubit,
-                                            FavoriteState
-                                          >(
-                                            builder: (context, favoriteState) {
-                                              switch (favoriteState) {
-                                                case FavoriteLoaded():
-                                                  return ListView.builder(
-                                                    scrollDirection:
-                                                        Axis.horizontal,
-                                                    itemCount:
-                                                        placeState
-                                                            .places
-                                                            .length,
-                                                    itemBuilder: (
-                                                      context,
-                                                      index,
-                                                    ) {
-                                                      final place =
-                                                          placeState
-                                                              .places[index];
-                                                      return InkWell(
-                                                        onTap: () {
-                                                          context.router.push(
-                                                            BusinessDetailsRoute(
-                                                              place: place,
-                                                            ),
-                                                          );
-                                                        },
-                                                        child: PlaceCard(
-                                                          place: place,
-                                                          isFavorite: favoriteState
-                                                              .favorites
-                                                              .any(
-                                                                (fav) =>
-                                                                    fav.placeId ==
-                                                                    place.id,
-                                                              ),
-                                                          onFavoritePressed: () {
-                                                            context
-                                                                .read<
-                                                                  FavoriteCubit
-                                                                >()
-                                                                .toggleFavorite(
-                                                                  place.id,
-                                                                  user.uid,
-                                                                );
-                                                          },
-                                                        ),
-                                                      );
-                                                    },
-                                                  );
-                                                case FavoriteInitial():
-                                                  Center(
-                                                    child:
-                                                        CircularProgressIndicator(),
-                                                  );
-                                                case FavoriteLoading():
-                                                  Center(
-                                                    child:
-                                                        CircularProgressIndicator(),
-                                                  );
-                                                case FavoriteError():
-                                                  (error) {
-                                                    Center(child: Text(error));
-                                                  };
-                                              }
-                                              return SizedBox();
-                                            },
-                                          ),
-                                        ),
-                                        const SizedBox(height: 16),
-                                        CategoriesSection(),
-                                      ],
-                                    ),
-                                  );
+                if (state is Authenticated) {
+                  if (state.user is Map) {
+                    displayName =
+                        (state.user as Map)['displayName'] ?? _userName;
+                  }
+                }
 
-                                case PlacesError():
-                                  (error) {
-                                    return Center(child: Text("Error $error"));
-                                  };
-                              }
-                              return SizedBox();
-                            },
-                          ),
-                        ],
+                return Text(
+                  '¡Hola, ${displayName.split(' ').first}!',
+                  style: AppTextStyles.titleMedium(
+                    context,
+                  ).copyWith(color: Colors.white, fontWeight: FontWeight.bold),
+                );
+              },
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Descubre los mejores lugares en Cuba',
+              style: AppTextStyles.bodyLarge(
+                context,
+              ).copyWith(color: Colors.white.withOpacity(0.9)),
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                _buildQuickActionButton(
+                  Icons.location_on,
+                  'Cerca',
+                  Colors.white.withOpacity(0.2),
+                ),
+                const SizedBox(width: 12),
+                _buildQuickActionButton(
+                  Icons.favorite,
+                  'Favoritos',
+                  Colors.white.withOpacity(0.2),
+                ),
+                const SizedBox(width: 12),
+                _buildQuickActionButton(
+                  Icons.discount,
+                  'Ofertas',
+                  Colors.white.withOpacity(0.2),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildQuickActionButton(IconData icon, String label, Color bgColor) {
+    return Expanded(
+      child: InkWell(
+        onTap: () {},
+        borderRadius: BorderRadius.circular(8),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          decoration: BoxDecoration(
+            color: bgColor,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Column(
+            children: [
+              Icon(icon, color: Colors.white, size: 20),
+              const SizedBox(height: 4),
+              Text(
+                label,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSearchBar() {
+    return FadeInUp(
+      duration: const Duration(milliseconds: 700),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(20, 15, 20, 20),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            borderRadius: BorderRadius.circular(16),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Theme.of(context).colorScheme.surface,
+                AppColors.primaryRed.withOpacity(0.05),
+              ],
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                spreadRadius: 1,
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: TextField(
+            style: AppTextStyles.bodyLarge(context),
+            decoration: InputDecoration(
+              hintText: 'Buscar lugares, ofertas, etc...',
+              hintStyle: AppTextStyles.bodyMedium(context).copyWith(
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+              ),
+              prefixIcon: const Icon(
+                Icons.search_rounded,
+                color: AppColors.primaryRed,
+                size: 26,
+              ),
+              border: InputBorder.none,
+              contentPadding: const EdgeInsets.symmetric(
+                vertical: 16,
+                horizontal: 16,
+              ),
+            ),
+            onTap: () {
+              // Implementar búsqueda
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    'Búsqueda no implementada aún',
+                    style: AppTextStyles.bodyMedium(
+                      context,
+                    ).copyWith(color: Colors.white),
+                  ),
+                  backgroundColor: AppColors.primaryDarkRed,
+                  duration: const Duration(seconds: 2),
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCategoryTabs() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: FadeInUp(
+        duration: const Duration(milliseconds: 600),
+        child: Column(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  colors: [
+                    AppColors.primaryRed.withOpacity(0.05),
+                    Colors.transparent,
+                    AppColors.primaryRed.withOpacity(0.05),
+                  ],
+                ),
+              ),
+              child: TabBar(
+                controller: _tabController,
+                isScrollable: true,
+                indicatorColor: AppColors.primaryRed,
+                indicatorWeight: 3,
+                indicatorSize: TabBarIndicatorSize.label,
+                labelColor: AppColors.primaryRed,
+                unselectedLabelColor: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withOpacity(0.7),
+                labelStyle: AppTextStyles.bodyLarge(
+                  context,
+                ).copyWith(fontWeight: FontWeight.bold),
+                unselectedLabelStyle: AppTextStyles.bodyLarge(context),
+                tabs:
+                    _categories.map((category) => Tab(text: category)).toList(),
+                onTap: (index) {
+                  // Efecto de vibración suave al cambiar de tab
+                  HapticFeedback.lightImpact();
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPlacesList(
+    BuildContext context,
+    PlaceState placeState,
+    FavoriteState favoriteState,
+  ) {
+    switch (placeState) {
+      case PlacesInitial():
+      case PlacesLoading():
+        return SliverFillRemaining(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const CircularProgressIndicator(
+                  color: AppColors.primaryRed,
+                  strokeWidth: 3,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Cargando lugares increíbles...',
+                  style: AppTextStyles.bodyLarge(context),
+                ),
+              ],
+            ),
+          ),
+        );
+
+      case PlacesLoaded():
+        final places = placeState.places;
+
+        // Filtrar lugares según la pestaña seleccionada
+        var filteredPlaces = places;
+        final selectedTab = _tabController.index;
+
+        if (selectedTab == 1) {
+          // Mejores Ofertas - lugares con ofertas
+          filteredPlaces =
+              places.where((place) => place.offers.isNotEmpty).toList();
+        } else if (selectedTab == 2) {
+          // Trending - lugares con mejor rating
+          filteredPlaces = places.where((place) => place.rating >= 4).toList();
+        } else if (selectedTab == 3) {
+          // Precio-Calidad - lugares con precio moderado
+          filteredPlaces =
+              places.where((place) => place.averagePrice <= 25).toList();
+        }
+
+        if (filteredPlaces.isEmpty) {
+          return SliverFillRemaining(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.search_off,
+                    size: 64,
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withOpacity(0.5),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'No hay lugares disponibles',
+                    style: AppTextStyles.titleSmall(context),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Intenta con otra búsqueda',
+                    style: AppTextStyles.bodyMedium(context),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+
+        return SliverPadding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 80),
+          sliver: SliverGrid(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisSpacing: 16,
+              crossAxisSpacing: 16,
+              childAspectRatio: 0.70,
+            ),
+            delegate: SliverChildBuilderDelegate((context, index) {
+              final place = filteredPlaces[index];
+              return _buildPlaceCard(context, place, favoriteState, index);
+            }, childCount: filteredPlaces.length),
+          ),
+        );
+
+      case PlacesError():
+        return SliverFillRemaining(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.error, size: 64, color: AppColors.primaryRed),
+                const SizedBox(height: 16),
+                Text(
+                  'Error: ${placeState.error}',
+                  style: AppTextStyles.titleSmall(context),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 24),
+                ElevatedButton.icon(
+                  onPressed: () => context.read<PlaceCubit>().getPlaces(),
+                  icon: const Icon(Icons.refresh),
+                  label: Text(
+                    'Reintentar',
+                    style: AppTextStyles.button(context),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primaryRed,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 12,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+    }
+  }
+
+  Widget _buildPlaceCard(
+    BuildContext context,
+    Place place,
+    FavoriteState favoriteState,
+    int index,
+  ) {
+    bool isFavorite = false;
+
+    switch (favoriteState) {
+      case FavoriteLoaded():
+        isFavorite = favoriteState.favorites.contains(place.id);
+        break;
+      default:
+        isFavorite = false;
+    }
+
+    return GestureDetector(
+      onTap: () {
+        context.router.push(BusinessDetailsRoute(id: place.id));
+      },
+      child: FadeInUp(
+        delay: Duration(milliseconds: 100 * (index % 6)),
+        duration: const Duration(milliseconds: 600),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: AppColors.primaryRed.withOpacity(0.1),
+              width: 1.5,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.08),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Stack(
+                children: [
+                  // Imagen del lugar con efecto de héroe para animación
+                  ClipRRect(
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(16),
+                    ),
+                    child: Hero(
+                      tag: 'place_image_${place.id}',
+                      child: AspectRatio(
+                        aspectRatio: 1.2,
+                        child: Image.network(
+                          place.mainImage.isNotEmpty
+                              ? place.mainImage
+                              : (place.imageUrls.isNotEmpty
+                                  ? place.imageUrls.first
+                                  : 'https://via.placeholder.com/400'),
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              color: Colors.grey[300],
+                              child: const Icon(
+                                Icons.image_not_supported,
+                                size: 50,
+                              ),
+                            );
+                          },
+                        ),
                       ),
                     ),
                   ),
-                );
-              }
 
-            default:
-              break;
-          }
+                  // Botón de favorito con nuevo diseño
+                  Positioned(
+                    top: 8,
+                    right: 8,
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () {
+                          final cubit = context.read<FavoriteCubit>();
+                          cubit.toggleFavorite(int.parse(place.id), '');
+                          // Efecto de vibración al añadir a favoritos
+                          HapticFeedback.mediumImpact();
+                        },
+                        customBorder: const CircleBorder(),
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.9),
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.1),
+                                blurRadius: 4,
+                                spreadRadius: 1,
+                                offset: const Offset(0, 1),
+                              ),
+                            ],
+                          ),
+                          child: Icon(
+                            isFavorite ? Icons.favorite : Icons.favorite_border,
+                            color:
+                                isFavorite
+                                    ? AppColors.primaryRed
+                                    : Colors.grey.shade600,
+                            size: 22,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
 
-          return CircularProgressIndicator.adaptive();
-        },
+                  // Badge de "Abierto" con nuevo estilo
+                  if (place.isOpen)
+                    Positioned(
+                      top: 8,
+                      left: 8,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 5,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.9),
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 4,
+                              spreadRadius: 1,
+                              offset: const Offset(0, 1),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 6,
+                              height: 6,
+                              decoration: const BoxDecoration(
+                                color: Colors.green,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              'ABIERTO',
+                              style: TextStyle(
+                                color: Colors.green.shade800,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.all(12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      place.name,
+                      style: AppTextStyles.bodyLarge(context).copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.primaryRed,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.location_on,
+                          size: 16,
+                          color: AppColors.primaryRed,
+                        ),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            place.address,
+                            style: AppTextStyles.bodyMedium(context),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.star,
+                              color: Colors.amber,
+                              size: 16,
+                            ),
+                            const SizedBox(width: 2),
+                            Text(
+                              place.rating.toStringAsFixed(1),
+                              style: AppTextStyles.bodyMedium(context).copyWith(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.primaryRed,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            '\$${place.averagePrice.toStringAsFixed(0)}',
+                            style: AppTextStyles.bodyMedium(context).copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPromoSection() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 24, 20, 24),
+      child: FadeInUp(
+        duration: const Duration(milliseconds: 800),
+        child: Container(
+          width: double.infinity,
+          height: 190,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            gradient: AppColors.purpleGradient,
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF8E2DE2).withOpacity(0.3),
+                blurRadius: 15,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          child: Stack(
+            children: [
+              Positioned(
+                right: -20,
+                bottom: -20,
+                child: Icon(
+                  Icons.beach_access,
+                  size: 150,
+                  color: Colors.white.withOpacity(0.1),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text(
+                      "¡Oferta especial!",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      "Disfruta 20% de descuento en tours por La Habana",
+                      style: TextStyle(color: Colors.white, fontSize: 16),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 12),
+                    ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: const Color(0xFF8E2DE2),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 12,
+                        ),
+                      ),
+                      child: const Text(
+                        "Ver Oferta",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

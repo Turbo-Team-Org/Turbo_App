@@ -13,31 +13,37 @@ class PlaceService implements PlaceInterface {
   Future<List<Place>> getPlaces() async {
     try {
       final snapshot = await firestore.collection('places').get();
-      final places = await Future.wait(snapshot.docs.map((doc) async {
-        final place = Place.fromFirestore(doc);
+      final places = await Future.wait(
+        snapshot.docs.map((doc) async {
+          final place = Place.fromFirestore(doc);
 
-        final reviewsSnapshot = await firestore
-            .collection('reviews')
-            .where('placeId', isEqualTo: place.id)
-            .orderBy('date', descending: true)
-            .limit(20)
-            .get();
+          final reviewsSnapshot =
+              await firestore
+                  .collection('reviews')
+                  .where('placeId', isEqualTo: place.id)
+                  .orderBy('date', descending: true)
+                  .limit(20)
+                  .get();
 
-        final offersSnapshot = await firestore
-            .collection('offers')
-            .where('placeId', isEqualTo: place.id)
-            .get();
+          final offersSnapshot =
+              await firestore
+                  .collection('offers')
+                  .where('placeId', isEqualTo: place.id)
+                  .get();
 
-        final offers = offersSnapshot.docs
-            .map((offerDoc) => Offer.fromFirestore(offerDoc))
-            .toList();
+          final offers =
+              offersSnapshot.docs
+                  .map((offerDoc) => Offer.fromFirestore(offerDoc))
+                  .toList();
 
-        final reviews = reviewsSnapshot.docs
-            .map((reviewDoc) => Review.fromFirestore(reviewDoc.data()))
-            .toList();
+          final reviews =
+              reviewsSnapshot.docs
+                  .map((reviewDoc) => Review.fromFirestore(reviewDoc.data()))
+                  .toList();
 
-        return place.copyWith(reviews: reviews, offer: offers.first);
-      }).toList());
+          return place.copyWith(reviews: reviews, offers: offers);
+        }).toList(),
+      );
 
       return places;
     } catch (e) {

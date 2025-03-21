@@ -9,12 +9,32 @@ class AuthGuard extends AutoRouteGuard {
 
   @override
   void onNavigation(NavigationResolver resolver, StackRouter router) {
+    print("🔐 AuthGuard - onNavigation - Verificando estado de autenticación");
+
+    // Verificar el estado actual primero
+    final currentState = authCubit.state;
+    print("🔐 AuthGuard - Estado actual: $currentState");
+
+    if (currentState is Authenticated) {
+      print(
+        "🔐 AuthGuard - Usuario ya autenticado, permitiendo navegación inmediata",
+      );
+      resolver.next();
+      return;
+    }
+
+    // Si no estamos seguros, esperar por el primer evento del stream
+    print("🔐 AuthGuard - Esperando cambio de estado de autenticación...");
     authCubit.stream.first.then((state) {
+      print("🔐 AuthGuard - Nuevo estado recibido: $state");
+
       switch (state) {
         case Authenticated():
+          print("🔐 AuthGuard - Usuario autenticado, permitiendo navegación");
           resolver.next();
           break;
         default:
+          print("🔐 AuthGuard - Usuario no autenticado, redirigiendo a login");
           router.replace(SignInRoute());
           break;
       }

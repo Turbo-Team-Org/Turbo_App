@@ -28,10 +28,7 @@ class AddReviewModal extends StatelessWidget {
           children: [
             const Text(
               "Agregar Reseña",
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
             // Calificación
@@ -67,18 +64,21 @@ class AddReviewModal extends StatelessWidget {
               onPressed: () {
                 if (commentController.text.isNotEmpty && rating > 0) {
                   // Aquí puedes agregar la lógica para enviar la reseña
-                  place.reviews.add(Review(
-                    id: 1,
-                    userName:
-                        'Usuario', // Esto lo podrías obtener del usuario logueado
-                    comment: commentController.text,
-                    rating: rating.toDouble(),
-                    userAvatar: 'https://via.placeholder.com/150',
-                    date: DateTime.now(),
-                  ));
+                  place.reviews.add(
+                    Review(
+                      id: '1',
+                      userName:
+                          'Usuario', // Esto lo podrías obtener del usuario logueado
+                      comment: commentController.text,
+                      rating: rating.toDouble(),
+                      userAvatar: 'https://via.placeholder.com/150',
+                      date: DateTime.now(),
+                    ),
+                  );
 
                   Navigator.pop(
-                      context); // Cierra el modal después de agregar la reseña
+                    context,
+                  ); // Cierra el modal después de agregar la reseña
                 }
               },
               child: const Text("Enviar Reseña"),

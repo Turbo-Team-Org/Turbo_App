@@ -20,7 +20,6 @@ import 'package:turbo/authentication/presentation/screens/splash_screen.dart'
     as _i8;
 import 'package:turbo/favorites/presentation/screens/favorite_screen.dart'
     as _i3;
-import 'package:turbo/places/place_repository/models/place/place.dart' as _i11;
 import 'package:turbo/places/presentation/screens/business_detail.dart' as _i2;
 import 'package:turbo/places/presentation/screens/feed_screen.dart' as _i4;
 import 'package:turbo/users/presentation/screens/profile_screen.dart' as _i5;
@@ -46,11 +45,11 @@ class BottomNavShellWidget extends _i9.PageRouteInfo<void> {
 class BusinessDetailsRoute extends _i9.PageRouteInfo<BusinessDetailsRouteArgs> {
   BusinessDetailsRoute({
     _i10.Key? key,
-    required _i11.Place place,
+    required String id,
     List<_i9.PageRouteInfo>? children,
   }) : super(
          BusinessDetailsRoute.name,
-         args: BusinessDetailsRouteArgs(key: key, place: place),
+         args: BusinessDetailsRouteArgs(key: key, id: id),
          initialChildren: children,
        );
 
@@ -60,21 +59,21 @@ class BusinessDetailsRoute extends _i9.PageRouteInfo<BusinessDetailsRouteArgs> {
     name,
     builder: (data) {
       final args = data.argsAs<BusinessDetailsRouteArgs>();
-      return _i2.BusinessDetailsScreen(key: args.key, place: args.place);
+      return _i2.BusinessDetailsScreen(key: args.key, id: args.id);
     },
   );
 }
 
 class BusinessDetailsRouteArgs {
-  const BusinessDetailsRouteArgs({this.key, required this.place});
+  const BusinessDetailsRouteArgs({this.key, required this.id});
 
   final _i10.Key? key;
 
-  final _i11.Place place;
+  final String id;
 
   @override
   String toString() {
-    return 'BusinessDetailsRouteArgs{key: $key, place: $place}';
+    return 'BusinessDetailsRouteArgs{key: $key, id: $id}';
   }
 }
 

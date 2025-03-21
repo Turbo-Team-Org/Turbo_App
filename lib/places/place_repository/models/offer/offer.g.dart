@@ -13,6 +13,9 @@ _Offer _$OfferFromJson(Map<String, dynamic> json) => _Offer(
   offerPrice: (json['offerPrice'] as num?)?.toDouble(),
   offerConditions: json['offerConditions'] as String?,
   offerImage: json['offerImage'] as String?,
+  name: json['name'] as String? ?? '',
+  description: json['description'] as String? ?? '',
+  image: json['image'] as String? ?? '',
 );
 
 Map<String, dynamic> _$OfferToJson(_Offer instance) => <String, dynamic>{
@@ -22,4 +25,7 @@ Map<String, dynamic> _$OfferToJson(_Offer instance) => <String, dynamic>{
   'offerPrice': instance.offerPrice,
   'offerConditions': instance.offerConditions,
   'offerImage': instance.offerImage,
+  'name': instance.name,
+  'description': instance.description,
+  'image': instance.image,
 };

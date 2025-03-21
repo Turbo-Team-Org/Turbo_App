@@ -86,11 +86,57 @@ class AuthenticationService implements AuthenticationInterface {
       _firebaseAuth.authStateChanges().asyncMap(_userFromFirestore);
 
   Future<AuthUser?> _userFromFirestore(User? user) async {
-    if (user == null) return null;
-    final doc = await firestore.collection('users').doc(user.uid).get();
-    if (doc.exists) {
-      return AuthUser.fromJson(doc.data()!);
-    } else {
+    print(
+      "🔥 AuthService - _userFromFirestore - Usuario de Firebase: ${user?.uid ?? 'null'}",
+    );
+    if (user == null) {
+      print(
+        "🔥 AuthService - _userFromFirestore - Usuario nulo, retornando null",
+      );
+      return null;
+    }
+
+    try {
+      final doc = await firestore.collection('users').doc(user.uid).get();
+      print(
+        "🔥 AuthService - _userFromFirestore - Documento existe: ${doc.exists}",
+      );
+
+      if (doc.exists) {
+        final data = doc.data();
+        print(
+          "🔥 AuthService - _userFromFirestore - Datos obtenidos: ${data != null}",
+        );
+        if (data != null) {
+          try {
+            final authUser = AuthUser.fromJson(data);
+            print(
+              "🔥 AuthService - _userFromFirestore - Usuario convertido correctamente: ${authUser.uid}",
+            );
+            return authUser;
+          } catch (e) {
+            print(
+              "🔥 AuthService - _userFromFirestore - Error al convertir usuario: $e",
+            );
+            // Si hay un error al convertir, creamos un usuario nuevo
+            final newUser = AuthUser(
+              uid: user.uid,
+              email: user.email!,
+              displayName: user.displayName,
+              photoUrl: user.photoURL,
+              favorites: [],
+              createdAt: DateTime.now(),
+            );
+            await firestore
+                .collection('users')
+                .doc(user.uid)
+                .set(newUser.toJson());
+            return newUser;
+          }
+        }
+      }
+
+      print("🔥 AuthService - _userFromFirestore - Creando nuevo usuario");
       final newUser = AuthUser(
         uid: user.uid,
         email: user.email!,
@@ -101,6 +147,17 @@ class AuthenticationService implements AuthenticationInterface {
       );
       await firestore.collection('users').doc(user.uid).set(newUser.toJson());
       return newUser;
+    } catch (error) {
+      print("🔥 AuthService - _userFromFirestore - Error: $error");
+      // En caso de error, devolvemos un usuario básico
+      return AuthUser(
+        uid: user.uid,
+        email: user.email ?? '',
+        displayName: user.displayName,
+        photoUrl: user.photoURL,
+        favorites: [],
+        createdAt: DateTime.now(),
+      );
     }
   }
 }

@@ -16,6 +16,7 @@ class AuthCubit extends Cubit<AuthCubitState> {
   AuthCubit({required this.authenticationModule})
     : super(const AuthCubitState.initial()) {
     _authSubscription = authenticationModule.call(NoParams()).listen((user) {
+      print("📱 AuthCubit - Stream listener - Usuario: ${user?.uid ?? 'null'}");
       if (user != null) {
         emit(Authenticated(user));
       } else {
@@ -23,11 +24,31 @@ class AuthCubit extends Cubit<AuthCubitState> {
       }
     });
   }
+
   Future<void> checkAuthStatus() async {
-    final user = await authenticationModule.call(NoParams()).first;
-    if (user != null) {
-      emit(Authenticated(user));
-    } else {
+    print(
+      "📱 AuthCubit - checkAuthStatus - Verificando estado de autenticación",
+    );
+    try {
+      final user = await authenticationModule.call(NoParams()).first;
+      print(
+        "📱 AuthCubit - checkAuthStatus - Usuario obtenido: ${user?.uid ?? 'null'}",
+      );
+
+      if (user != null) {
+        print(
+          "📱 AuthCubit - checkAuthStatus - Emitiendo estado Authenticated",
+        );
+        emit(Authenticated(user));
+      } else {
+        print(
+          "📱 AuthCubit - checkAuthStatus - Emitiendo estado Unauthenticated",
+        );
+        emit(Unauthenticated());
+      }
+    } catch (error) {
+      print("📱 AuthCubit - checkAuthStatus - Error: $error");
+      // En caso de error, asumimos que el usuario no está autenticado
       emit(Unauthenticated());
     }
   }
