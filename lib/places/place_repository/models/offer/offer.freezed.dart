@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Offer {
 
- String get offerTitle; String get offerDescription; DateTime get offerValidUntil; double? get offerPrice; String? get offerConditions; String? get offerImage; String get name; String get description; String get image;
+ String get offerTitle; String get offerDescription;@TimestampDateTimeConverter() DateTime get offerValidUntil; double? get offerPrice; String? get offerConditions; String? get offerImage; String get name; String get description; String get image;
 /// Create a copy of Offer
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -49,7 +49,7 @@ abstract mixin class $OfferCopyWith<$Res>  {
   factory $OfferCopyWith(Offer value, $Res Function(Offer) _then) = _$OfferCopyWithImpl;
 @useResult
 $Res call({
- String offerTitle, String offerDescription, DateTime offerValidUntil, double? offerPrice, String? offerConditions, String? offerImage, String name, String description, String image
+ String offerTitle, String offerDescription,@TimestampDateTimeConverter() DateTime offerValidUntil, double? offerPrice, String? offerConditions, String? offerImage, String name, String description, String image
 });
 
 
@@ -88,12 +88,12 @@ as String,
 @JsonSerializable()
 
 class _Offer implements Offer {
-  const _Offer({required this.offerTitle, required this.offerDescription, required this.offerValidUntil, this.offerPrice, this.offerConditions, this.offerImage, this.name = '', this.description = '', this.image = ''});
+  const _Offer({required this.offerTitle, required this.offerDescription, @TimestampDateTimeConverter() required this.offerValidUntil, this.offerPrice, this.offerConditions, this.offerImage, this.name = '', this.description = '', this.image = ''});
   factory _Offer.fromJson(Map<String, dynamic> json) => _$OfferFromJson(json);
 
 @override final  String offerTitle;
 @override final  String offerDescription;
-@override final  DateTime offerValidUntil;
+@override@TimestampDateTimeConverter() final  DateTime offerValidUntil;
 @override final  double? offerPrice;
 @override final  String? offerConditions;
 @override final  String? offerImage;
@@ -134,7 +134,7 @@ abstract mixin class _$OfferCopyWith<$Res> implements $OfferCopyWith<$Res> {
   factory _$OfferCopyWith(_Offer value, $Res Function(_Offer) _then) = __$OfferCopyWithImpl;
 @override @useResult
 $Res call({
- String offerTitle, String offerDescription, DateTime offerValidUntil, double? offerPrice, String? offerConditions, String? offerImage, String name, String description, String image
+ String offerTitle, String offerDescription,@TimestampDateTimeConverter() DateTime offerValidUntil, double? offerPrice, String? offerConditions, String? offerImage, String name, String description, String image
 });
 
 

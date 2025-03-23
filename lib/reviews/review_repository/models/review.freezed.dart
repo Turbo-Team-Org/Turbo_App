@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Review {
 
- String get id; String get userName; String get userAvatar; String get comment; double get rating; DateTime get date; DateTime? get createdAt;
+ String get id; String get userName; String get userAvatar; String get comment; double get rating;@TimestampDateTimeConverter() DateTime get date;@TimestampDateTimeConverter() DateTime? get createdAt;
 /// Create a copy of Review
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -49,7 +49,7 @@ abstract mixin class $ReviewCopyWith<$Res>  {
   factory $ReviewCopyWith(Review value, $Res Function(Review) _then) = _$ReviewCopyWithImpl;
 @useResult
 $Res call({
- String id, String userName, String userAvatar, String comment, double rating, DateTime date, DateTime? createdAt
+ String id, String userName, String userAvatar, String comment, double rating,@TimestampDateTimeConverter() DateTime date,@TimestampDateTimeConverter() DateTime? createdAt
 });
 
 
@@ -86,7 +86,7 @@ as DateTime?,
 @JsonSerializable()
 
 class _Review implements Review {
-  const _Review({required this.id, required this.userName, required this.userAvatar, required this.comment, required this.rating, required this.date, this.createdAt});
+  const _Review({required this.id, required this.userName, required this.userAvatar, required this.comment, required this.rating, @TimestampDateTimeConverter() required this.date, @TimestampDateTimeConverter() this.createdAt});
   factory _Review.fromJson(Map<String, dynamic> json) => _$ReviewFromJson(json);
 
 @override final  String id;
@@ -94,8 +94,8 @@ class _Review implements Review {
 @override final  String userAvatar;
 @override final  String comment;
 @override final  double rating;
-@override final  DateTime date;
-@override final  DateTime? createdAt;
+@override@TimestampDateTimeConverter() final  DateTime date;
+@override@TimestampDateTimeConverter() final  DateTime? createdAt;
 
 /// Create a copy of Review
 /// with the given fields replaced by the non-null parameter values.
@@ -130,7 +130,7 @@ abstract mixin class _$ReviewCopyWith<$Res> implements $ReviewCopyWith<$Res> {
   factory _$ReviewCopyWith(_Review value, $Res Function(_Review) _then) = __$ReviewCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String userName, String userAvatar, String comment, double rating, DateTime date, DateTime? createdAt
+ String id, String userName, String userAvatar, String comment, double rating,@TimestampDateTimeConverter() DateTime date,@TimestampDateTimeConverter() DateTime? createdAt
 });
 
 

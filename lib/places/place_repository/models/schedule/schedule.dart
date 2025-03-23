@@ -12,6 +12,8 @@ class Schedule with _$Schedule {
     @Default('') String dayName,
   }) = _Schedule;
 
+  const Schedule._();
+
   factory Schedule.fromJson(Map<String, dynamic> json) =>
       _$ScheduleFromJson(json);
 

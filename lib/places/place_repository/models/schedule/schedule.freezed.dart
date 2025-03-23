@@ -82,8 +82,8 @@ as String,
 /// @nodoc
 @JsonSerializable()
 
-class _Schedule implements Schedule {
-  const _Schedule({required this.opening, required this.closing, this.isFullDay = false, this.dayName = ''});
+class _Schedule extends Schedule {
+  const _Schedule({required this.opening, required this.closing, this.isFullDay = false, this.dayName = ''}): super._();
   factory _Schedule.fromJson(Map<String, dynamic> json) => _$ScheduleFromJson(json);
 
 @override final  String opening;

@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:turbo/app/core/theme/text_styles.dart';
 import 'package:turbo/app/core/theme/theme_cubit.dart';
 import 'package:turbo/app/routes/router/app_router.gr.dart';
+import 'package:turbo/app/utils/app_preferences.dart';
 import 'package:turbo/authentication/state_managament/auth_cubit/cubit/auth_cubit_cubit.dart';
 import 'package:turbo/favorites/state_management/cubit/favorite_cubit.dart';
 import 'package:turbo/places/place_repository/models/place/place.dart';
@@ -26,8 +27,7 @@ class _FeedScreenState extends State<FeedScreen> with TickerProviderStateMixin {
   late TabController _tabController;
   final ScrollController _scrollController = ScrollController();
   bool _isHeaderCollapsed = false;
-  String _userName = "explorador";
-  String _userPhotoUrl = "";
+  final prefs = AppPreferences();
 
   final List<String> _categories = [
     'Populares',
@@ -45,29 +45,7 @@ class _FeedScreenState extends State<FeedScreen> with TickerProviderStateMixin {
     _scrollController.addListener(_onScroll);
 
     // Cargar datos del usuario
-    _loadUserData();
-  }
-
-  Future<void> _loadUserData() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final userName = prefs.getString('userName');
-      final userPhotoUrl = prefs.getString('userPhotoUrl');
-
-      if (mounted) {
-        setState(() {
-          if (userName != null && userName.isNotEmpty) {
-            _userName = userName;
-          }
-
-          if (userPhotoUrl != null && userPhotoUrl.isNotEmpty) {
-            _userPhotoUrl = userPhotoUrl;
-          }
-        });
-      }
-    } catch (e) {
-      debugPrint('Error cargando datos de usuario: $e');
-    }
+    //_loadUserData();
   }
 
   @override
@@ -152,34 +130,32 @@ class _FeedScreenState extends State<FeedScreen> with TickerProviderStateMixin {
           String profileImageUrl = "";
 
           if (state is Authenticated) {
-            if (state.user is Map) {
-              profileImageUrl =
-                  (state.user as Map)['photoURL'] ?? _userPhotoUrl;
-            } else {
-              profileImageUrl = _userPhotoUrl;
-            }
-          }
+            profileImageUrl = state.user.photoUrl ?? '';
 
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: CircleAvatar(
-              backgroundColor: AppColors.primaryRed.withOpacity(0.1),
-              backgroundImage:
-                  profileImageUrl.isNotEmpty
-                      ? NetworkImage(profileImageUrl)
-                      : null,
-              child:
-                  profileImageUrl.isEmpty
-                      ? Text(
-                        _userName.isNotEmpty ? _userName[0].toUpperCase() : "T",
-                        style: TextStyle(
-                          color: AppColors.primaryRed,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      )
-                      : null,
-            ),
-          );
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: CircleAvatar(
+                backgroundColor: AppColors.primaryRed.withOpacity(0.1),
+                backgroundImage:
+                    profileImageUrl.isNotEmpty
+                        ? NetworkImage(profileImageUrl)
+                        : null,
+                child:
+                    profileImageUrl.isEmpty
+                        ? Text(
+                          state.user.displayName?.isNotEmpty ?? false
+                              ? state.user.displayName![0].toUpperCase()
+                              : "T",
+                          style: TextStyle(
+                            color: AppColors.primaryRed,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )
+                        : null,
+              ),
+            );
+          }
+          return const SizedBox.shrink();
         },
       ),
       title:
@@ -291,13 +267,10 @@ class _FeedScreenState extends State<FeedScreen> with TickerProviderStateMixin {
           children: [
             BlocBuilder<AuthCubit, AuthCubitState>(
               builder: (context, state) {
-                String displayName = _userName;
+                String displayName = "";
 
                 if (state is Authenticated) {
-                  if (state.user is Map) {
-                    displayName =
-                        (state.user as Map)['displayName'] ?? _userName;
-                  }
+                  displayName = state.user.displayName!;
                 }
 
                 return Text(

@@ -9,7 +9,9 @@ part of 'offer.dart';
 _Offer _$OfferFromJson(Map<String, dynamic> json) => _Offer(
   offerTitle: json['offerTitle'] as String,
   offerDescription: json['offerDescription'] as String,
-  offerValidUntil: DateTime.parse(json['offerValidUntil'] as String),
+  offerValidUntil: const TimestampDateTimeConverter().fromJson(
+    json['offerValidUntil'],
+  ),
   offerPrice: (json['offerPrice'] as num?)?.toDouble(),
   offerConditions: json['offerConditions'] as String?,
   offerImage: json['offerImage'] as String?,
@@ -21,7 +23,9 @@ _Offer _$OfferFromJson(Map<String, dynamic> json) => _Offer(
 Map<String, dynamic> _$OfferToJson(_Offer instance) => <String, dynamic>{
   'offerTitle': instance.offerTitle,
   'offerDescription': instance.offerDescription,
-  'offerValidUntil': instance.offerValidUntil.toIso8601String(),
+  'offerValidUntil': const TimestampDateTimeConverter().toJson(
+    instance.offerValidUntil,
+  ),
   'offerPrice': instance.offerPrice,
   'offerConditions': instance.offerConditions,
   'offerImage': instance.offerImage,

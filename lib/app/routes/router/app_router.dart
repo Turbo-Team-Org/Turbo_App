@@ -11,6 +11,7 @@ import '../../../favorites/presentation/screens/favorite_screen.dart';
 import '../../../places/place_repository/models/place/place.dart';
 import '../../../places/presentation/screens/business_detail.dart';
 import '../../../places/presentation/screens/feed_screen.dart';
+import '../../../places/presentation/screens/places_showcase_screen.dart';
 import '../../../users/presentation/screens/profile_screen.dart';
 
 @AutoRouterConfig(replaceInRouteName: 'Screen|Page,Route')
@@ -29,6 +30,7 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: SignInRoute.page, path: '/sign-in'),
 
     AutoRoute(page: BusinessDetailsRoute.page, path: '/business-detail'),
+    AutoRoute(page: PlacesShowcaseRoute.page, path: '/places-showcase'),
     AutoRoute(
       path: '/home',
       page: BottomNavShellWidget.page,

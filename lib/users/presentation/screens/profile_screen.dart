@@ -5,6 +5,8 @@ import 'package:turbo/app/routes/router/app_router.gr.dart';
 import 'package:turbo/authentication/state_managament/auth_cubit/cubit/auth_cubit_cubit.dart';
 import 'package:turbo/authentication/state_managament/sign_out_cubit/cubit/sign_out_cubit.dart';
 import 'package:turbo/places/presentation/widgets/feed_widgets.dart';
+import 'package:turbo/utils/sample_data_loader.dart';
+import 'package:turbo/utils/data_loader_manager.dart';
 
 import '../../../app/view/widgets/global_widgets.dart';
 
@@ -14,6 +16,11 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Instancia de nuestro cargador de datos
+    final sampleDataLoader = SampleDataLoader();
+    // Instancia del gestor de carga de datos
+    final dataLoaderManager = DataLoaderManager();
+
     return BlocListener<SignOutCubit, SignOutState>(
       listener: (context, signoutstate) {
         switch (signoutstate) {
@@ -52,11 +59,65 @@ class ProfileScreen extends StatelessWidget {
                   elevation: 0,
                   centerTitle: true,
                   actions: [
+                    // Menú para gestionar datos de prueba
+                    PopupMenuButton<String>(
+                      icon: const Icon(Icons.data_array, color: Colors.blue),
+                      onSelected: (value) {
+                        switch (value) {
+                          case 'places':
+                            // Mostrar diálogo de confirmación para lugares
+                            showDialog(
+                              context: context,
+                              builder:
+                                  (context) => AlertDialog(
+                                    title: const Text(
+                                      'Cargar lugares de prueba',
+                                    ),
+                                    content: const Text(
+                                      '¿Estás seguro de cargar lugares de prueba? '
+                                      'Esta acción agregará lugares ficticios a tu base de datos.',
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(context),
+                                        child: const Text('Cancelar'),
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                          // Cargar datos de prueba
+                                          sampleDataLoader.loadSamplePlaces(
+                                            context,
+                                          );
+                                        },
+                                        child: const Text('Cargar lugares'),
+                                      ),
+                                    ],
+                                  ),
+                            );
+                            break;
+                          case 'additional':
+                            // Mostrar opciones para cargar ofertas o reseñas
+                            dataLoaderManager.showDataLoaderOptions(context);
+                            break;
+                        }
+                      },
+                      itemBuilder:
+                          (BuildContext context) => [
+                            const PopupMenuItem<String>(
+                              value: 'places',
+                              child: Text('Cargar lugares'),
+                            ),
+                            const PopupMenuItem<String>(
+                              value: 'additional',
+                              child: Text('Cargar ofertas/reseñas'),
+                            ),
+                          ],
+                    ),
                     IconButton(
                       icon: const Icon(Icons.logout, color: Colors.black),
                       onPressed: () {
                         context.read<SignOutCubit>().signOut();
-                        // context.replaceRoute(const SignInRoute());
                       },
                     ),
                   ],

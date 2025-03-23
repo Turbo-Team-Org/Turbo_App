@@ -12,11 +12,8 @@ _Review _$ReviewFromJson(Map<String, dynamic> json) => _Review(
   userAvatar: json['userAvatar'] as String,
   comment: json['comment'] as String,
   rating: (json['rating'] as num).toDouble(),
-  date: DateTime.parse(json['date'] as String),
-  createdAt:
-      json['createdAt'] == null
-          ? null
-          : DateTime.parse(json['createdAt'] as String),
+  date: const TimestampDateTimeConverter().fromJson(json['date']),
+  createdAt: const TimestampDateTimeConverter().fromJson(json['createdAt']),
 );
 
 Map<String, dynamic> _$ReviewToJson(_Review instance) => <String, dynamic>{
@@ -25,6 +22,14 @@ Map<String, dynamic> _$ReviewToJson(_Review instance) => <String, dynamic>{
   'userAvatar': instance.userAvatar,
   'comment': instance.comment,
   'rating': instance.rating,
-  'date': instance.date.toIso8601String(),
-  'createdAt': instance.createdAt?.toIso8601String(),
+  'date': const TimestampDateTimeConverter().toJson(instance.date),
+  'createdAt': _$JsonConverterToJson<dynamic, DateTime>(
+    instance.createdAt,
+    const TimestampDateTimeConverter().toJson,
+  ),
 };
+
+Json? _$JsonConverterToJson<Json, Value>(
+  Value? value,
+  Json? Function(Value value) toJson,
+) => value == null ? null : toJson(value);
