@@ -84,7 +84,10 @@ class AppThemes {
         bodyMedium: TextStyle(color: Colors.black87),
         bodySmall: TextStyle(color: Colors.black54),
       ),
-      dividerTheme: DividerThemeData(color: Colors.grey[300], thickness: 1),
+      dividerTheme: const DividerThemeData(
+        color: Colors.transparent,
+        thickness: 0,
+      ),
       cardTheme: CardTheme(
         elevation: 2,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -173,7 +176,10 @@ class AppThemes {
         bodyMedium: TextStyle(color: Colors.white),
         bodySmall: TextStyle(color: Colors.white70),
       ),
-      dividerTheme: const DividerThemeData(color: Colors.white24, thickness: 1),
+      dividerTheme: const DividerThemeData(
+        color: Colors.transparent,
+        thickness: 0,
+      ),
       cardTheme: CardTheme(
         color: const Color(0xFF1E1E1E),
         elevation: 2,

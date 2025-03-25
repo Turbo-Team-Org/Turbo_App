@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:turbo/app/core/theme/text_styles.dart';
 import 'package:turbo/places/place_repository/models/place/place.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:animate_do/animate_do.dart';
@@ -23,9 +22,12 @@ class _ImageCarouselState extends State<ImageCarousel> {
   @override
   void initState() {
     super.initState();
+
     // Iniciar autoplay después de que el widget se construya
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _startAutoPlay();
+      if (mounted) {
+        _startAutoPlay();
+      }
     });
   }
 
@@ -41,18 +43,18 @@ class _ImageCarouselState extends State<ImageCarousel> {
     _stopAutoPlay();
     // Crear nuevo timer para cambiar página cada 5 segundos
     _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
-      if (_pageController.hasClients) {
+      if (_pageController.hasClients && mounted) {
         if (_currentPage < _getImages().length - 1) {
           _pageController.nextPage(
             duration: const Duration(milliseconds: 800),
-            curve: Curves.easeInOut,
+            curve: Curves.easeOutQuint,
           );
         } else {
           // Volver a la primera página con una animación suave
           _pageController.animateToPage(
             0,
-            duration: const Duration(milliseconds: 800),
-            curve: Curves.easeInOut,
+            duration: const Duration(milliseconds: 1200),
+            curve: Curves.easeInOutCubic,
           );
         }
       }
@@ -90,7 +92,10 @@ class _ImageCarouselState extends State<ImageCarousel> {
   @override
   Widget build(BuildContext context) {
     final images = _getImages();
+    return _buildCarousel(images);
+  }
 
+  Widget _buildCarousel(List<String> images) {
     return Stack(
       children: [
         // PageView para el carrusel
@@ -98,40 +103,82 @@ class _ImageCarouselState extends State<ImageCarousel> {
           controller: _pageController,
           itemCount: images.length,
           onPageChanged: (index) {
-            setState(() {
-              _currentPage = index;
-            });
+            if (mounted) {
+              setState(() {
+                _currentPage = index;
+              });
+            }
           },
           itemBuilder: (context, index) {
-            return FadeIn(
-              duration: const Duration(milliseconds: 300),
-              child: Hero(
-                tag:
-                    index == 0 && widget.place.mainImage.isNotEmpty
-                        ? 'place_image_${widget.place.id}'
-                        : 'place_image_${widget.place.id}_$index',
-                child: CachedNetworkImage(
-                  imageUrl: images[index],
-                  fit: BoxFit.cover,
-                  placeholder:
-                      (context, url) => Container(
-                        color: Colors.grey.shade300,
-                        child: const Center(
-                          child: CircularProgressIndicator(
-                            color: AppColors.primaryRed,
+            return Hero(
+              tag:
+                  index == 0
+                      ? 'place_image_${widget.place.id}'
+                      : 'place_image_${widget.place.id}_$index',
+              // Añadimos un flightShuttleBuilder personalizado para controlar la animación del Hero
+              flightShuttleBuilder: (
+                BuildContext flightContext,
+                Animation<double> animation,
+                HeroFlightDirection flightDirection,
+                BuildContext fromHeroContext,
+                BuildContext toHeroContext,
+              ) {
+                // Creamos una combinación de animaciones para un efecto más impresionante
+                return AnimatedBuilder(
+                  animation: animation,
+                  builder: (context, child) {
+                    // Calculamos valores para efectos visuales durante la transición
+                    final double curvedAnimation = Curves.easeInOutCubic
+                        .transform(animation.value);
+
+                    return Material(
+                      color: Colors.transparent,
+                      child: Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          // Aplicamos transformaciones para un efecto más dramático
+                          Transform.scale(
+                            scale:
+                                // Aplicamos ligero efecto de escala
+                                1.0 + curvedAnimation * 0.05,
+                            child: CachedNetworkImage(
+                              imageUrl: images[index],
+                              fit: BoxFit.cover,
+                            ),
                           ),
-                        ),
+                          // Overlay con opacidad que va desapareciendo
+                          Opacity(
+                            opacity:
+                                flightDirection == HeroFlightDirection.push
+                                    ? (1 - curvedAnimation) *
+                                        0.3 // Al abrir, el overlay desaparece
+                                    : curvedAnimation *
+                                        0.3, // Al cerrar, el overlay aparece
+                            child: Container(color: Colors.black),
+                          ),
+                        ],
                       ),
-                  errorWidget:
-                      (context, url, error) => Container(
-                        color: Colors.grey.shade300,
-                        child: const Icon(
-                          Icons.image_not_supported,
-                          size: 50,
-                          color: Colors.grey,
-                        ),
+                    );
+                  },
+                );
+              },
+              child: CachedNetworkImage(
+                imageUrl: images[index],
+                fit: BoxFit.cover,
+                placeholder:
+                    (context, url) => Container(
+                      color: Colors.grey.shade300,
+                      child: const Center(child: CircularProgressIndicator()),
+                    ),
+                errorWidget:
+                    (context, url, error) => Container(
+                      color: Colors.grey.shade300,
+                      child: const Icon(
+                        Icons.image_not_supported,
+                        size: 50,
+                        color: Colors.grey,
                       ),
-                ),
+                    ),
               ),
             );
           },
@@ -140,24 +187,32 @@ class _ImageCarouselState extends State<ImageCarousel> {
         // Indicador de página
         if (images.length > 1)
           Positioned(
-            bottom: 100,
+            bottom: 20,
             left: 0,
             right: 0,
             child: Center(
-              child: FadeInUp(
-                duration: const Duration(milliseconds: 400),
-                delay: const Duration(milliseconds: 400),
-                child: SmoothPageIndicator(
-                  controller: _pageController,
-                  count: images.length,
-                  effect: ExpandingDotsEffect(
-                    activeDotColor: AppColors.primaryRed,
-                    dotColor: Colors.white.withOpacity(0.7),
-                    dotHeight: 8,
-                    dotWidth: 8,
-                    expansionFactor: 3,
-                    spacing: 5,
+              child: SmoothPageIndicator(
+                controller: _pageController,
+                count: images.length,
+                effect: CustomizableEffect(
+                  activeDotDecoration: DotDecoration(
+                    width: 20,
+                    height: 8,
+                    color: Theme.of(context).colorScheme.primary,
+                    borderRadius: BorderRadius.circular(12),
+                    dotBorder: DotBorder(color: Colors.white, width: 1),
                   ),
+                  dotDecoration: DotDecoration(
+                    width: 8,
+                    height: 8,
+                    color: Colors.white.withOpacity(0.5),
+                    borderRadius: BorderRadius.circular(16),
+                    dotBorder: DotBorder(
+                      color: Colors.white.withOpacity(0.3),
+                      width: 1,
+                    ),
+                  ),
+                  spacing: 8,
                 ),
               ),
             ),

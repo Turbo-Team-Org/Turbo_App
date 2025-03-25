@@ -6,6 +6,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:turbo/favorites/state_management/cubit/favorite_cubit.dart';
 import 'package:turbo/places/place_repository/models/place/place.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'image_carousel.dart'; // Importamos el carrusel
 
 class BusinessSliverAppBar extends StatelessWidget {
   final Place place;
@@ -26,29 +27,9 @@ class BusinessSliverAppBar extends StatelessWidget {
         background: Stack(
           fit: StackFit.expand,
           children: [
-            // Usar CachedNetworkImage directamente
+            // Usamos el ImageCarousel para mostrar un carrusel de imágenes
             place.imageUrls.isNotEmpty
-                ? CachedNetworkImage(
-                  imageUrl:
-                      place.mainImage.isNotEmpty
-                          ? place.mainImage
-                          : place.imageUrls.first,
-                  fit: BoxFit.cover,
-                  placeholder:
-                      (context, url) => Container(
-                        color: Colors.grey.shade300,
-                        child: const Center(child: CircularProgressIndicator()),
-                      ),
-                  errorWidget:
-                      (context, url, error) => Container(
-                        color: Colors.grey.shade300,
-                        child: const Icon(
-                          Icons.image_not_supported,
-                          size: 50,
-                          color: Colors.grey,
-                        ),
-                      ),
-                )
+                ? ImageCarousel(place: place)
                 : Container(
                   color: Colors.grey.shade300,
                   child: const Center(
@@ -155,14 +136,38 @@ class BusinessSliverAppBar extends StatelessWidget {
       ),
       leading: FadeInLeft(
         duration: const Duration(milliseconds: 300),
-        child: CircleAvatar(
-          backgroundColor: Colors.white.withOpacity(0.9),
-          child: IconButton(
-            icon: Icon(
-              Icons.arrow_back,
-              color: Theme.of(context).colorScheme.primary,
+        child: Padding(
+          padding: const EdgeInsets.only(left: 10.0),
+          child: CircleAvatar(
+            radius: 24,
+            backgroundColor: Colors.white.withOpacity(0.9),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(25),
+                splashColor: Theme.of(
+                  context,
+                ).colorScheme.primary.withOpacity(0.3),
+                highlightColor: Theme.of(
+                  context,
+                ).colorScheme.primary.withOpacity(0.1),
+                onTap: () {
+                  // Añadimos feedback táctil
+                  HapticFeedback.lightImpact();
+                  // Pequeña pausa antes de navegar para un mejor efecto visual
+                  Future.delayed(const Duration(milliseconds: 50), () {
+                    Navigator.of(context).pop();
+                  });
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Icon(
+                    Icons.arrow_back,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                ),
+              ),
             ),
-            onPressed: () => Navigator.of(context).pop(),
           ),
         ),
       ),
