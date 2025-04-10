@@ -110,7 +110,7 @@ String toString() {
 
 
 class FavoriteLoaded implements FavoriteState {
-  const FavoriteLoaded(final  List<Favorite> favorites): _favorites = favorites;
+  const FavoriteLoaded({required final  List<Favorite> favorites}): _favorites = favorites;
   
 
  final  List<Favorite> _favorites;
@@ -170,7 +170,7 @@ class _$FavoriteLoadedCopyWithImpl<$Res>
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') $Res call({Object? favorites = null,}) {
   return _then(FavoriteLoaded(
-null == favorites ? _self._favorites : favorites // ignore: cast_nullable_to_non_nullable
+favorites: null == favorites ? _self._favorites : favorites // ignore: cast_nullable_to_non_nullable
 as List<Favorite>,
   ));
 }
@@ -182,7 +182,7 @@ as List<Favorite>,
 
 
 class FavoriteError implements FavoriteState {
-  const FavoriteError(this.message);
+  const FavoriteError({required this.message});
   
 
  final  String message;
@@ -236,7 +236,7 @@ class _$FavoriteErrorCopyWithImpl<$Res>
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') $Res call({Object? message = null,}) {
   return _then(FavoriteError(
-null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }

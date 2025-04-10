@@ -1,10 +1,10 @@
-import 'package:bloc/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:turbo/favorites/module/toogle_favorite_use_case.dart';
 import 'dart:async';
 
 import '../../favorite_repository/models/favorite.dart';
 import '../../module/get_favorites_use_case.dart';
-import '../../module/toogle_favorite_use_case.dart';
 
 part 'favorite_state.dart';
 part 'favorite_cubit.freezed.dart';
@@ -12,6 +12,7 @@ part 'favorite_cubit.freezed.dart';
 class FavoriteCubit extends Cubit<FavoriteState> {
   final GetFavoritesUseCase getFavoritesUseCase;
   final ToggleFavoriteUseCase toggleFavoriteUseCase;
+  final Map<String, bool> _favoritesMap = {};
 
   FavoriteCubit({
     required this.getFavoritesUseCase,
@@ -22,40 +23,45 @@ class FavoriteCubit extends Cubit<FavoriteState> {
     emit(const FavoriteState.loading());
     try {
       final favorites = await getFavoritesUseCase(userId);
-      emit(FavoriteState.loaded(favorites));
+      // Actualizar el mapa de favoritos
+      _favoritesMap.clear();
+      for (var favorite in favorites) {
+        _favoritesMap[favorite.placeId] = true;
+      }
+      emit(FavoriteState.loaded(favorites: favorites));
     } catch (e) {
-      emit(FavoriteState.error(e.toString()));
+      emit(FavoriteState.error(message: e.toString()));
     }
   }
 
-  Future<void> toggleFavorite(int placeId, String userId) async {
+  Future<void> toggleFavorite({
+    required String userId,
+    required String placeId,
+  }) async {
     try {
-      final favorite = Favorite(userId: userId, placeId: placeId);
+      // Optimistic update del mapa local
+      _favoritesMap[placeId] = !(_favoritesMap[placeId] ?? false);
+
+      final favorite = Favorite(
+        id: '', // Se generará en el servicio
+        placeId: placeId,
+        userId: userId,
+        date: DateTime.now(),
+      );
+
       await toggleFavoriteUseCase(favorite);
-      final favorites = await getFavoritesUseCase(userId);
-      // Actualizar el estado actual
-      switch (state) {
-        case FavoriteState.loaded:
-          final updatedFavorites = List<Favorite>.from(favorites);
-          if (updatedFavorites.any((fav) => fav.placeId == placeId)) {
-            updatedFavorites.removeWhere(
-              (fav) => fav.placeId == placeId,
-            ); // Eliminar de favoritos
-          } else {
-            updatedFavorites.add(
-              Favorite(userId: userId, placeId: placeId),
-            ); // Añadir a favoritos
-          }
-          emit(FavoriteState.loaded(updatedFavorites));
-          break;
-        default:
-          // Maneja otros casos si es necesario
-          break;
-      }
+
+      // Recargar la lista de favoritos después de togglear
+      await getFavorites(userId);
     } catch (e) {
-      emit(const FavoriteState.error('Error al actualizar los favoritos'));
+      // Revertir el cambio local si hay error
+      _favoritesMap[placeId] = !(_favoritesMap[placeId] ?? false);
+      emit(FavoriteState.error(message: e.toString()));
     }
   }
 
   // Verificar si un lugar es favorito
+  bool isFavorite(String placeId) {
+    return _favoritesMap[placeId] ?? false;
+  }
 }

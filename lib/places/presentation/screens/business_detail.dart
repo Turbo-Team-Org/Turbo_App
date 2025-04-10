@@ -6,6 +6,8 @@ import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:turbo/app/core/theme/text_styles.dart';
+import 'package:turbo/app/utils/app_preferences.dart';
+import 'package:turbo/app/utils/theme/style.dart';
 import 'package:turbo/authentication/state_managament/auth_cubit/cubit/auth_cubit_cubit.dart';
 import 'package:turbo/favorites/state_management/cubit/favorite_cubit.dart';
 import 'package:turbo/places/state_management/place_bloc/cubit/place_cubit.dart';
@@ -39,6 +41,7 @@ class _BusinessDetailsScreenState extends State<BusinessDetailsScreen> {
   final ScrollController _scrollController = ScrollController();
   String _userName = "explorador";
   String _userPhotoUrl = "";
+  final prefs = AppPreferences();
 
   @override
   void initState() {
@@ -178,6 +181,7 @@ class _BusinessDetailsScreenState extends State<BusinessDetailsScreen> {
                 BusinessSliverAppBar(
                   place: place,
                   showBackground: _showAppBarBackground,
+                  prefs: prefs,
                 ),
                 SliverToBoxAdapter(
                   child: Column(
@@ -195,6 +199,116 @@ class _BusinessDetailsScreenState extends State<BusinessDetailsScreen> {
                             // Sección de descripción
                             DescriptionSection(place: place),
                             const SizedBox(height: 24),
+
+                            // Botón del menú si está disponible
+                            if (place.menuUrl.isNotEmpty)
+                              FadeInUp(
+                                delay: const Duration(milliseconds: 200),
+                                duration: const Duration(milliseconds: 400),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        Styles.turboRed,
+                                        Theme.of(
+                                          context,
+                                        ).colorScheme.primary.withOpacity(0.9),
+                                      ],
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                    ),
+                                    borderRadius: BorderRadius.circular(30),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.primary.withOpacity(0.3),
+                                        blurRadius: 8,
+                                        offset: const Offset(0, 4),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Material(
+                                    color: Colors.transparent,
+                                    child: InkWell(
+                                      onTap: () async {
+                                        if (await canLaunchUrl(
+                                          Uri.parse(place.menuUrl),
+                                        )) {
+                                          await launchUrl(
+                                            Uri.parse(place.menuUrl),
+                                          );
+                                        } else {
+                                          if (mounted) {
+                                            ScaffoldMessenger.of(
+                                              context,
+                                            ).showSnackBar(
+                                              const SnackBar(
+                                                content: Text(
+                                                  'No se pudo abrir el menú',
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                        }
+                                      },
+                                      borderRadius: BorderRadius.circular(15),
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 16,
+                                          horizontal: 20,
+                                        ),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Container(
+                                              padding: const EdgeInsets.all(8),
+                                              decoration: BoxDecoration(
+                                                color: Colors.white.withOpacity(
+                                                  0.2,
+                                                ),
+                                                shape: BoxShape.circle,
+                                              ),
+                                              child: const Icon(
+                                                Icons.menu_book,
+                                                color: Colors.white,
+                                                size: 24,
+                                              ),
+                                            ),
+                                            const SizedBox(width: 12),
+                                            const Text(
+                                              'Ver Menú',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            const SizedBox(width: 8),
+                                            Container(
+                                              padding: const EdgeInsets.all(4),
+                                              decoration: BoxDecoration(
+                                                color: Colors.white.withOpacity(
+                                                  0.2,
+                                                ),
+                                                shape: BoxShape.circle,
+                                              ),
+                                              child: const Icon(
+                                                Icons.arrow_forward_ios,
+                                                color: Colors.white,
+                                                size: 14,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            if (place.menuUrl.isNotEmpty)
+                              const SizedBox(height: 24),
 
                             // Sección de ofertas
                             OfferSection(place: place),
@@ -224,8 +338,8 @@ class _BusinessDetailsScreenState extends State<BusinessDetailsScreen> {
                 if (authState is Authenticated) {
                   final favoriteCubit = context.read<FavoriteCubit>();
                   favoriteCubit.toggleFavorite(
-                    int.parse(place.id),
-                    authState.user.uid,
+                    userId: authState.user.uid,
+                    placeId: place.id,
                   );
                 }
               },

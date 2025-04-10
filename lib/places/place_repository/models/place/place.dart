@@ -25,6 +25,7 @@ sealed class Place with _$Place {
     @Default([]) List<Schedule> schedules,
     @Default("") String mainImage,
     @Default(0) int favoriteCount,
+    @Default("") String menuUrl,
   }) = _Place;
 
   factory Place.fromJson(Map<String, dynamic> json) => _$PlaceFromJson(json);
@@ -61,6 +62,7 @@ sealed class Place with _$Place {
               ? (data['imageUrls'] as List).first.toString()
               : ''),
       favoriteCount: data['favoriteCount'] ?? 0,
+      menuUrl: data['menuUrl'] ?? '',
     );
   }
 }

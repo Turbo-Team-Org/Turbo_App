@@ -5,8 +5,8 @@ import 'package:turbo/app/routes/router/app_router.gr.dart';
 import 'package:turbo/authentication/state_managament/auth_cubit/cubit/auth_cubit_cubit.dart';
 import 'package:turbo/authentication/state_managament/sign_out_cubit/cubit/sign_out_cubit.dart';
 import 'package:turbo/places/presentation/widgets/feed_widgets.dart';
-import 'package:turbo/utils/sample_data_loader.dart';
-import 'package:turbo/utils/data_loader_manager.dart';
+import 'package:turbo/mock_data/sample_data_loader.dart';
+import 'package:turbo/mock_data/data_loader_manager.dart';
 
 import '../../../app/view/widgets/global_widgets.dart';
 

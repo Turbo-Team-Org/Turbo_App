@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:turbo/utils/offers_data_loader.dart';
-import 'package:turbo/utils/reviews_data_loader.dart';
+import 'package:turbo/mock_data/offers_data_loader.dart';
+import 'package:turbo/mock_data/reviews_data_loader.dart';
 
 /// Clase manager para facilitar la carga de distintos tipos de datos de muestra
 class DataLoaderManager {

@@ -35,6 +35,7 @@ _Place _$PlaceFromJson(Map<String, dynamic> json) => _Place(
       const [],
   mainImage: json['mainImage'] as String? ?? "",
   favoriteCount: (json['favoriteCount'] as num?)?.toInt() ?? 0,
+  menuUrl: json['menuUrl'] as String? ?? "",
 );
 
 Map<String, dynamic> _$PlaceToJson(_Place instance) => <String, dynamic>{
@@ -52,4 +53,5 @@ Map<String, dynamic> _$PlaceToJson(_Place instance) => <String, dynamic>{
   'schedules': instance.schedules,
   'mainImage': instance.mainImage,
   'favoriteCount': instance.favoriteCount,
+  'menuUrl': instance.menuUrl,
 };

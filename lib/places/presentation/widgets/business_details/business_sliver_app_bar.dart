@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:turbo/app/core/theme/text_styles.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:turbo/app/utils/app_preferences.dart';
 import 'package:turbo/favorites/state_management/cubit/favorite_cubit.dart';
 import 'package:turbo/places/place_repository/models/place/place.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -11,11 +12,12 @@ import 'image_carousel.dart'; // Importamos el carrusel
 class BusinessSliverAppBar extends StatelessWidget {
   final Place place;
   final bool showBackground;
-
-  const BusinessSliverAppBar({
+  final AppPreferences prefs;
+  BusinessSliverAppBar({
     super.key,
     required this.place,
     required this.showBackground,
+    required this.prefs,
   });
 
   @override
@@ -196,7 +198,10 @@ class BusinessSliverAppBar extends StatelessWidget {
                   ),
                   onPressed: () {
                     final favoriteCubit = context.read<FavoriteCubit>();
-                    favoriteCubit.toggleFavorite(int.parse(place.id), '');
+                    favoriteCubit.toggleFavorite(
+                      userId: prefs.getUserId() ?? '',
+                      placeId: place.id.toString(),
+                    );
                     HapticFeedback.mediumImpact(); // Vibración al dar "Me gusta"
                   },
                 ),

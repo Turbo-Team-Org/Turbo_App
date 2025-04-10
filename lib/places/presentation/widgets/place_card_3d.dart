@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:turbo/places/place_repository/models/place/place.dart';
-import 'package:turbo/shared/ui/rotation_3d.dart';
-import 'package:turbo/shared/ui/styles.dart';
+import 'package:turbo/app/shared/ui/rotation_3d.dart';
+import 'package:turbo/app/shared/ui/styles.dart';
 
 /// Widget que renderiza una tarjeta de lugar con efectos 3D
 class PlaceCard3D extends StatelessWidget {

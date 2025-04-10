@@ -11,7 +11,18 @@ import 'package:turbo/authentication/module/sign_up_with_email_use_case.dart';
 import 'package:turbo/authentication/state_managament/auth_cubit/cubit/auth_cubit_cubit.dart';
 import 'package:turbo/authentication/state_managament/sign_out_cubit/cubit/sign_out_cubit.dart';
 import 'package:turbo/authentication/state_managament/sign_up_cubit/cubit/sign_up_cubit.dart';
+import 'package:turbo/events/event_repository/event_repository.dart';
+import 'package:turbo/events/event_repository/service/event_service.dart';
+import 'package:turbo/events/module/get_events_use_case.dart';
+import 'package:turbo/events/module/get_today_events_use_case.dart';
+import 'package:turbo/events/state_management/event_bloc/cubit/event_cubit.dart';
+import 'package:turbo/favorites/module/toogle_favorite_use_case.dart';
 import 'package:turbo/firebase_options.dart';
+import 'package:turbo/location/location_repository/location_repository.dart';
+import 'package:turbo/location/location_repository/service/location_service.dart';
+import 'package:turbo/location/module/get_current_location_use_case.dart';
+import 'package:turbo/location/module/request_location_permission_use_case.dart';
+import 'package:turbo/location/state_management/location_bloc/cubit/location_cubit.dart';
 import 'package:turbo/places/module/get_places_use_case.dart';
 import 'package:turbo/places/place_repository/place_repository.dart';
 import 'package:turbo/places/place_repository/service/place_service.dart';
@@ -24,7 +35,6 @@ import '../../authentication/state_managament/sign_in_cubit/cubit/sign_in_cubit.
 import '../../favorites/favorite_repository/favorite_repository.dart';
 import '../../favorites/favorite_repository/service/favorite_service.dart';
 import '../../favorites/module/get_favorites_use_case.dart';
-import '../../favorites/module/toogle_favorite_use_case.dart';
 import '../../favorites/state_management/cubit/favorite_cubit.dart';
 import '../../reviews/module/add_review_use_case.dart';
 import '../../reviews/module/get_all_reviews_use_case.dart';
@@ -35,7 +45,7 @@ import '../../reviews/state_management/cubit/review_cubit.dart';
 import '../utils/app_preferences.dart';
 import 'package:turbo/app/core/theme/theme_cubit.dart';
 
-///The init order of dependencies is Service/Repository/Use Cases (Module)/State Managament(Cubit or Bloc)
+///The init order of dependencies is Service/ Repository/ Use Cases (Module)/ State Managament(Cubit or Bloc)
 
 FutureOr<void> initCore(GetIt sl) async {
   await AppPreferences.init();
@@ -152,5 +162,45 @@ FutureOr<void> initCore(GetIt sl) async {
         toggleFavoriteUseCase: sl<ToggleFavoriteUseCase>(),
       ),
     )
-    ..registerLazySingleton(() => ThemeCubit());
+    ..registerLazySingleton(() => ThemeCubit())
+    // Registro de dependencias para la geolocalización
+    ..registerLazySingleton<LocationService>(() => LocationService())
+    ..registerLazySingleton<LocationRepository>(
+      () => LocationRepository(locationService: sl<LocationService>()),
+    )
+    ..registerLazySingleton<GetCurrentLocationUseCase>(
+      () => GetCurrentLocationUseCase(sl<LocationRepository>()),
+    )
+    ..registerLazySingleton<RequestLocationPermissionUseCase>(
+      () => RequestLocationPermissionUseCase(sl<LocationRepository>()),
+    )
+    ..registerLazySingleton<LocationCubit>(
+      () => LocationCubit(
+        getCurrentLocationUseCase: sl<GetCurrentLocationUseCase>(),
+        requestLocationPermissionUseCase:
+            sl<RequestLocationPermissionUseCase>(),
+      ),
+    )
+    // Registro de dependencias para eventos
+    ..registerLazySingleton<EventService>(
+      () => EventService(firestore: sl<FirebaseFirestore>()),
+    )
+    ..registerLazySingleton<EventRepository>(
+      () => EventRepositoryImpl(eventService: sl<EventService>()),
+    )
+    ..registerLazySingleton<GetEventsUseCase>(
+      () => GetEventsUseCase(eventRepository: sl<EventRepository>()),
+    )
+    ..registerLazySingleton<GetTodayEventsUseCase>(
+      () => GetTodayEventsUseCase(eventRepository: sl<EventRepository>()),
+    )
+    ..registerLazySingleton<EventCubit>(
+      () => EventCubit(
+        getEventsUseCase: sl<GetEventsUseCase>(),
+        getTodayEventsUseCase: sl<GetTodayEventsUseCase>(),
+      ),
+    );
+
+  // Cargar datos ficticios para desarrollo (descomentar en entorno de desarrollo)
+  sl<EventService>().loadMockDataToFirestore();
 }

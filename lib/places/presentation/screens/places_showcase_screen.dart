@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:turbo/app/utils/app_preferences.dart';
 import 'package:turbo/places/place_repository/models/place/place.dart';
 import 'package:turbo/places/presentation/widgets/place_card_list_3d.dart';
 import 'package:turbo/places/state_management/place_bloc/cubit/place_cubit.dart';
@@ -17,6 +18,7 @@ class PlacesShowcaseScreen extends StatefulWidget {
 class _PlacesShowcaseScreenState extends State<PlacesShowcaseScreen> {
   Place? selectedPlace;
   Map<String, bool> favoritePlaces = {};
+  final prefs = AppPreferences();
 
   @override
   Widget build(BuildContext context) {
@@ -192,8 +194,8 @@ class _PlacesShowcaseScreenState extends State<PlacesShowcaseScreen> {
           },
           onFavoriteToggle: (place, isFavorite) {
             context.read<FavoriteCubit>().toggleFavorite(
-              int.parse(place.id),
-              '',
+              userId: prefs.getUserId() ?? '',
+              placeId: place.id.toString(),
             );
           },
           favoritePlaces: favoritePlaces,

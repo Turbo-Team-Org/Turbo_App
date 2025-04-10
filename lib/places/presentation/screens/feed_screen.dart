@@ -9,13 +9,15 @@ import 'package:turbo/app/core/theme/theme_cubit.dart';
 import 'package:turbo/app/routes/router/app_router.gr.dart';
 import 'package:turbo/app/routes/transitions/custom_page_transitions.dart';
 import 'package:turbo/app/utils/app_preferences.dart';
+import 'package:turbo/app/utils/theme/style.dart';
 import 'package:turbo/authentication/state_managament/auth_cubit/cubit/auth_cubit_cubit.dart';
 import 'package:turbo/favorites/state_management/cubit/favorite_cubit.dart';
+import 'package:turbo/location/location_repository/models/location_data.dart';
+import 'package:turbo/location/state_management/location_bloc/cubit/location_cubit.dart';
 import 'package:turbo/places/place_repository/models/place/place.dart';
 import 'package:turbo/places/presentation/screens/business_detail.dart';
 import 'package:turbo/places/state_management/place_bloc/cubit/place_cubit.dart';
-import '../widgets/feed_widgets.dart';
-import 'package:turbo/app/core/theme/app_theme_switch.dart';
+import 'package:turbo/events/presentation/widgets/welcome_events_dialog.dart';
 
 @RoutePage()
 class FeedScreen extends StatefulWidget {
@@ -30,9 +32,17 @@ class _FeedScreenState extends State<FeedScreen> with TickerProviderStateMixin {
   final ScrollController _scrollController = ScrollController();
   bool _isHeaderCollapsed = false;
   final prefs = AppPreferences();
+  bool _locationPermissionRequested = false;
 
   // Controlador para la animación de pulsación en las tarjetas
   late Map<String, AnimationController> _cardAnimationControllers = {};
+
+  // Controlador para la animación del search bar
+  late AnimationController _searchAnimationController;
+  late Animation<double> _searchScaleAnimation;
+
+  // Ubicación actual del usuario
+  LocationData? _currentLocation;
 
   final List<String> _categories = [
     'Restaurantes',
@@ -55,11 +65,26 @@ class _FeedScreenState extends State<FeedScreen> with TickerProviderStateMixin {
     super.initState();
     _tabController = TabController(length: _categories.length, vsync: this);
 
+    // Configurar animación para la barra de búsqueda
+    _searchAnimationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 150),
+    );
+    _searchScaleAnimation = Tween<double>(begin: 1.0, end: 0.98).animate(
+      CurvedAnimation(
+        parent: _searchAnimationController,
+        curve: Curves.easeInOut,
+      ),
+    );
+
     // Añadir listener para detectar scroll
     _scrollController.addListener(_onScroll);
 
-    // Cargar datos del usuario
-    //_loadUserData();
+    // Verificar permisos de localización al iniciar
+    _checkLocationPermission();
+
+    // Mostrar el diálogo de bienvenida después de un breve retardo
+    _showWelcomeEventsDialogWithDelay();
   }
 
   @override
@@ -67,6 +92,9 @@ class _FeedScreenState extends State<FeedScreen> with TickerProviderStateMixin {
     _tabController.dispose();
     _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
+
+    // Disponer del controlador de animación de la barra de búsqueda
+    _searchAnimationController.dispose();
 
     // Disponer de todos los controladores de animación de tarjetas
     for (var controller in _cardAnimationControllers.values) {
@@ -86,6 +114,89 @@ class _FeedScreenState extends State<FeedScreen> with TickerProviderStateMixin {
     }
   }
 
+  Future<void> _checkLocationPermission() async {
+    final prefs = await SharedPreferences.getInstance();
+    _locationPermissionRequested =
+        prefs.getBool('location_permission_requested') ?? false;
+
+    if (!_locationPermissionRequested) {
+      // Esperar un momento para que la UI se cargue completamente
+      Future.delayed(const Duration(seconds: 2), () {
+        _requestLocationPermission();
+      });
+    } else {
+      // Si ya se solicitó permiso anteriormente, intentamos obtener la ubicación actual
+      context.read<LocationCubit>().getCurrentLocation();
+    }
+  }
+
+  Future<void> _requestLocationPermission() async {
+    // Mostrar diálogo para solicitar permiso
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder:
+          (context) => AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            title: const Text('Acceso a ubicación'),
+            content: const Text(
+              'Turbo necesita acceder a tu ubicación para mostrarte lugares cercanos. '
+              '¿Permitir acceso a tu ubicación?',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  _markPermissionAsRequested();
+                },
+                child: const Text('Ahora no'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  _markPermissionAsRequested();
+                  context.read<LocationCubit>().requestLocationPermission();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Styles.turboRed,
+                  foregroundColor: Colors.white,
+                ),
+                child: const Text('Permitir'),
+              ),
+            ],
+          ),
+    );
+  }
+
+  Future<void> _markPermissionAsRequested() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('location_permission_requested', true);
+    _locationPermissionRequested = true;
+  }
+
+  Future<void> _showWelcomeEventsDialogWithDelay() async {
+    // Esperar para que la UI se cargue completamente
+    await Future.delayed(const Duration(seconds: 2));
+
+    if (!mounted) return;
+
+    // Obtener el nombre del usuario actual
+    final authState = context.read<AuthCubit>().state;
+    String userName = 'Aventurero';
+
+    if (authState is Authenticated) {
+      userName = authState.user.displayName ?? 'Aventurero';
+    }
+
+    // Mostrar el diálogo sin verificar si ya se mostró hoy
+    if (mounted) {
+      // Mostrar el diálogo
+      showWelcomeEventsDialog(context, userName);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -98,37 +209,89 @@ class _FeedScreenState extends State<FeedScreen> with TickerProviderStateMixin {
             stops: [0.0, 0.3],
           ),
         ),
-        child: BlocBuilder<PlaceCubit, PlaceState>(
-          builder: (context, placeState) {
-            return BlocBuilder<FavoriteCubit, FavoriteState>(
-              builder: (context, favoriteState) {
-                return RefreshIndicator(
-                  color: AppColors.primaryRed,
-                  onRefresh: () async {
-                    await context.read<PlaceCubit>().getPlaces();
-                  },
-                  child: CustomScrollView(
-                    controller: _scrollController,
-                    physics: const BouncingScrollPhysics(),
-                    slivers: [
-                      _buildAppBar(context),
-                      SliverToBoxAdapter(
-                        child: Column(
-                          children: [
-                            _buildWelcomeSection(),
-                            _buildSearchBar(),
-                            _buildCategoryTabs(),
-                            _buildPromoSection(),
-                          ],
-                        ),
-                      ),
-                      _buildPlacesList(context, placeState, favoriteState),
-                    ],
+        child: BlocListener<LocationCubit, LocationState>(
+          listener: (context, state) {
+            print("LocationCubit cambió a estado: $state");
+            if (state is LocationObtained) {
+              setState(() {
+                _currentLocation = state.location;
+              });
+              // Obtenemos lugares después de obtener la ubicación
+              context.read<PlaceCubit>().getPlaces();
+            } else if (state is LocationError) {
+              // Mostrar un mensaje de error, pero seguir intentando cargar los lugares
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    'Error al obtener ubicación: ${state.message}',
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                  backgroundColor: Colors.red,
+                ),
+              );
+              // Intentar cargar lugares de todos modos
+              context.read<PlaceCubit>().getPlaces();
+            } else if (state is LocationPermissionGranted) {
+              // Cuando se otorga el permiso, solicitar la ubicación
+              context.read<LocationCubit>().getCurrentLocation();
+            } else if (state is LocationPermissionDenied) {
+              // Mostrar mensaje y cargar lugares sin filtro de ubicación
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text(
+                    'Ubicación no disponible. Mostrando todos los lugares.',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  backgroundColor: Colors.orange,
+                ),
+              );
+              context.read<PlaceCubit>().getPlaces();
+            }
+          },
+          child: BlocConsumer<PlaceCubit, PlaceState>(
+            listener: (context, placeState) {
+              if (placeState is PlacesError) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Error: ${placeState.error}'),
+                    backgroundColor: Colors.red,
                   ),
                 );
-              },
-            );
-          },
+              }
+            },
+            builder: (context, placeState) {
+              return BlocBuilder<FavoriteCubit, FavoriteState>(
+                builder: (context, favoriteState) {
+                  return RefreshIndicator(
+                    color: AppColors.primaryRed,
+                    onRefresh: () async {
+                      await context.read<PlaceCubit>().getPlaces();
+                      // También actualizar ubicación al hacer pull-to-refresh
+                      context.read<LocationCubit>().getCurrentLocation();
+                    },
+                    child: CustomScrollView(
+                      controller: _scrollController,
+                      physics: const BouncingScrollPhysics(),
+                      slivers: [
+                        _buildAppBar(context),
+                        SliverToBoxAdapter(
+                          child: Column(
+                            children: [
+                              _buildWelcomeSection(),
+                              _buildSearchBar(),
+                              _buildCategoryTabs(),
+                              _buildPromoSection(),
+                            ],
+                          ),
+                        ),
+                        _buildPlacesList(context, placeState, favoriteState),
+                      ],
+                    ),
+                  );
+                },
+              );
+            },
+          ),
         ),
       ),
     );
@@ -268,52 +431,52 @@ class _FeedScreenState extends State<FeedScreen> with TickerProviderStateMixin {
       {
         'icon': Icons.local_fire_department_rounded,
         'label': 'Popular',
-        'color': Colors.orangeAccent,
+        'color': Styles.turboRed,
       },
       {
         'icon': Icons.favorite_rounded,
         'label': 'Favoritos',
-        'color': Colors.redAccent,
+        'color': Styles.turboRed,
       },
       {
         'icon': Icons.trending_up_rounded,
         'label': 'Trending',
-        'color': Colors.purpleAccent,
+        'color': Styles.turboRed,
       },
       {
         'icon': Icons.monetization_on_rounded,
         'label': 'Buen Precio',
-        'color': Colors.greenAccent,
+        'color': Styles.turboRed,
       },
       {
         'icon': Icons.star_rounded,
         'label': 'Top Rated',
-        'color': Colors.amberAccent,
+        'color': Styles.turboRed,
       },
       {
         'icon': Icons.comment_rounded,
         'label': 'Reseñas',
-        'color': Colors.blueAccent,
+        'color': Styles.turboRed,
       },
       {
         'icon': Icons.local_dining_rounded,
         'label': 'Comida',
-        'color': Colors.tealAccent,
+        'color': Styles.turboRed,
       },
       {
         'icon': Icons.local_bar_rounded,
         'label': 'Bebidas',
-        'color': Colors.deepOrangeAccent,
+        'color': Styles.turboRed,
       },
       {
         'icon': Icons.discount_rounded,
         'label': 'Ofertas',
-        'color': Colors.pinkAccent,
+        'color': Styles.turboRed,
       },
       {
         'icon': Icons.location_on_rounded,
         'label': 'Cerca',
-        'color': Colors.cyanAccent,
+        'color': Styles.turboRed,
       },
     ];
 
@@ -527,60 +690,161 @@ class _FeedScreenState extends State<FeedScreen> with TickerProviderStateMixin {
       duration: const Duration(milliseconds: 700),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(20, 15, 20, 20),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface,
-            borderRadius: BorderRadius.circular(16),
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Theme.of(context).colorScheme.surface,
-                AppColors.primaryRed.withOpacity(0.05),
-              ],
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                spreadRadius: 1,
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: TextField(
-            style: AppTextStyles.bodyLarge(context),
-            decoration: InputDecoration(
-              hintText: 'Buscar lugares, ofertas, etc...',
-              hintStyle: AppTextStyles.bodyMedium(context).copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-              ),
-              prefixIcon: const Icon(
-                Icons.search_rounded,
-                color: AppColors.primaryRed,
-                size: 26,
-              ),
-              border: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(
-                vertical: 16,
-                horizontal: 16,
-              ),
-            ),
-            onTap: () {
-              // Implementar búsqueda
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    'Búsqueda no implementada aún',
-                    style: AppTextStyles.bodyMedium(
-                      context,
-                    ).copyWith(color: Colors.white),
-                  ),
-                  //  backgroundColor: AppColors.primaryDarkRed,
-                  duration: const Duration(seconds: 2),
+        child: GestureDetector(
+          onTapDown: (_) {
+            _searchAnimationController.forward();
+          },
+          onTapUp: (_) {
+            _searchAnimationController.reverse();
+
+            // Efecto haptico sutil
+            HapticFeedback.lightImpact();
+
+            // Implementar búsqueda
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  'Búsqueda no implementada aún',
+                  style: AppTextStyles.bodyMedium(
+                    context,
+                  ).copyWith(color: Colors.white),
                 ),
+                backgroundColor: AppColors.primaryDarkRed,
+                duration: const Duration(seconds: 2),
+                behavior: SnackBarBehavior.floating,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                margin: const EdgeInsets.all(16),
+              ),
+            );
+          },
+          onTapCancel: () {
+            _searchAnimationController.reverse();
+          },
+          child: AnimatedBuilder(
+            animation: _searchScaleAnimation,
+            builder: (context, child) {
+              return Transform.scale(
+                scale: _searchScaleAnimation.value,
+                child: child,
               );
             },
+            child: Container(
+              height: 56,
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surface,
+                borderRadius: BorderRadius.circular(28),
+                boxShadow: [
+                  // Sombra principal - más pronunciada
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.12),
+                    offset: const Offset(0, 6),
+                    blurRadius: 14,
+                    spreadRadius: 0,
+                  ),
+                  // Sombra secundaria con toque de color
+                  BoxShadow(
+                    color: AppColors.primaryRed.withOpacity(0.08),
+                    offset: const Offset(0, 3),
+                    blurRadius: 20,
+                    spreadRadius: 2,
+                  ),
+                  // Sombra de brillo superior
+                  BoxShadow(
+                    color: Colors.white.withOpacity(0.9),
+                    offset: const Offset(0, -2),
+                    blurRadius: 4,
+                    spreadRadius: 0,
+                  ),
+                ],
+                // Gradiente sutil que da sensación de volumen
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [Colors.white, Theme.of(context).colorScheme.surface],
+                  stops: const [0.1, 1.0],
+                ),
+                border: Border.all(
+                  color: Colors.white.withOpacity(0.6),
+                  width: 1.2,
+                ),
+              ),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  splashColor: AppColors.primaryRed.withOpacity(0.12),
+                  highlightColor: AppColors.primaryRed.withOpacity(0.05),
+                  borderRadius: BorderRadius.circular(28),
+                  onTap:
+                      () {}, // Vacío porque manejamos el tap en el GestureDetector
+                  child: Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Icon(
+                          Icons.search_rounded,
+                          color: AppColors.primaryRed,
+                          size: 24,
+                        ),
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          child: Text(
+                            'Buscar lugares, ofertas, etc...',
+                            style: AppTextStyles.bodyMedium(context).copyWith(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurface.withOpacity(0.6),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.only(right: 8),
+                        decoration: BoxDecoration(
+                          color: AppColors.primaryRed.withOpacity(0.08),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Material(
+                          color: Colors.transparent,
+                          shape: const CircleBorder(),
+                          clipBehavior: Clip.antiAlias,
+                          child: IconButton(
+                            icon: const Icon(
+                              Icons.mic_rounded,
+                              size: 22,
+                              color: AppColors.primaryRed,
+                            ),
+                            onPressed: () {
+                              HapticFeedback.mediumImpact();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    'Búsqueda por voz no implementada aún',
+                                    style: AppTextStyles.bodyMedium(
+                                      context,
+                                    ).copyWith(color: Colors.white),
+                                  ),
+                                  backgroundColor: AppColors.primaryDarkRed,
+                                  duration: const Duration(seconds: 2),
+                                  behavior: SnackBarBehavior.floating,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  margin: const EdgeInsets.all(16),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           ),
         ),
       ),
@@ -688,6 +952,14 @@ class _FeedScreenState extends State<FeedScreen> with TickerProviderStateMixin {
           // Precio-Calidad - lugares con precio moderado
           filteredPlaces =
               places.where((place) => place.averagePrice <= 25).toList();
+        } else if (selectedTab == 9) {
+          // Cercanos - lugares cerca del usuario (último índice en quickCategories)
+          if (_currentLocation != null) {
+            // Si tenemos la ubicación, filtrar por cercanía
+            // Aquí se podría implementar un algoritmo más sofisticado de distancia
+            // Por ahora, simplemente mostramos los primeros 5 lugares como ejemplo
+            filteredPlaces = places.take(5).toList();
+          }
         }
 
         if (filteredPlaces.isEmpty) {
@@ -784,7 +1056,9 @@ class _FeedScreenState extends State<FeedScreen> with TickerProviderStateMixin {
 
     switch (favoriteState) {
       case FavoriteLoaded():
-        isFavorite = favoriteState.favorites.contains(place.id);
+        isFavorite = favoriteState.favorites.any(
+          (favorite) => favorite.placeId == place.id,
+        );
         break;
       default:
         isFavorite = false;
@@ -921,9 +1195,13 @@ class _FeedScreenState extends State<FeedScreen> with TickerProviderStateMixin {
                         child: InkWell(
                           onTap: () {
                             final cubit = context.read<FavoriteCubit>();
-                            cubit.toggleFavorite(int.parse(place.id), '');
-                            // Efecto de vibración al añadir a favoritos
-                            HapticFeedback.mediumImpact();
+                            final authState = context.read<AuthCubit>().state;
+                            if (authState is Authenticated) {
+                              cubit.toggleFavorite(
+                                userId: authState.user.uid,
+                                placeId: place.id,
+                              );
+                            }
                           },
                           customBorder: const CircleBorder(),
                           child: Container(
