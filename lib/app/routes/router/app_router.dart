@@ -5,6 +5,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:turbo/app/routes/guards/authentication_guards.dart';
 import 'package:turbo/app/routes/router/app_router.gr.dart';
 import 'package:turbo/authentication/presentation/screens/aut_screens.dart';
+import 'package:turbo/events/presentation/screens/events_screen.dart';
 
 import '../../../authentication/presentation/screens/splash_screen.dart';
 import '../../../favorites/presentation/screens/favorite_screen.dart';
@@ -39,6 +40,7 @@ class AppRouter extends RootStackRouter {
         AutoRoute(path: 'feed', page: FeedRoute.page, initial: true),
         AutoRoute(path: 'favorites', page: FavoritesRoute.page),
         AutoRoute(path: 'profile', page: ProfileRoute.page),
+        AutoRoute(path: 'events', page: EventsRoute.page),
       ],
     ),
   ];

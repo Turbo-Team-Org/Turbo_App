@@ -18,6 +18,9 @@ import 'package:turbo/places/place_repository/models/place/place.dart';
 import 'package:turbo/places/presentation/screens/business_detail.dart';
 import 'package:turbo/places/state_management/place_bloc/cubit/place_cubit.dart';
 import 'package:turbo/events/presentation/widgets/welcome_events_dialog.dart';
+import 'package:intl/intl.dart';
+
+const _lastWelcomeDialogShownDateKey = 'last_welcome_dialog_shown_date';
 
 @RoutePage()
 class FeedScreen extends StatefulWidget {
@@ -84,7 +87,7 @@ class _FeedScreenState extends State<FeedScreen> with TickerProviderStateMixin {
     _checkLocationPermission();
 
     // Mostrar el diálogo de bienvenida después de un breve retardo
-    _showWelcomeEventsDialogWithDelay();
+    _showWelcomeDialogIfNeeded();
   }
 
   @override
@@ -176,24 +179,35 @@ class _FeedScreenState extends State<FeedScreen> with TickerProviderStateMixin {
     _locationPermissionRequested = true;
   }
 
-  Future<void> _showWelcomeEventsDialogWithDelay() async {
-    // Esperar para que la UI se cargue completamente
-    await Future.delayed(const Duration(seconds: 2));
-
+  Future<void> _showWelcomeDialogIfNeeded() async {
+    // Esperar un momento para que la UI inicial cargue
+    await Future.delayed(const Duration(milliseconds: 1500));
     if (!mounted) return;
 
-    // Obtener el nombre del usuario actual
-    final authState = context.read<AuthCubit>().state;
-    String userName = 'Aventurero';
+    final prefs = await SharedPreferences.getInstance();
+    final today = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    final lastShownDate = prefs.getString(_lastWelcomeDialogShownDateKey);
 
-    if (authState is Authenticated) {
-      userName = authState.user.displayName ?? 'Aventurero';
-    }
+    print('Hoy: $today, Última vez mostrado: $lastShownDate'); // Debug
 
-    // Mostrar el diálogo sin verificar si ya se mostró hoy
-    if (mounted) {
+    if (lastShownDate != today) {
+      // Obtener el nombre del usuario actual
+      final authState = context.read<AuthCubit>().state;
+      String userName = 'Aventurero'; // Nombre por defecto
+      if (authState is Authenticated) {
+        userName = authState.user.displayName?.split(' ').first ?? 'Aventurero';
+      }
+
       // Mostrar el diálogo
-      showWelcomeEventsDialog(context, userName);
+      if (mounted) {
+        print('Mostrando diálogo de bienvenida...'); // Debug
+        showWelcomeEventsDialog(context, userName);
+        // Guardar la fecha actual
+        await prefs.setString(_lastWelcomeDialogShownDateKey, today);
+        print('Fecha guardada: $today'); // Debug
+      }
+    } else {
+      print('Diálogo ya mostrado hoy.'); // Debug
     }
   }
 

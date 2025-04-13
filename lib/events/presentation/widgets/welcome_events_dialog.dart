@@ -6,10 +6,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart'; // Importación para inicializar datos de localización
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:turbo/app/shared/ui/styles.dart';
 import 'package:turbo/app/core/theme/text_styles.dart';
 import 'package:turbo/app/utils/global/global_vars.dart';
-import 'package:turbo/app/utils/theme/style.dart';
 import 'package:turbo/events/event_repository/models/event.dart';
 import 'package:turbo/events/state_management/event_bloc/cubit/event_cubit.dart';
 import 'package:turbo/places/presentation/screens/business_detail.dart';
