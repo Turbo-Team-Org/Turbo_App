@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:get_it/get_it.dart';
+import 'package:turbo/app/notification/service/notification_service.dart';
 import 'package:turbo/authentication/module/authentication_module.dart';
 import 'package:turbo/authentication/module/sign_in_with_email_use_case.dart';
 import 'package:turbo/authentication/module/sign_out_use_case.dart';
@@ -11,6 +12,14 @@ import 'package:turbo/authentication/module/sign_up_with_email_use_case.dart';
 import 'package:turbo/authentication/state_managament/auth_cubit/cubit/auth_cubit_cubit.dart';
 import 'package:turbo/authentication/state_managament/sign_out_cubit/cubit/sign_out_cubit.dart';
 import 'package:turbo/authentication/state_managament/sign_up_cubit/cubit/sign_up_cubit.dart';
+import 'package:turbo/categories/category_repository/category_repository.dart';
+import 'package:turbo/categories/category_repository/service/category_service.dart';
+import 'package:turbo/categories/module/get_categories_use_case.dart';
+import 'package:turbo/categories/module/get_category_by_id_use_case.dart';
+import 'package:turbo/categories/module/get_places_by_category_use_case.dart';
+import 'package:turbo/categories/module/place_category_association.dart';
+import 'package:turbo/categories/module/update_place_categories_use_case.dart';
+import 'package:turbo/categories/state_management/category_bloc/category_cubit/cubit/category_cubit.dart';
 import 'package:turbo/events/event_repository/event_repository.dart';
 import 'package:turbo/events/event_repository/service/event_service.dart';
 import 'package:turbo/events/module/get_events_use_case.dart';
@@ -60,6 +69,9 @@ FutureOr<void> initCore(GetIt sl) async {
     ..registerSingleton<FirebaseAuth>(
       FirebaseAuth.instanceFor(app: firebaseInstance),
     )
+    ..registerLazySingleton<NotificationService>(
+      () => NotificationService(firestore: sl<FirebaseFirestore>()),
+    )
     ..registerLazySingleton<AuthenticationService>(
       () => AuthenticationService(
         firebaseAuth: sl<FirebaseAuth>(),
@@ -101,7 +113,10 @@ FutureOr<void> initCore(GetIt sl) async {
       ),
     )
     ..registerLazySingleton<AuthCubit>(
-      () => AuthCubit(authenticationModule: sl<AuthenticationModule>()),
+      () => AuthCubit(
+        authenticationModule: sl<AuthenticationModule>(),
+        notificationService: sl<NotificationService>(),
+      ),
     )
     ..registerLazySingleton<SignUpCubit>(
       () => SignUpCubit(signUpWithEmailUseCase: sl<SignUpWithEmailUseCase>()),
@@ -199,8 +214,40 @@ FutureOr<void> initCore(GetIt sl) async {
         getEventsUseCase: sl<GetEventsUseCase>(),
         getTodayEventsUseCase: sl<GetTodayEventsUseCase>(),
       ),
+    )
+    // Registro de dependencias para categorías
+    ..registerLazySingleton<CategoryService>(
+      () => CategoryService(firestore: sl<FirebaseFirestore>()),
+    )
+    ..registerLazySingleton<CategoryRepository>(
+      () => CategoryRepository(categoryService: sl<CategoryService>()),
+    )
+    ..registerLazySingleton<PlaceCategoryAssociation>(
+      () => PlaceCategoryAssociation(firestore: sl<FirebaseFirestore>()),
+    )
+    ..registerLazySingleton<GetCategoriesUseCase>(
+      () => GetCategoriesUseCase(repository: sl<CategoryRepository>()),
+    )
+    ..registerLazySingleton<GetCategoryByIdUseCase>(
+      () => GetCategoryByIdUseCase(repository: sl<CategoryRepository>()),
+    )
+    ..registerLazySingleton<GetPlacesByCategoryUseCase>(
+      () => GetPlacesByCategoryUseCase(
+        placeCategoryAssociation: sl<PlaceCategoryAssociation>(),
+      ),
+    )
+    ..registerLazySingleton<UpdatePlaceCategoriesUseCase>(
+      () => UpdatePlaceCategoriesUseCase(
+        placeCategoryAssociation: sl<PlaceCategoryAssociation>(),
+      ),
+    )
+    ..registerLazySingleton<CategoryCubit>(
+      () => CategoryCubit(
+        getCategoriesUseCase: sl<GetCategoriesUseCase>(),
+        getCategoryByIdUseCase: sl<GetCategoryByIdUseCase>(),
+      ),
     );
 
   // Cargar datos ficticios para desarrollo (descomentar en entorno de desarrollo)
-  sl<EventService>().loadMockDataToFirestore();
+  // sl<EventService>().loadMockDataToFirestore();
 }
