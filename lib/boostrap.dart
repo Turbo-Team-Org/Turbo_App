@@ -8,11 +8,8 @@ import 'package:turbo/app/dependency_injection/init_config.dart';
 GetIt sl = GetIt.I;
 Future<void> bootstrap(FutureOr<Widget> Function() builder) async {
   WidgetsFlutterBinding.ensureInitialized();
-
   // Inicializar datos de localización para formatear fechas
   await initializeDateFormatting('es_ES', null);
-
   await initCore(sl);
-
   runApp(await builder());
 }

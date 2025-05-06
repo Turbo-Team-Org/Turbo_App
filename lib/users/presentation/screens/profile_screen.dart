@@ -16,8 +16,6 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Instancia de nuestro cargador de datos
-    final sampleDataLoader = SampleDataLoader();
     // Instancia del gestor de carga de datos
     final dataLoaderManager = DataLoaderManager();
 
@@ -85,10 +83,8 @@ class ProfileScreen extends StatelessWidget {
                                       ElevatedButton(
                                         onPressed: () {
                                           Navigator.pop(context);
-                                          // Cargar datos de prueba
-                                          sampleDataLoader.loadSamplePlaces(
-                                            context,
-                                          );
+                                          // Usar el dataLoaderManager en lugar de sampleDataLoader
+                                          dataLoaderManager.loadPlaces();
                                         },
                                         child: const Text('Cargar lugares'),
                                       ),
@@ -96,8 +92,37 @@ class ProfileScreen extends StatelessWidget {
                                   ),
                             );
                             break;
+                          case 'categories':
+                            // Mostrar diálogo de confirmación para categorías
+                            showDialog(
+                              context: context,
+                              builder:
+                                  (context) => AlertDialog(
+                                    title: const Text(
+                                      'Cargar categorías de prueba',
+                                    ),
+                                    content: const Text(
+                                      '¿Estás seguro de cargar categorías de prueba? '
+                                      'Esta acción agregará categorías y asignará a los lugares existentes.',
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(context),
+                                        child: const Text('Cancelar'),
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                          dataLoaderManager.loadCategories();
+                                        },
+                                        child: const Text('Cargar categorías'),
+                                      ),
+                                    ],
+                                  ),
+                            );
+                            break;
                           case 'additional':
-                            // Mostrar opciones para cargar ofertas o reseñas
+                            // Mostrar opciones para cargar todo tipo de datos
                             dataLoaderManager.showDataLoaderOptions(context);
                             break;
                         }
@@ -109,8 +134,12 @@ class ProfileScreen extends StatelessWidget {
                               child: Text('Cargar lugares'),
                             ),
                             const PopupMenuItem<String>(
+                              value: 'categories',
+                              child: Text('Cargar categorías'),
+                            ),
+                            const PopupMenuItem<String>(
                               value: 'additional',
-                              child: Text('Cargar ofertas/reseñas'),
+                              child: Text('Cargar datos adicionales'),
                             ),
                           ],
                     ),
