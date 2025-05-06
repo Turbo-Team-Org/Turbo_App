@@ -1,12 +1,10 @@
-import 'dart:convert'; // Para decodificar payloads JSON
-import 'dart:io' show Platform;
-
+import 'dart:convert';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
-import 'package:flutter/foundation.dart'; // Para kIsWeb
+import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart'; // Para guardar token
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 // --- Manejador de mensajes en segundo plano (Nivel superior) ---
 @pragma('vm:entry-point')
@@ -18,7 +16,6 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // si las automáticas de FCM no son suficientes o si quieres personalización.
   // NotificationService.showLocalNotification(message); // Ejemplo
 }
-// -----------------------------------------------------------
 
 class NotificationService {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;

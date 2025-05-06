@@ -12,12 +12,8 @@ import 'package:turbo/authentication/state_managament/auth_cubit/cubit/auth_cubi
 import 'package:turbo/favorites/state_management/cubit/favorite_cubit.dart';
 import 'package:turbo/places/state_management/place_bloc/cubit/place_cubit.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../../../reviews/review_repository/models/review.dart';
-import '../../place_repository/models/offer/offer.dart';
 import '../../place_repository/models/place/place.dart';
-import '../widgets/feed_widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'dart:math';
 import 'dart:async';
 // Importar los widgets separados
 import '../widgets/business_details/business_sliver_app_bar.dart';

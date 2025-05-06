@@ -6,11 +6,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:turbo/app/core/theme/text_styles.dart';
 import 'package:turbo/app/core/theme/theme_cubit.dart';
-import 'package:turbo/app/routes/router/app_router.gr.dart';
-import 'package:turbo/app/routes/transitions/custom_page_transitions.dart';
 import 'package:turbo/app/utils/app_preferences.dart';
 import 'package:turbo/app/utils/theme/style.dart';
 import 'package:turbo/authentication/state_managament/auth_cubit/cubit/auth_cubit_cubit.dart';
+import 'package:turbo/categories/state_management/category_bloc/category_cubit/cubit/category_cubit.dart';
 import 'package:turbo/favorites/state_management/cubit/favorite_cubit.dart';
 import 'package:turbo/location/location_repository/models/location_data.dart';
 import 'package:turbo/location/state_management/location_bloc/cubit/location_cubit.dart';
@@ -66,7 +65,16 @@ class _FeedScreenState extends State<FeedScreen> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: _categories.length, vsync: this);
+    // Inicializar con un valor seguro
+    _tabController = TabController(length: 1, vsync: this);
+
+    // Agregar listener para cambios de pestaña
+    _tabController.addListener(() {
+      // Esto puede ayudar a detectar errores de selección
+      if (_tabController.indexIsChanging) {
+        print('Cambiando a tab: ${_tabController.index}');
+      }
+    });
 
     // Configurar animación para la barra de búsqueda
     _searchAnimationController = AnimationController(
@@ -872,48 +880,113 @@ class _FeedScreenState extends State<FeedScreen> with TickerProviderStateMixin {
         duration: const Duration(milliseconds: 600),
         child: Column(
           children: [
-            Material(
-              color: Colors.transparent,
-              elevation: 0,
-              child: Container(
-                margin: const EdgeInsets.only(bottom: 1),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                    colors: [
-                      AppColors.primaryRed.withOpacity(0.05),
-                      Colors.transparent,
-                      AppColors.primaryRed.withOpacity(0.05),
+            BlocBuilder<CategoryCubit, CategoryState>(
+              builder: (context, state) {
+                if (state is CategoryInitial) {
+                  // Cargar categorías si aún no se han cargado
+                  context.read<CategoryCubit>().loadCategories();
+                  return SizedBox(
+                    height: 48, // Altura estándar para TabBar
+                    child: const Center(
+                      child: CircularProgressIndicator(
+                        color: Colors.red,
+                        strokeWidth: 2,
+                      ),
+                    ),
+                  );
+                }
+
+                if (state is CategoryLoaded) {
+                  final int requiredLength = state.categories.length + 1;
+
+                  // Verificar si necesitamos actualizar el TabController
+                  if (_tabController.length != requiredLength) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      // Actualizar en el siguiente frame para evitar errores
+                      if (mounted) {
+                        setState(() {
+                          // Primero desechamos el controlador anterior
+                          _tabController.dispose();
+
+                          // Creamos uno nuevo con la longitud correcta
+                          _tabController = TabController(
+                            length: requiredLength,
+                            vsync: this,
+                          );
+                        });
+                      }
+                    });
+
+                    // Mientras tanto, mostrar un indicador de carga
+                    return SizedBox(
+                      height: 48, // Altura estándar para TabBar
+                      child: const Center(
+                        child: CircularProgressIndicator(
+                          color: Colors.red,
+                          strokeWidth: 2,
+                        ),
+                      ),
+                    );
+                  }
+
+                  // Si el controlador ya tiene la longitud correcta, mostrar el TabBar
+                  return TabBar(
+                    controller: _tabController,
+                    isScrollable: true,
+                    indicatorColor: Colors.red,
+                    indicatorWeight: 3,
+                    indicatorSize: TabBarIndicatorSize.tab,
+                    dividerColor: Colors.transparent,
+                    labelColor: Colors.red,
+                    unselectedLabelColor: Colors.grey,
+                    tabs: [
+                      const Tab(text: 'Todos'),
+                      ...state.categories.map(
+                        (category) => Tab(
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (category.icon.isNotEmpty &&
+                                  int.tryParse(category.icon) != null)
+                                Icon(
+                                  IconData(
+                                    int.tryParse(category.icon) ?? 0xe5d3,
+                                    fontFamily: 'MaterialIcons',
+                                  ),
+                                  size: 20,
+                                ),
+                              if (category.icon.isNotEmpty &&
+                                  int.tryParse(category.icon) != null)
+                                const SizedBox(width: 4),
+                              Flexible(
+                                child: Text(
+                                  category.name,
+                                  style: const TextStyle(
+                                    fontFamily:
+                                        'Roboto', // Usar fuente segura en lugar de MuseoSans
+                                    fontSize: 14,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     ],
+                  );
+                }
+
+                return SizedBox(
+                  height: 48, // Altura estándar para TabBar
+                  child: const Center(
+                    child: CircularProgressIndicator(
+                      color: Colors.red,
+                      strokeWidth: 2,
+                    ),
                   ),
-                ),
-                child: TabBar(
-                  controller: _tabController,
-                  isScrollable: true,
-                  indicatorColor: AppColors.primaryRed,
-                  indicatorWeight: 3,
-                  indicatorSize: TabBarIndicatorSize.tab,
-                  dividerColor: Colors.transparent,
-                  overlayColor: WidgetStateProperty.all(Colors.transparent),
-                  labelColor: AppColors.primaryRed,
-                  unselectedLabelColor: Theme.of(
-                    context,
-                  ).colorScheme.onSurface.withOpacity(0.7),
-                  labelStyle: AppTextStyles.bodyLarge(
-                    context,
-                  ).copyWith(fontWeight: FontWeight.bold),
-                  unselectedLabelStyle: AppTextStyles.bodyLarge(context),
-                  tabs:
-                      _categories
-                          .map((category) => Tab(text: category))
-                          .toList(),
-                  onTap: (index) {
-                    // Efecto de vibración suave al cambiar de tab
-                    HapticFeedback.lightImpact();
-                  },
-                ),
-              ),
+                );
+              },
             ),
           ],
         ),
@@ -930,20 +1003,29 @@ class _FeedScreenState extends State<FeedScreen> with TickerProviderStateMixin {
       case PlacesInitial():
       case PlacesLoading():
         return SliverFillRemaining(
+          hasScrollBody: false,
           child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const CircularProgressIndicator(
-                  color: AppColors.primaryRed,
-                  strokeWidth: 3,
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  'Cargando lugares increíbles...',
-                  style: AppTextStyles.bodyLarge(context),
-                ),
-              ],
+            child: Container(
+              constraints: const BoxConstraints(maxHeight: 100),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: const [
+                  CircularProgressIndicator(color: Colors.red, strokeWidth: 3),
+                  SizedBox(height: 12),
+                  Text(
+                    'Cargando...',
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontSize: 14,
+                      fontFamily: 'Roboto',
+                      fontWeight: FontWeight.w500,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
             ),
           ),
         );
@@ -978,28 +1060,43 @@ class _FeedScreenState extends State<FeedScreen> with TickerProviderStateMixin {
 
         if (filteredPlaces.isEmpty) {
           return SliverFillRemaining(
+            hasScrollBody: false,
             child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.search_off,
-                    size: 64,
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.onSurface.withOpacity(0.5),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'No hay lugares disponibles',
-                    style: AppTextStyles.titleSmall(context),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Intenta con otra búsqueda',
-                    style: AppTextStyles.bodyMedium(context),
-                  ),
-                ],
+              child: Container(
+                constraints: const BoxConstraints(maxHeight: 150),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.search_off,
+                      size: 48,
+                      color: Colors.grey.shade400,
+                    ),
+                    const SizedBox(height: 12),
+                    const Text(
+                      'No hay lugares disponibles',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontFamily: 'Roboto',
+                        fontWeight: FontWeight.w500,
+                        color: Colors.grey,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      'Intenta con otra búsqueda',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontFamily: 'Roboto',
+                        color: Colors.grey,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
               ),
             ),
           );
@@ -1023,37 +1120,43 @@ class _FeedScreenState extends State<FeedScreen> with TickerProviderStateMixin {
 
       case PlacesError():
         return SliverFillRemaining(
+          hasScrollBody: false,
           child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.error, size: 64, color: AppColors.primaryRed),
-                const SizedBox(height: 16),
-                Text(
-                  'Error: ${placeState.error}',
-                  style: AppTextStyles.titleSmall(context),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 24),
-                ElevatedButton.icon(
-                  onPressed: () => context.read<PlaceCubit>().getPlaces(),
-                  icon: const Icon(Icons.refresh),
-                  label: Text(
-                    'Reintentar',
-                    style: AppTextStyles.button(context),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primaryRed,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 24,
-                      vertical: 12,
+            child: Container(
+              constraints: const BoxConstraints(maxHeight: 150),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.error, size: 48, color: Colors.red),
+                  const SizedBox(height: 12),
+                  Text(
+                    'Error: ${placeState.error}',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontFamily: 'Roboto',
+                      fontWeight: FontWeight.w500,
+                      color: Colors.red,
                     ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton.icon(
+                    onPressed: () => context.read<PlaceCubit>().getPlaces(),
+                    icon: const Icon(Icons.refresh, size: 16),
+                    label: const Text('Reintentar'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                      minimumSize: const Size(120, 36),
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         );
@@ -1128,7 +1231,7 @@ class _FeedScreenState extends State<FeedScreen> with TickerProviderStateMixin {
                 child,
               ) {
                 // Usamos CurvedAnimation para una experiencia más suave
-                var curve = CurvedAnimation(
+                CurvedAnimation(
                   parent: animation,
                   curve: Curves.easeOutCubic,
                   reverseCurve: Curves.easeInCubic,

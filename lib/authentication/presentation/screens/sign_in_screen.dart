@@ -19,20 +19,11 @@ class SignInScreen extends StatelessWidget {
     return BlocListener<SignInCubit, SignInState>(
       listener: (context, signinstate) {
         switch (signinstate) {
-          case Success(:final user):
+          case Success():
             {
               context.router.navigate(const FeedRoute());
             }
-            /*
-            showDialog(
-              context: context,
-              builder:
-                  (_) => SuccessDialog(
-                    title: "¡Registro Exitoso!",
-                    message: "Bienvenido, ${user.displayName ?? 'Usuario'}",
-                  ),
-            );
-            */
+
             break;
 
           case Error(:final error):

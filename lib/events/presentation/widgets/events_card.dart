@@ -38,9 +38,9 @@ class EventCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Imagen del evento (si existe)
-            if (event.imageUrl != null && event.imageUrl!.isNotEmpty)
+            if (event.imageUrl.isNotEmpty)
               Image.network(
-                event.imageUrl!,
+                event.imageUrl,
                 height: 180,
                 width: double.infinity,
                 fit: BoxFit.cover,
@@ -126,7 +126,7 @@ class EventCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  if (event.location != null && event.location!.isNotEmpty) ...[
+                  if (event.location.isNotEmpty) ...[
                     const SizedBox(height: 8),
                     Row(
                       children: [
@@ -138,7 +138,7 @@ class EventCard extends StatelessWidget {
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
-                            event.location!,
+                            event.location,
                             style: textTheme.bodyMedium,
                             overflow: TextOverflow.ellipsis,
                           ),

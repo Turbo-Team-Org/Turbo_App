@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:turbo/authentication/authentication_repository/models/auth_user.dart';
 
 import 'service/authentication_service.dart';

@@ -134,7 +134,10 @@ FutureOr<void> initCore(GetIt sl) async {
       () => GetPlacesUseCase(placeRepository: sl<PlaceRepository>()),
     )
     ..registerLazySingleton<PlaceCubit>(
-      () => PlaceCubit(getPlacesUseCase: sl<GetPlacesUseCase>()),
+      () => PlaceCubit(
+        getPlacesUseCase: sl<GetPlacesUseCase>(),
+        getPlacesByCategoryUseCase: sl<GetPlacesByCategoryUseCase>(),
+      ),
     )
     ..registerLazySingleton<ReviewService>(
       () => ReviewService(firestore: sl<FirebaseFirestore>()),

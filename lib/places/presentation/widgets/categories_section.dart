@@ -1,87 +1,79 @@
 import 'package:flutter/material.dart';
-
-import 'feed_widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:auto_route/auto_route.dart';
+import 'package:turbo/app/routes/router/app_router.gr.dart';
+import 'package:turbo/categories/presentation/widgets/category_card.dart';
+import 'package:turbo/categories/state_management/category_bloc/category_cubit/cubit/category_cubit.dart';
 
 class CategoriesSection extends StatelessWidget {
-  final List<String> categories = [
-    "Mountains",
-    "Forest",
-    "Ocean",
-    "Desert",
-    "Mountains",
-    "Forest",
-    "Ocean",
-    "Desert",
-    "Mountains",
-    "Forest",
-    "Ocean",
-  ];
-
-  final List<IconData> icons = [
-    Icons.terrain,
-    Icons.forest,
-    Icons.waves,
-    Icons.landscape,
-    Icons.terrain,
-    Icons.forest,
-    Icons.waves,
-    Icons.landscape,
-    Icons.terrain,
-    Icons.forest,
-    Icons.waves,
-  ];
-
-  CategoriesSection({super.key});
+  const CategoriesSection({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return GlassCard(
-      blur: 100.0,
-      opacity: 0.1,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              "Otras categorías de servicios",
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-            const SizedBox(height: 12),
-            SizedBox(
-              height: 100,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: categories.length,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 12),
-                    child: Column(
-                      children: [
-                        GlassCircleAvatar(
-                          child: Icon(icons[index], color: Colors.white),
+    return BlocBuilder<CategoryCubit, CategoryState>(
+      builder: (context, state) {
+        switch (state) {
+          case CategoryLoaded():
+            final featuredCategories =
+                state.categories.where((cat) => cat.isFeatured).toList();
+
+            if (featuredCategories.isEmpty) {
+              return const SizedBox.shrink();
+            }
+
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0,
+                    vertical: 8.0,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Categorías destacadas',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
                         ),
-                        const SizedBox(height: 4),
-                        Text(
-                          categories[index],
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: Colors.white,
-                          ),
+                      ),
+                      TextButton(
+                        onPressed:
+                            () => context.router.push(const CategoriesRoute()),
+                        child: const Text('Ver todas'),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: 120,
+                  child: ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    scrollDirection: Axis.horizontal,
+                    itemCount: featuredCategories.length,
+                    itemBuilder: (context, index) {
+                      final category = featuredCategories[index];
+                      return SizedBox(
+                        width: 160,
+                        child: CategoryCard(
+                          category: category,
+                          onTap:
+                              () => context.router.push(
+                                CategoryDetailsRoute(categoryId: category.id),
+                              ),
                         ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            );
+          default:
+            return const SizedBox.shrink();
+        }
+      },
     );
   }
 }

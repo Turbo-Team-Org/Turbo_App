@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'dart:math';
 
 /// Clase para cargar datos de prueba en Firestore
@@ -46,65 +45,6 @@ class SampleDataLoader {
         );
       }
       print('Error al cargar datos de prueba: $e');
-    }
-  }
-
-  /// Limpia las colecciones existentes - Ahora solo muestra diálogos sin eliminar datos
-  Future<void> _cleanCollections(BuildContext context) async {
-    // Solo mostramos los diálogos pero no eliminamos nada
-    if (context.mounted) {
-      Navigator.of(context).pop();
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder:
-            (context) =>
-                _buildProgressDialog(context, 'Preparando datos...', 0, 4),
-      );
-
-      await Future.delayed(const Duration(milliseconds: 300));
-
-      Navigator.of(context).pop();
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder:
-            (context) =>
-                _buildProgressDialog(context, 'Preparando datos...', 1, 4),
-      );
-
-      await Future.delayed(const Duration(milliseconds: 300));
-
-      Navigator.of(context).pop();
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder:
-            (context) =>
-                _buildProgressDialog(context, 'Preparando datos...', 2, 4),
-      );
-
-      await Future.delayed(const Duration(milliseconds: 300));
-
-      Navigator.of(context).pop();
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder:
-            (context) =>
-                _buildProgressDialog(context, 'Preparando datos...', 3, 4),
-      );
-
-      await Future.delayed(const Duration(milliseconds: 300));
-
-      Navigator.of(context).pop();
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder:
-            (context) =>
-                _buildProgressDialog(context, 'Datos listos para cargar', 4, 4),
-      );
     }
   }
 
@@ -272,7 +212,6 @@ class SampleDataLoader {
 
     int reviewCount = 0;
     for (final entry in placeReviews.entries) {
-      final placeId = entry.key;
       final reviews = entry.value;
 
       for (final review in reviews) {

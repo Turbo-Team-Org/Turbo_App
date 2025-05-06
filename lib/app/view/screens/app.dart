@@ -9,6 +9,7 @@ import 'package:turbo/authentication/state_managament/auth_cubit/cubit/auth_cubi
 import 'package:turbo/authentication/state_managament/sign_in_cubit/cubit/sign_in_cubit.dart';
 import 'package:turbo/authentication/state_managament/sign_out_cubit/cubit/sign_out_cubit.dart';
 import 'package:turbo/authentication/state_managament/sign_up_cubit/cubit/sign_up_cubit.dart';
+import 'package:turbo/categories/state_management/category_bloc/category_cubit/cubit/category_cubit.dart';
 import 'package:turbo/location/state_management/location_bloc/cubit/location_cubit.dart';
 import 'package:turbo/places/state_management/place_bloc/cubit/place_cubit.dart';
 import 'package:turbo/events/state_management/event_bloc/cubit/event_cubit.dart';
@@ -35,7 +36,8 @@ class MyApp extends StatelessWidget {
         BlocProvider.value(value: sl<SignUpCubit>()),
         BlocProvider.value(value: sl<LocationCubit>()),
         BlocProvider.value(value: sl<EventCubit>()),
-        BlocProvider(create: (_) => ThemeCubit()),
+        BlocProvider.value(value: sl<ThemeCubit>()),
+        BlocProvider.value(value: sl<CategoryCubit>()),
       ],
       child: BlocListener<AuthCubit, AuthCubitState>(
         listenWhen: (previous, current) => previous != current,
