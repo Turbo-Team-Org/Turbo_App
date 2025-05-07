@@ -15,11 +15,11 @@ class ReviewCubit extends Cubit<ReviewState> {
   final AddReviewUseCase addReviewUseCase;
   final GetAllReviewsUseCase getAllReviewsUseCase;
   final GetReviewsFromAPlaceUseCase getReviewsFromAPlaceUseCase;
-  ReviewCubit(
-      {required this.addReviewUseCase,
-      required this.getAllReviewsUseCase,
-      required this.getReviewsFromAPlaceUseCase})
-      : super(const ReviewState.initial());
+  ReviewCubit({
+    required this.addReviewUseCase,
+    required this.getAllReviewsUseCase,
+    required this.getReviewsFromAPlaceUseCase,
+  }) : super(const ReviewState.initial());
 
   Future<void> addReview(Review review, String placeId) async {
     emit(const ReviewState.loading());
@@ -35,6 +35,16 @@ class ReviewCubit extends Cubit<ReviewState> {
     emit(const ReviewState.loading());
     try {
       final reviews = await getAllReviewsUseCase(NoParams());
+      emit(ReviewState.loaded(reviews));
+    } catch (e) {
+      emit(ReviewState.error(e.toString()));
+    }
+  }
+
+  Future<void> getReviewsFromAPlace(String placeId) async {
+    emit(const ReviewState.loading());
+    try {
+      final reviews = await getReviewsFromAPlaceUseCase(placeId);
       emit(ReviewState.loaded(reviews));
     } catch (e) {
       emit(ReviewState.error(e.toString()));

@@ -1,21 +1,24 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:turbo/app/core/theme/text_styles.dart';
 import 'package:turbo/app/utils/app_preferences.dart';
 import 'package:turbo/app/utils/theme/style.dart';
 import 'package:turbo/authentication/state_managament/auth_cubit/cubit/auth_cubit_cubit.dart';
 import 'package:turbo/favorites/state_management/cubit/favorite_cubit.dart';
 import 'package:turbo/places/state_management/place_bloc/cubit/place_cubit.dart';
+import 'package:turbo/reviews/state_management/cubit/review_cubit.dart';
+import 'package:turbo/reviews/module/add_review_use_case.dart';
+import 'package:turbo/reviews/module/get_all_reviews_use_case.dart';
+import 'package:turbo/reviews/module/get_reviews_from_a_place_use_case.dart';
+import 'package:turbo/reviews/review_repository/review_repository.dart';
+import 'package:turbo/reviews/review_repository/service/review_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../place_repository/models/place/place.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dart:async';
-// Importar los widgets separados
 import '../widgets/business_details/business_sliver_app_bar.dart';
 import '../widgets/business_details/business_header.dart';
 import '../widgets/business_details/description_section.dart';
@@ -38,6 +41,7 @@ class _BusinessDetailsScreenState extends State<BusinessDetailsScreen> {
   String _userName = "explorador";
   String _userPhotoUrl = "";
   final prefs = AppPreferences();
+  late final ReviewCubit _reviewCubit;
 
   @override
   void initState() {
@@ -52,6 +56,20 @@ class _BusinessDetailsScreenState extends State<BusinessDetailsScreen> {
 
     // Cargar datos del usuario
     _loadUserData();
+
+    // Inicializar el ReviewCubit
+    final reviewRepository = ReviewRepository(
+      reviewService: ReviewService(firestore: FirebaseFirestore.instance),
+    );
+    _reviewCubit = ReviewCubit(
+      addReviewUseCase: AddReviewUseCase(reviewRepository: reviewRepository),
+      getAllReviewsUseCase: GetAllReviewsUseCase(
+        reviewRepository: reviewRepository,
+      ),
+      getReviewsFromAPlaceUseCase: GetReviewsFromAPlaceUseCase(
+        reviewRepository: reviewRepository,
+      ),
+    );
   }
 
   Future<void> _loadUserData() async {
@@ -88,6 +106,7 @@ class _BusinessDetailsScreenState extends State<BusinessDetailsScreen> {
   @override
   void dispose() {
     _scrollController.dispose();
+    _reviewCubit.close();
     super.dispose();
   }
 
@@ -168,191 +187,196 @@ class _BusinessDetailsScreenState extends State<BusinessDetailsScreen> {
             );
           }
 
-          return Scaffold(
-            body: CustomScrollView(
-              controller: _scrollController,
-              physics: const BouncingScrollPhysics(),
-              slivers: [
-                // AppBar con imagen de fondo
-                BusinessSliverAppBar(
-                  place: place,
-                  showBackground: _showAppBarBackground,
-                  prefs: prefs,
-                ),
-                SliverToBoxAdapter(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Información principal del negocio (nombre, dirección, etc)
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            BusinessHeader(place: place),
-                            const SizedBox(height: 24),
+          return BlocProvider.value(
+            value: _reviewCubit,
+            child: Scaffold(
+              body: CustomScrollView(
+                controller: _scrollController,
+                physics: const BouncingScrollPhysics(),
+                slivers: [
+                  // AppBar con imagen de fondo
+                  BusinessSliverAppBar(
+                    place: place,
+                    showBackground: _showAppBarBackground,
+                    prefs: prefs,
+                  ),
+                  SliverToBoxAdapter(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Información principal del negocio (nombre, dirección, etc)
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              BusinessHeader(place: place),
+                              const SizedBox(height: 24),
 
-                            // Sección de descripción
-                            DescriptionSection(place: place),
-                            const SizedBox(height: 24),
+                              // Sección de descripción
+                              DescriptionSection(place: place),
+                              const SizedBox(height: 24),
 
-                            // Botón del menú si está disponible
-                            if (place.menuUrl.isNotEmpty)
-                              FadeInUp(
-                                delay: const Duration(milliseconds: 200),
-                                duration: const Duration(milliseconds: 400),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors: [
-                                        Styles.turboRed,
-                                        Theme.of(
-                                          context,
-                                        ).colorScheme.primary.withOpacity(0.9),
-                                      ],
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                    ),
-                                    borderRadius: BorderRadius.circular(30),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Theme.of(
-                                          context,
-                                        ).colorScheme.primary.withOpacity(0.3),
-                                        blurRadius: 8,
-                                        offset: const Offset(0, 4),
+                              // Botón del menú si está disponible
+                              if (place.menuUrl.isNotEmpty)
+                                FadeInUp(
+                                  delay: const Duration(milliseconds: 200),
+                                  duration: const Duration(milliseconds: 400),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        colors: [
+                                          Styles.turboRed,
+                                          Theme.of(context).colorScheme.primary
+                                              .withOpacity(0.9),
+                                        ],
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
                                       ),
-                                    ],
-                                  ),
-                                  child: Material(
-                                    color: Colors.transparent,
-                                    child: InkWell(
-                                      onTap: () async {
-                                        if (await canLaunchUrl(
-                                          Uri.parse(place.menuUrl),
-                                        )) {
-                                          await launchUrl(
-                                            Uri.parse(place.menuUrl),
-                                          );
-                                        } else {
-                                          if (mounted) {
-                                            ScaffoldMessenger.of(
-                                              context,
-                                            ).showSnackBar(
-                                              const SnackBar(
-                                                content: Text(
-                                                  'No se pudo abrir el menú',
-                                                ),
-                                              ),
-                                            );
-                                          }
-                                        }
-                                      },
-                                      borderRadius: BorderRadius.circular(15),
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          vertical: 16,
-                                          horizontal: 20,
+                                      borderRadius: BorderRadius.circular(30),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary
+                                              .withOpacity(0.3),
+                                          blurRadius: 8,
+                                          offset: const Offset(0, 4),
                                         ),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Container(
-                                              padding: const EdgeInsets.all(8),
-                                              decoration: BoxDecoration(
-                                                color: Colors.white.withOpacity(
-                                                  0.2,
+                                      ],
+                                    ),
+                                    child: Material(
+                                      color: Colors.transparent,
+                                      child: InkWell(
+                                        onTap: () async {
+                                          if (await canLaunchUrl(
+                                            Uri.parse(place.menuUrl),
+                                          )) {
+                                            await launchUrl(
+                                              Uri.parse(place.menuUrl),
+                                            );
+                                          } else {
+                                            if (mounted) {
+                                              ScaffoldMessenger.of(
+                                                context,
+                                              ).showSnackBar(
+                                                const SnackBar(
+                                                  content: Text(
+                                                    'No se pudo abrir el menú',
+                                                  ),
                                                 ),
-                                                shape: BoxShape.circle,
-                                              ),
-                                              child: const Icon(
-                                                Icons.menu_book,
-                                                color: Colors.white,
-                                                size: 24,
-                                              ),
-                                            ),
-                                            const SizedBox(width: 12),
-                                            const Text(
-                                              'Ver Menú',
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            const SizedBox(width: 8),
-                                            Container(
-                                              padding: const EdgeInsets.all(4),
-                                              decoration: BoxDecoration(
-                                                color: Colors.white.withOpacity(
-                                                  0.2,
+                                              );
+                                            }
+                                          }
+                                        },
+                                        borderRadius: BorderRadius.circular(15),
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            vertical: 16,
+                                            horizontal: 20,
+                                          ),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Container(
+                                                padding: const EdgeInsets.all(
+                                                  8,
                                                 ),
-                                                shape: BoxShape.circle,
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white
+                                                      .withOpacity(0.2),
+                                                  shape: BoxShape.circle,
+                                                ),
+                                                child: const Icon(
+                                                  Icons.menu_book,
+                                                  color: Colors.white,
+                                                  size: 24,
+                                                ),
                                               ),
-                                              child: const Icon(
-                                                Icons.arrow_forward_ios,
-                                                color: Colors.white,
-                                                size: 14,
+                                              const SizedBox(width: 12),
+                                              const Text(
+                                                'Ver Menú',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
                                               ),
-                                            ),
-                                          ],
+                                              const SizedBox(width: 8),
+                                              Container(
+                                                padding: const EdgeInsets.all(
+                                                  4,
+                                                ),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white
+                                                      .withOpacity(0.2),
+                                                  shape: BoxShape.circle,
+                                                ),
+                                                child: const Icon(
+                                                  Icons.arrow_forward_ios,
+                                                  color: Colors.white,
+                                                  size: 14,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            if (place.menuUrl.isNotEmpty)
+                              if (place.menuUrl.isNotEmpty)
+                                const SizedBox(height: 24),
+
+                              // Sección de ofertas
+                              OfferSection(place: place),
                               const SizedBox(height: 24),
 
-                            // Sección de ofertas
-                            OfferSection(place: place),
-                            const SizedBox(height: 24),
-
-                            // Sección de reseñas
-                            ReviewSection(place: place),
-                            const SizedBox(
-                              height: 80,
-                            ), // Espacio para la barra inferior
-                          ],
+                              // Sección de reseñas
+                              ReviewSection(place: place),
+                              const SizedBox(
+                                height: 80,
+                              ), // Espacio para la barra inferior
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
-            bottomNavigationBar: BottomActionBar(
-              place: place,
-              onCall: _makePhoneCall,
-              onNavigate: () => _launchMaps(place),
-            ),
-            floatingActionButton: FloatingActionButton(
-              onPressed: () {
-                final authState = context.read<AuthCubit>().state;
-                if (authState is Authenticated) {
-                  final favoriteCubit = context.read<FavoriteCubit>();
-                  favoriteCubit.toggleFavorite(
-                    userId: authState.user.uid,
-                    placeId: place.id,
-                  );
-                }
-              },
-              backgroundColor: Theme.of(context).colorScheme.primary,
-              child: BlocBuilder<FavoriteCubit, FavoriteState>(
-                builder: (context, favState) {
-                  bool isFavorite = false;
-                  if (favState is FavoriteLoaded) {
-                    isFavorite = favState.favorites.any(
-                      (fav) => fav.placeId.toString() == place.id,
+                ],
+              ),
+              bottomNavigationBar: BottomActionBar(
+                place: place,
+                onCall: _makePhoneCall,
+                onNavigate: () => _launchMaps(place),
+              ),
+              floatingActionButton: FloatingActionButton(
+                onPressed: () {
+                  final authState = context.read<AuthCubit>().state;
+                  if (authState is Authenticated) {
+                    final favoriteCubit = context.read<FavoriteCubit>();
+                    favoriteCubit.toggleFavorite(
+                      userId: authState.user.uid,
+                      placeId: place.id,
                     );
                   }
-                  return Icon(
-                    isFavorite ? Icons.favorite : Icons.favorite_border,
-                    color: Colors.white,
-                  );
                 },
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                child: BlocBuilder<FavoriteCubit, FavoriteState>(
+                  builder: (context, favState) {
+                    bool isFavorite = false;
+                    if (favState is FavoriteLoaded) {
+                      isFavorite = favState.favorites.any(
+                        (fav) => fav.placeId.toString() == place.id,
+                      );
+                    }
+                    return Icon(
+                      isFavorite ? Icons.favorite : Icons.favorite_border,
+                      color: Colors.white,
+                    );
+                  },
+                ),
               ),
             ),
           );

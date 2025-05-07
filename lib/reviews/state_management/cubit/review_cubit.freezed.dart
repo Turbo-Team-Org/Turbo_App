@@ -45,8 +45,8 @@ $ReviewStateCopyWith(ReviewState _, $Res Function(ReviewState) __);
 /// @nodoc
 
 
-class _Initial implements ReviewState {
-  const _Initial();
+class ReviewInitial implements ReviewState {
+  const ReviewInitial();
   
 
 
@@ -56,7 +56,7 @@ class _Initial implements ReviewState {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Initial);
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ReviewInitial);
 }
 
 
@@ -77,8 +77,8 @@ String toString() {
 /// @nodoc
 
 
-class _Loading implements ReviewState {
-  const _Loading();
+class ReviewLoading implements ReviewState {
+  const ReviewLoading();
   
 
 
@@ -88,7 +88,7 @@ class _Loading implements ReviewState {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Loading);
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ReviewLoading);
 }
 
 
@@ -109,8 +109,8 @@ String toString() {
 /// @nodoc
 
 
-class _Loaded implements ReviewState {
-  const _Loaded(final  List<Review> reviews): _reviews = reviews;
+class ReviewLoaded implements ReviewState {
+  const ReviewLoaded(final  List<Review> reviews): _reviews = reviews;
   
 
  final  List<Review> _reviews;
@@ -125,13 +125,13 @@ class _Loaded implements ReviewState {
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-_$LoadedCopyWith<_Loaded> get copyWith => __$LoadedCopyWithImpl<_Loaded>(this, _$identity);
+$ReviewLoadedCopyWith<ReviewLoaded> get copyWith => _$ReviewLoadedCopyWithImpl<ReviewLoaded>(this, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Loaded&&const DeepCollectionEquality().equals(other._reviews, _reviews));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ReviewLoaded&&const DeepCollectionEquality().equals(other._reviews, _reviews));
 }
 
 
@@ -147,8 +147,8 @@ String toString() {
 }
 
 /// @nodoc
-abstract mixin class _$LoadedCopyWith<$Res> implements $ReviewStateCopyWith<$Res> {
-  factory _$LoadedCopyWith(_Loaded value, $Res Function(_Loaded) _then) = __$LoadedCopyWithImpl;
+abstract mixin class $ReviewLoadedCopyWith<$Res> implements $ReviewStateCopyWith<$Res> {
+  factory $ReviewLoadedCopyWith(ReviewLoaded value, $Res Function(ReviewLoaded) _then) = _$ReviewLoadedCopyWithImpl;
 @useResult
 $Res call({
  List<Review> reviews
@@ -159,17 +159,17 @@ $Res call({
 
 }
 /// @nodoc
-class __$LoadedCopyWithImpl<$Res>
-    implements _$LoadedCopyWith<$Res> {
-  __$LoadedCopyWithImpl(this._self, this._then);
+class _$ReviewLoadedCopyWithImpl<$Res>
+    implements $ReviewLoadedCopyWith<$Res> {
+  _$ReviewLoadedCopyWithImpl(this._self, this._then);
 
-  final _Loaded _self;
-  final $Res Function(_Loaded) _then;
+  final ReviewLoaded _self;
+  final $Res Function(ReviewLoaded) _then;
 
 /// Create a copy of ReviewState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') $Res call({Object? reviews = null,}) {
-  return _then(_Loaded(
+  return _then(ReviewLoaded(
 null == reviews ? _self._reviews : reviews // ignore: cast_nullable_to_non_nullable
 as List<Review>,
   ));
@@ -181,8 +181,8 @@ as List<Review>,
 /// @nodoc
 
 
-class _Error implements ReviewState {
-  const _Error(this.message);
+class ReviewError implements ReviewState {
+  const ReviewError(this.message);
   
 
  final  String message;
@@ -191,13 +191,13 @@ class _Error implements ReviewState {
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-_$ErrorCopyWith<_Error> get copyWith => __$ErrorCopyWithImpl<_Error>(this, _$identity);
+$ReviewErrorCopyWith<ReviewError> get copyWith => _$ReviewErrorCopyWithImpl<ReviewError>(this, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Error&&(identical(other.message, message) || other.message == message));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ReviewError&&(identical(other.message, message) || other.message == message));
 }
 
 
@@ -213,8 +213,8 @@ String toString() {
 }
 
 /// @nodoc
-abstract mixin class _$ErrorCopyWith<$Res> implements $ReviewStateCopyWith<$Res> {
-  factory _$ErrorCopyWith(_Error value, $Res Function(_Error) _then) = __$ErrorCopyWithImpl;
+abstract mixin class $ReviewErrorCopyWith<$Res> implements $ReviewStateCopyWith<$Res> {
+  factory $ReviewErrorCopyWith(ReviewError value, $Res Function(ReviewError) _then) = _$ReviewErrorCopyWithImpl;
 @useResult
 $Res call({
  String message
@@ -225,17 +225,17 @@ $Res call({
 
 }
 /// @nodoc
-class __$ErrorCopyWithImpl<$Res>
-    implements _$ErrorCopyWith<$Res> {
-  __$ErrorCopyWithImpl(this._self, this._then);
+class _$ReviewErrorCopyWithImpl<$Res>
+    implements $ReviewErrorCopyWith<$Res> {
+  _$ReviewErrorCopyWithImpl(this._self, this._then);
 
-  final _Error _self;
-  final $Res Function(_Error) _then;
+  final ReviewError _self;
+  final $Res Function(ReviewError) _then;
 
 /// Create a copy of ReviewState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') $Res call({Object? message = null,}) {
-  return _then(_Error(
+  return _then(ReviewError(
 null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
 as String,
   ));

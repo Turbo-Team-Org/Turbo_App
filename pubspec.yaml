@@ -39,6 +39,9 @@ dependencies:
   freezed_annotation: ^3.0.0
   json_annotation: ^4.9.0
   flutter_svg: ^2.0.14
+  image_picker: ^1.0.7
+  image: ^4.1.7
+  path_provider: ^2.1.2
 
   get_it: ^8.0.3
   shared_preferences: ^2.3.3
