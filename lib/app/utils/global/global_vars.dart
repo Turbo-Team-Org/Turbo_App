@@ -12,6 +12,7 @@ const String nameText = 'Name';
 const String nameHintText = 'Tell us your name';
 const String account = 'Already have an account?';
 const String noaccount = 'Do not have an account?';
+/*
 final List<Place> places = [
   Place(
     rating: 4,
@@ -109,3 +110,4 @@ final List<Place> places = [
     ],
   ),
 ];
+*/

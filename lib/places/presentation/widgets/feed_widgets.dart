@@ -6,7 +6,6 @@ export 'category_tabs.dart';
 export 'search_bar.dart';
 export 'glass_circle_avatar.dart';
 export 'glass_card.dart';
-export 'add_review_modal.dart';
 export 'offer_dialog.dart';
 
 import 'package:animate_do/animate_do.dart';

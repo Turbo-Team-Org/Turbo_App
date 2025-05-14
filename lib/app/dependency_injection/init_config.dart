@@ -4,6 +4,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:get_it/get_it.dart';
+import 'package:turbo/app/image_management/data/repositories/image_management_repository_impl.dart';
+import 'package:turbo/app/image_management/domain/repositories/image_management_repository.dart';
+import 'package:turbo/app/image_management/presentation/cubit/image_management_cubit.dart';
 import 'package:turbo/app/notification/service/notification_service.dart';
 import 'package:turbo/authentication/module/authentication_module.dart';
 import 'package:turbo/authentication/module/sign_in_with_email_use_case.dart';
@@ -249,6 +252,12 @@ FutureOr<void> initCore(GetIt sl) async {
         getCategoriesUseCase: sl<GetCategoriesUseCase>(),
         getCategoryByIdUseCase: sl<GetCategoryByIdUseCase>(),
       ),
+    )
+    ..registerLazySingleton<ImageManagementRepository>(
+      () => ImageManagementRepositoryImpl(),
+    )
+    ..registerFactory(
+      () => ImageManagementCubit(repository: sl<ImageManagementRepository>()),
     );
 
   // Cargar datos ficticios para desarrollo (descomentar en entorno de desarrollo)

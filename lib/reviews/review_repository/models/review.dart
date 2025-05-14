@@ -28,12 +28,14 @@ class TimestampDateTimeConverter implements JsonConverter<DateTime, dynamic> {
 sealed class Review with _$Review {
   const factory Review({
     required String id,
+    required String userId,
     required String userName,
     required String userAvatar,
     required String comment,
     required double rating,
     @TimestampDateTimeConverter() required DateTime date,
     @TimestampDateTimeConverter() DateTime? createdAt,
+    @Default([]) List<String> imageUrls,
   }) = _Review;
 
   factory Review.fromJson(Map<String, dynamic> json) => _$ReviewFromJson(json);
@@ -65,6 +67,7 @@ sealed class Review with _$Review {
 
     return Review(
       id: data['id'] ?? '',
+      userId: data['userId'] ?? '',
       userName: data['userName'] ?? '',
       userAvatar: data['userAvatar'] ?? '',
       comment: data['comment'] ?? '',
@@ -72,6 +75,7 @@ sealed class Review with _$Review {
           (data['rating'] != null) ? (data['rating'] as num).toDouble() : 0.0,
       date: parsedDate,
       createdAt: createdAt ?? parsedDate,
+      imageUrls: data['imageUrls'] ?? [],
     );
   }
 }

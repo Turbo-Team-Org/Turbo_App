@@ -4,6 +4,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:turbo/app/core/theme/app_themes.dart';
 import 'package:turbo/app/core/theme/theme_cubit.dart';
 import 'package:turbo/app/core/theme/theme_state.dart';
+import 'package:turbo/app/image_management/presentation/cubit/image_management_cubit.dart';
 import 'package:turbo/app/routes/guards/authentication_guards.dart';
 import 'package:turbo/authentication/state_managament/auth_cubit/cubit/auth_cubit_cubit.dart';
 import 'package:turbo/authentication/state_managament/sign_in_cubit/cubit/sign_in_cubit.dart';
@@ -24,7 +25,6 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    print("🚀 MyApp - Iniciando aplicación");
     return MultiBlocProvider(
       providers: [
         BlocProvider.value(value: sl<SignInCubit>()),
@@ -38,6 +38,7 @@ class MyApp extends StatelessWidget {
         BlocProvider.value(value: sl<EventCubit>()),
         BlocProvider.value(value: sl<ThemeCubit>()),
         BlocProvider.value(value: sl<CategoryCubit>()),
+        BlocProvider.value(value: sl<ImageManagementCubit>()),
       ],
       child: BlocListener<AuthCubit, AuthCubitState>(
         listenWhen: (previous, current) => previous != current,
