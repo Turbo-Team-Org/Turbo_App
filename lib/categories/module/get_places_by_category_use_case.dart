@@ -1,14 +1,14 @@
-import '../../places/place_repository/models/place/place.dart';
-import '../module/place_category_association.dart';
+import 'package:core/core.dart';
 
 class GetPlacesByCategoryUseCase {
-  final PlaceCategoryAssociation _placeCategoryAssociation;
+  final CategoryRepository _categoryRepository;
 
-  GetPlacesByCategoryUseCase({
-    required PlaceCategoryAssociation placeCategoryAssociation,
-  }) : _placeCategoryAssociation = placeCategoryAssociation;
+  GetPlacesByCategoryUseCase({required CategoryRepository categoryRepository})
+    : _categoryRepository = categoryRepository;
 
-  Future<List<Place>> call(String categoryId) async {
-    return await _placeCategoryAssociation.getPlacesInCategory(categoryId);
+  Future<PlaceCategory> call(String categoryId) async {
+    final places = await _categoryRepository.getPlacesByCategory(categoryId);
+    final category = await _categoryRepository.getCategoryById(categoryId);
+    return PlaceCategory(places: places, categories: category!);
   }
 }

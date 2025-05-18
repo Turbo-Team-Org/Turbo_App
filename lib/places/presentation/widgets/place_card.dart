@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:turbo/authentication/state_managament/auth_cubit/cubit/auth_cubit_cubit.dart';
+import 'package:core/core.dart';
+import 'package:turbo/authentication/state_management/auth_cubit/cubit/auth_cubit_cubit.dart';
 import 'package:turbo/favorites/state_management/cubit/favorite_cubit.dart';
-import 'package:turbo/places/place_repository/models/place/place.dart';
 
 class PlaceCard extends StatefulWidget {
   final Place place;

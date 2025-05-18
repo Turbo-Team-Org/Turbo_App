@@ -1,5 +1,5 @@
+import 'package:core/core.dart';
 import 'package:turbo/app/core/use_case.dart';
-import 'package:turbo/reviews/review_repository/review_repository.dart';
 import 'package:turbo/reviews/module/review_models_params/add_review_params.dart';
 
 class AddReviewUseCase implements UseCase<Future<void>, AddReviewParams> {

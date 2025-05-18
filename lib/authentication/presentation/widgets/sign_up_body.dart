@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:turbo/app/routes/router/app_router.gr.dart';
 import 'package:turbo/app/utils/global/global_vars.dart';
-import 'package:turbo/authentication/state_managament/sign_up_cubit/cubit/sign_up_cubit.dart';
+import 'package:turbo/authentication/state_management/sign_up_cubit/cubit/sign_up_cubit.dart';
 
 import '../../../app/utils/theme/style.dart';
 import 'widgets.dart';

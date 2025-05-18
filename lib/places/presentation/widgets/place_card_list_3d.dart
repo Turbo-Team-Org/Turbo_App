@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:turbo/places/place_repository/models/place/place.dart';
+import 'package:core/core.dart';
 import 'package:turbo/places/presentation/widgets/place_card_3d.dart';
 import 'package:turbo/app/shared/ui/rotation_3d.dart';
 

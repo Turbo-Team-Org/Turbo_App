@@ -1,5 +1,4 @@
-import '../category_repository/category_repository.dart';
-import '../category_repository/model/category.dart';
+import 'package:core/core.dart';
 
 class GetCategoriesUseCase {
   final CategoryRepository _repository;

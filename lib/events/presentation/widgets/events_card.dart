@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:core/core.dart';
 import 'package:turbo/app/core/theme/text_styles.dart';
-import 'package:turbo/events/event_repository/models/event.dart';
 
 class EventCard extends StatelessWidget {
   final Event event;

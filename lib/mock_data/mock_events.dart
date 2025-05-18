@@ -1,4 +1,4 @@
-import 'package:turbo/events/event_repository/models/event.dart';
+import 'package:core/core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 // Datos de eventos ficticios para usar cuando no hay datos disponibles en Firestore

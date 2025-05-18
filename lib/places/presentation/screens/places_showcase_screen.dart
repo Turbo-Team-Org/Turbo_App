@@ -2,7 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:turbo/app/utils/app_preferences.dart';
-import 'package:turbo/places/place_repository/models/place/place.dart';
+import 'package:core/core.dart';
 import 'package:turbo/places/presentation/widgets/place_card_list_3d.dart';
 import 'package:turbo/places/state_management/place_bloc/cubit/place_cubit.dart';
 import 'package:turbo/favorites/state_management/cubit/favorite_cubit.dart';

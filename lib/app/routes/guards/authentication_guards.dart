@@ -1,6 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:turbo/app/routes/router/app_router.gr.dart';
-import 'package:turbo/authentication/state_managament/auth_cubit/cubit/auth_cubit_cubit.dart';
+import 'package:turbo/authentication/state_management/auth_cubit/cubit/auth_cubit_cubit.dart';
 
 class AuthGuard extends AutoRouteGuard {
   final AuthCubit authCubit;

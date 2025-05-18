@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:turbo/places/place_repository/models/place/place.dart';
+import 'package:core/core.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:animate_do/animate_do.dart';
 import 'dart:async';
 
 class ImageCarousel extends StatefulWidget {

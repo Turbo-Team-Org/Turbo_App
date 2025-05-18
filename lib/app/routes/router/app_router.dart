@@ -11,7 +11,6 @@ import 'package:turbo/events/presentation/screens/events_screen.dart';
 
 import '../../../authentication/presentation/screens/splash_screen.dart';
 import '../../../favorites/presentation/screens/favorite_screen.dart';
-import '../../../places/place_repository/models/place/place.dart';
 import '../../../places/presentation/screens/business_detail.dart';
 import '../../../places/presentation/screens/feed_screen.dart';
 import '../../../places/presentation/screens/places_showcase_screen.dart';
@@ -36,18 +35,22 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: PlacesShowcaseRoute.page, path: '/places-showcase'),
 
     // Rutas de categorías
-    AutoRoute(page: CategoriesRoute.page, path: '/categories'),
-    AutoRoute(page: CategoryDetailsRoute.page, path: '/category/:categoryId'),
-
     AutoRoute(
       path: '/home',
       page: BottomNavShellWidget.page,
       guards: [authGuard],
       children: [
         AutoRoute(path: 'feed', page: FeedRoute.page, initial: true),
+        AutoRoute(
+          path: 'categories',
+          page: CategoriesRoute.page,
+          children: [
+            AutoRoute(path: ':categoryId', page: CategoryDetailsRoute.page),
+          ],
+        ),
+        AutoRoute(path: 'events', page: EventsRoute.page),
         AutoRoute(path: 'favorites', page: FavoritesRoute.page),
         AutoRoute(path: 'profile', page: ProfileRoute.page),
-        AutoRoute(path: 'events', page: EventsRoute.page),
       ],
     ),
   ];

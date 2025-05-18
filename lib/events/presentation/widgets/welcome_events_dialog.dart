@@ -8,7 +8,7 @@ import 'package:intl/date_symbol_data_local.dart'; // Importación para iniciali
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:turbo/app/core/theme/text_styles.dart';
 import 'package:turbo/app/utils/global/global_vars.dart';
-import 'package:turbo/events/event_repository/models/event.dart';
+import 'package:core/core.dart';
 import 'package:turbo/events/state_management/event_bloc/cubit/event_cubit.dart';
 import 'package:turbo/places/presentation/screens/business_detail.dart';
 

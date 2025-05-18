@@ -1,6 +1,3 @@
-import '../../../places/place_repository/models/place/place.dart';
-import '../../../reviews/review_repository/models/review.dart';
-
 const String loginHeaderText = 'Todo lo que buscas, en un solo lugar.';
 const String googleSignInText = 'Register with Google';
 const String turboIconLogIn = 'assets/images/Turbo Marca 7.svg';

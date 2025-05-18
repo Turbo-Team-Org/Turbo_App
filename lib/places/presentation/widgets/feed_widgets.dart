@@ -1,8 +1,8 @@
 export 'bottom_nav_bar.dart';
 export 'place_card_widget.dart';
-export 'categories_section.dart';
+export '../../../categories/presentation/widgets/categories_section.dart';
 export 'profile_avatar_widget.dart';
-export 'category_tabs.dart';
+export '../../../categories/presentation/widgets/category_tabs.dart';
 export 'search_bar.dart';
 export 'glass_circle_avatar.dart';
 export 'glass_card.dart';

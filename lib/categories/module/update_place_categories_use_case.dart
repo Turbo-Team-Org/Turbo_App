@@ -1,14 +1,13 @@
-import '../module/place_category_association.dart';
+import 'package:core/core.dart';
 
 class UpdatePlaceCategoriesUseCase {
-  final PlaceCategoryAssociation _placeCategoryAssociation;
+  final CategoryRepository _categoryRepository;
 
-  UpdatePlaceCategoriesUseCase({
-    required PlaceCategoryAssociation placeCategoryAssociation,
-  }) : _placeCategoryAssociation = placeCategoryAssociation;
+  UpdatePlaceCategoriesUseCase({required CategoryRepository categoryRepository})
+    : _categoryRepository = categoryRepository;
 
   Future<bool> call(String placeId, List<String> categoryIds) async {
-    return await _placeCategoryAssociation.updatePlaceCategories(
+    return await _categoryRepository.updateCategoryAssociations(
       placeId,
       categoryIds,
     );

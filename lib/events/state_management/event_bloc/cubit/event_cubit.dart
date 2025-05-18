@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:core/core.dart';
 import 'package:turbo/app/core/no_params.dart';
-import 'package:turbo/events/event_repository/models/event.dart';
 import 'package:turbo/events/module/get_events_use_case.dart';
 import 'package:turbo/events/module/get_today_events_use_case.dart';
 

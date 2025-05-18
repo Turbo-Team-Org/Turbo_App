@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:turbo/categories/category_repository/model/category.dart';
+import 'package:turbo/categories/presentation/widgets/categories_widgets.dart';
+import 'package:core/core.dart';
 
 class CategoryCard extends StatelessWidget {
   final Category category;
@@ -22,7 +23,7 @@ class CategoryCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.2),
+              color: Colors.black.withAlpha(51),
               blurRadius: 8,
               offset: const Offset(0, 3),
             ),
@@ -31,67 +32,13 @@ class CategoryCard extends StatelessWidget {
         child: Stack(
           children: [
             if (category.imageUrl != null)
-              ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: Image.network(
-                  category.imageUrl!,
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                  height: double.infinity,
-                ),
-              ),
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                gradient: LinearGradient(
-                  colors: [Colors.transparent, Colors.black.withOpacity(0.7)],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                ),
-              ),
+              CategoryImage(imageUrl: category.imageUrl!),
+            const CategoryGradient(),
+            CategoryContent(
+              name: category.name,
+              placesCount: category.placesCount,
             ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Text(
-                    category.name,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  if (category.placesCount > 0)
-                    Text(
-                      '${category.placesCount} lugares',
-                      style: const TextStyle(color: Colors.white70),
-                    ),
-                ],
-              ),
-            ),
-            if (category.isFeatured)
-              Positioned(
-                top: 8,
-                right: 8,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.amber,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Text(
-                    'Destacado',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-                  ),
-                ),
-              ),
+            if (category.isFeatured) const FeaturedBadge(),
           ],
         ),
       ),

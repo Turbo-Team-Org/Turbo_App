@@ -1,7 +1,6 @@
-import 'package:turbo/favorites/favorite_repository/favorite_repository.dart';
+import 'package:core/core.dart';
 
 import '../../app/core/use_case.dart';
-import '../favorite_repository/models/favorite.dart';
 
 class GetFavoritesUseCase implements UseCase<Future<List<Favorite>>, String> {
   final FavoriteRepository favoriteRepository;

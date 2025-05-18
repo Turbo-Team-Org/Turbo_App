@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:turbo/app/core/no_params.dart';
-import 'package:turbo/location/location_repository/models/location_data.dart';
+import 'package:core/core.dart';
 import 'package:turbo/location/module/get_current_location_use_case.dart';
 import 'package:turbo/location/module/request_location_permission_use_case.dart';
 

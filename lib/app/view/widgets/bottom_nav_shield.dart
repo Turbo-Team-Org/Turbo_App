@@ -19,14 +19,20 @@ class BottomNavShellWidget extends StatelessWidget {
         transitionBuilder: (context, child, animation) {
           return FadeTransition(opacity: animation, child: child);
         },
-        routes: [FeedRoute(), EventsRoute(), FavoritesRoute(), ProfileRoute()],
+        routes: const [
+          FeedRoute(),
+          CategoriesRoute(),
+          EventsRoute(),
+          FavoritesRoute(),
+          ProfileRoute(),
+        ],
         bottomNavigationBuilder: (context, tabsRouter) {
           return Container(
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surface,
               boxShadow: [
                 BoxShadow(
-                  color: Theme.of(context).shadowColor.withOpacity(0.08),
+                  color: Theme.of(context).shadowColor.withAlpha(26),
                   blurRadius: 15,
                   offset: const Offset(0, -2),
                 ),
@@ -49,10 +55,18 @@ class BottomNavShellWidget extends StatelessWidget {
                     ),
                     _buildNavItem(
                       context,
+                      Icons.category_outlined,
+                      Icons.category,
+                      "Categorías",
+                      1,
+                      tabsRouter,
+                    ),
+                    _buildNavItem(
+                      context,
                       Icons.celebration_outlined,
                       Icons.celebration,
                       "Eventos",
-                      1,
+                      2,
                       tabsRouter,
                     ),
                     _buildNavItem(
@@ -60,7 +74,7 @@ class BottomNavShellWidget extends StatelessWidget {
                       Icons.favorite_border,
                       Icons.favorite,
                       "Favoritos",
-                      2,
+                      3,
                       tabsRouter,
                     ),
                     _buildNavItem(
@@ -68,7 +82,7 @@ class BottomNavShellWidget extends StatelessWidget {
                       Icons.person_outline,
                       Icons.person,
                       "Perfil",
-                      3,
+                      4,
                       tabsRouter,
                     ),
                   ],

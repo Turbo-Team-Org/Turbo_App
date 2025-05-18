@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:turbo/app/routes/router/app_router.gr.dart';
 import 'package:turbo/authentication/presentation/widgets/widgets.dart';
-import 'package:turbo/authentication/state_managament/auth_cubit/cubit/auth_cubit_cubit.dart';
+import 'package:turbo/authentication/state_management/auth_cubit/cubit/auth_cubit_cubit.dart';
 
 @RoutePage()
 class SplashScreen extends StatefulWidget {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:turbo/places/place_repository/models/place/place.dart';
+import 'package:core/core.dart';
 import 'package:animate_do/animate_do.dart';
 
 class DescriptionSection extends StatelessWidget {

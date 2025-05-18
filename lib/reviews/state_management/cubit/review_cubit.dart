@@ -6,7 +6,7 @@ import '../../module/add_review_use_case.dart';
 import '../../module/get_all_reviews_use_case.dart';
 import '../../module/get_reviews_from_a_place_use_case.dart';
 import '../../module/review_models_params/add_review_params.dart';
-import '../../review_repository/models/review.dart';
+import 'package:core/core.dart';
 
 part 'review_state.dart';
 part 'review_cubit.freezed.dart';

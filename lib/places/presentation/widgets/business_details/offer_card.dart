@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:turbo/app/core/theme/text_styles.dart';
-import 'package:turbo/places/place_repository/models/offer/offer.dart';
+import 'package:core/core.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:turbo/app/core/theme/text_styles.dart';
 
 class OfferCard extends StatelessWidget {
   final Offer offer;

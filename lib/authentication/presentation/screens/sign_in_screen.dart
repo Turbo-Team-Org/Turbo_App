@@ -4,7 +4,7 @@ import 'package:turbo/app/routes/router/app_router.gr.dart';
 import 'package:turbo/app/utils/theme/style.dart';
 import 'package:turbo/authentication/presentation/widgets/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:turbo/authentication/state_managament/sign_in_cubit/cubit/sign_in_cubit.dart';
+import 'package:turbo/authentication/state_management/sign_in_cubit/cubit/sign_in_cubit.dart';
 
 import '../../../app/view/widgets/global_widgets.dart';
 

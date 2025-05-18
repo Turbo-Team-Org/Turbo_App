@@ -1,4 +1,4 @@
-import '../../review_repository/models/review.dart';
+import 'package:core/core.dart';
 
 class AddReviewParams {
   final Review review;

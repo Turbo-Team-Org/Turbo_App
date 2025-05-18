@@ -1,9 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:core/core.dart';
 import 'package:turbo/favorites/module/toogle_favorite_use_case.dart';
 import 'dart:async';
 
-import '../../favorite_repository/models/favorite.dart';
 import '../../module/get_favorites_use_case.dart';
 
 part 'favorite_state.dart';

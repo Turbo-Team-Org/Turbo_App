@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:core/core.dart';
 import 'package:turbo/app/core/theme/text_styles.dart';
-import 'package:turbo/places/place_repository/models/place/place.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:turbo/places/presentation/widgets/business_details/review_card.dart';
 import 'package:turbo/places/presentation/widgets/business_details/add_review_dialog.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:turbo/reviews/state_management/cubit/review_cubit.dart';
-import 'package:turbo/reviews/review_repository/models/review.dart';
 
 class ReviewSection extends StatefulWidget {
   final Place place;

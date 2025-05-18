@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:turbo/app/core/theme/text_styles.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:turbo/app/utils/app_preferences.dart';
 import 'package:turbo/favorites/state_management/cubit/favorite_cubit.dart';
-import 'package:turbo/places/place_repository/models/place/place.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:core/core.dart';
 import 'image_carousel.dart'; // Importamos el carrusel
 
 class BusinessSliverAppBar extends StatelessWidget {

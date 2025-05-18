@@ -10,6 +10,6 @@ Future<void> bootstrap(FutureOr<Widget> Function() builder) async {
   WidgetsFlutterBinding.ensureInitialized();
   // Inicializar datos de localización para formatear fechas
   await initializeDateFormatting('es_ES', null);
-  await initCore(sl);
+  await initDependencies(sl);
   runApp(await builder());
 }

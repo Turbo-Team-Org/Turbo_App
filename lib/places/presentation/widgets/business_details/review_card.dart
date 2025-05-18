@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:turbo/reviews/review_repository/models/review.dart';
+import 'package:core/core.dart';
 import 'package:intl/intl.dart';
-import 'package:animate_do/animate_do.dart';
 
 class ReviewCard extends StatelessWidget {
   final Review review;
