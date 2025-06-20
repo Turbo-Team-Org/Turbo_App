@@ -40,6 +40,13 @@ import '../../reviews/state_management/cubit/review_cubit.dart';
 import '../utils/app_preferences.dart';
 import 'package:turbo/app/core/theme/theme_cubit.dart';
 import 'package:core/src/core.dart';
+import 'package:turbo/app/cache/core/cache_manager.dart';
+import 'package:turbo/app/cache/data/repositories/categories_cache_repository.dart';
+import 'package:turbo/app/cache/domain/use_cases/sync_cache_use_case.dart';
+import 'package:turbo/app/cache/presentation/cubit/sync_cubit.dart';
+import 'package:turbo/app/cache/data/repositories/places_cache_repository.dart';
+import 'package:turbo/app/cache/data/repositories/events_cache_repository.dart';
+import 'package:turbo/app/cache/data/repositories/favorites_cache_repository.dart';
 
 ///The init order of dependencies is Service/ Repository/ Use Cases (Module)/ State Managament(Cubit or Bloc)
 
@@ -52,6 +59,11 @@ FutureOr<void> initDependencies(GetIt sl) async {
 
   ///Initializing core package
   await initCoreDependencies(firebaseApp: firebaseInstance, sl: sl);
+
+  ///Initializing cache system
+  final cacheManager = CacheManager();
+  await cacheManager.initialize();
+  sl.registerSingleton<CacheManager>(cacheManager);
 
   sl
     ..registerLazySingleton<NotificationService>(
@@ -186,6 +198,42 @@ FutureOr<void> initDependencies(GetIt sl) async {
         getCategoryByIdUseCase: sl<GetCategoryByIdUseCase>(),
         getPlacesByCategoryUseCase: sl<GetPlacesByCategoryUseCase>(),
       ),
+    )
+    ..registerLazySingleton<CategoriesCacheRepository>(
+      () => CategoriesCacheRepository(
+        cacheManager: sl<CacheManager>(),
+        networkRepository: sl<CategoryRepository>(),
+      ),
+    )
+    ..registerLazySingleton<PlacesCacheRepository>(
+      () => PlacesCacheRepository(
+        cacheManager: sl<CacheManager>(),
+        networkRepository: sl<PlaceRepository>(),
+      ),
+    )
+    ..registerLazySingleton<EventsCacheRepository>(
+      () => EventsCacheRepository(
+        cacheManager: sl<CacheManager>(),
+        networkRepository: sl<EventRepository>(),
+      ),
+    )
+    ..registerLazySingleton<FavoritesCacheRepository>(
+      () => FavoritesCacheRepository(
+        cacheManager: sl<CacheManager>(),
+        networkRepository: sl<FavoriteRepository>(),
+      ),
+    )
+    ..registerLazySingleton<SyncCacheUseCase>(
+      () => SyncCacheUseCase(
+        cacheManager: sl<CacheManager>(),
+        categoriesRepository: sl<CategoriesCacheRepository>(),
+        placesRepository: sl<PlacesCacheRepository>(),
+        eventsRepository: sl<EventsCacheRepository>(),
+        favoritesRepository: sl<FavoritesCacheRepository>(),
+      ),
+    )
+    ..registerLazySingleton<SyncCubit>(
+      () => SyncCubit(syncCacheUseCase: sl<SyncCacheUseCase>()),
     )
     ..registerLazySingleton<ImageManagementRepository>(
       () => ImageManagementRepositoryImpl(),

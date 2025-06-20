@@ -14,6 +14,7 @@ import 'package:turbo/categories/state_management/category_cubit.dart';
 import 'package:turbo/location/state_management/location_bloc/cubit/location_cubit.dart';
 import 'package:turbo/places/state_management/place_bloc/cubit/place_cubit.dart';
 import 'package:turbo/events/state_management/event_bloc/cubit/event_cubit.dart';
+import 'package:turbo/app/cache/presentation/cubit/sync_cubit.dart';
 
 import '../../../boostrap.dart';
 import '../../../favorites/state_management/cubit/favorite_cubit.dart';
@@ -39,11 +40,12 @@ class MyApp extends StatelessWidget {
         BlocProvider.value(value: sl<ThemeCubit>()),
         BlocProvider.value(value: sl<CategoryCubit>()),
         BlocProvider.value(value: sl<ImageManagementCubit>()),
+        BlocProvider.value(value: sl<SyncCubit>()),
       ],
       child: BlocListener<AuthCubit, AuthCubitState>(
         listenWhen: (previous, current) => previous != current,
         listener: (context, state) {
-          print("🚀 MyApp - AuthCubit cambió de estado: $state");
+          print("MyApp - AuthCubit cambió de estado: $state");
         },
         child: const AppView(),
       ),
@@ -56,9 +58,9 @@ class AppView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("🚀 AppView - Construyendo AppView");
+    print("AppView - Construyendo AppView");
     final authCubit = context.read<AuthCubit>();
-    print("🚀 AppView - Estado actual de AuthCubit: ${authCubit.state}");
+    print("AppView - Estado actual de AuthCubit: ${authCubit.state}");
 
     final appRouter = AppRouter(authGuard: AuthGuard(authCubit));
 
@@ -79,7 +81,7 @@ class AppView extends StatelessWidget {
             navigatorObservers: () => [_NavigationObserver()],
           ),
           builder: (context, child) {
-            print("🚀 AppView - Builder llamado");
+            print("AppView - Builder llamado");
             return child ?? const SizedBox();
           },
         );
@@ -93,7 +95,7 @@ class _NavigationObserver extends NavigatorObserver {
   @override
   void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
     print(
-      '🧭 Navegación: Pushed ${route.settings.name} (from: ${previousRoute?.settings.name})',
+      'Navegación: Pushed ${route.settings.name} (from: ${previousRoute?.settings.name})',
     );
     super.didPush(route, previousRoute);
   }
@@ -101,7 +103,7 @@ class _NavigationObserver extends NavigatorObserver {
   @override
   void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
     print(
-      '🧭 Navegación: Popped ${route.settings.name} (to: ${previousRoute?.settings.name})',
+      'Navegación: Popped ${route.settings.name} (to: ${previousRoute?.settings.name})',
     );
     super.didPop(route, previousRoute);
   }
@@ -109,14 +111,14 @@ class _NavigationObserver extends NavigatorObserver {
   @override
   void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) {
     print(
-      '🧭 Navegación: Replaced ${oldRoute?.settings.name} → ${newRoute?.settings.name}',
+      'Navegación: Replaced ${oldRoute?.settings.name} → ${newRoute?.settings.name}',
     );
     super.didReplace(newRoute: newRoute, oldRoute: oldRoute);
   }
 
   @override
   void didRemove(Route<dynamic> route, Route<dynamic>? previousRoute) {
-    print('🧭 Navegación: Removed ${route.settings.name}');
+    print('Navegación: Removed ${route.settings.name}');
     super.didRemove(route, previousRoute);
   }
 }

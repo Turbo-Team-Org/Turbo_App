@@ -338,12 +338,12 @@ $PlacesInCategoryCopyWith<PlacesInCategory> get copyWith => _$PlacesInCategoryCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is PlacesInCategory&&const DeepCollectionEquality().equals(other.places, places));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PlacesInCategory&&(identical(other.places, places) || other.places == places));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(places));
+int get hashCode => Object.hash(runtimeType,places);
 
 @override
 String toString() {
@@ -375,9 +375,9 @@ class _$PlacesInCategoryCopyWithImpl<$Res>
 
 /// Create a copy of CategoryState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? places = freezed,}) {
+@pragma('vm:prefer-inline') $Res call({Object? places = null,}) {
   return _then(PlacesInCategory(
-places: freezed == places ? _self.places : places // ignore: cast_nullable_to_non_nullable
+places: null == places ? _self.places : places // ignore: cast_nullable_to_non_nullable
 as PlaceCategory,
   ));
 }

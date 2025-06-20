@@ -1,20 +1,8 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:flutter/material.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'package:turbo/app/routes/guards/authentication_guards.dart';
 import 'package:turbo/app/routes/router/app_router.gr.dart';
-import 'package:turbo/authentication/presentation/screens/aut_screens.dart';
-import 'package:turbo/categories/presentation/screens/categories_screen.dart';
-import 'package:turbo/categories/presentation/screens/category_details_screen.dart';
-import 'package:turbo/events/presentation/screens/events_screen.dart';
-
-import '../../../authentication/presentation/screens/splash_screen.dart';
-import '../../../favorites/presentation/screens/favorite_screen.dart';
-import '../../../places/presentation/screens/business_detail.dart';
-import '../../../places/presentation/screens/feed_screen.dart';
-import '../../../places/presentation/screens/places_showcase_screen.dart';
-import '../../../users/presentation/screens/profile_screen.dart';
+import '../../presentation/screens/turbo_splash_screen.dart';
 
 @AutoRouterConfig(replaceInRouteName: 'Screen|Page,Route')
 class AppRouter extends RootStackRouter {
@@ -27,7 +15,7 @@ class AppRouter extends RootStackRouter {
 
   @override
   List<AutoRoute> get routes => [
-    AutoRoute(page: SplashRoute.page, path: '/'),
+    AutoRoute(page: TurboSplashRoute.page, path: '/'),
     AutoRoute(page: SignUpRoute.page, path: '/sign-up'),
     AutoRoute(page: SignInRoute.page, path: '/sign-in'),
 
