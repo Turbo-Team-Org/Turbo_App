@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:animate_do/animate_do.dart';
@@ -8,12 +9,9 @@ import 'package:turbo/places/presentation/widgets/place_card.dart';
 
 @RoutePage()
 class CategoryDetailsScreen extends StatelessWidget {
-  final String categoryId;
+  final Category category;
 
-  const CategoryDetailsScreen({
-    super.key,
-    @PathParam('categoryId') required this.categoryId,
-  });
+  const CategoryDetailsScreen({super.key, required this.category});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +20,6 @@ class CategoryDetailsScreen extends StatelessWidget {
         switch (categoryState) {
           case PlacesInCategory():
             final places = categoryState.places;
-            final category = places.categories;
 
             return Scaffold(
               body: NestedScrollView(
@@ -89,7 +86,8 @@ class CategoryDetailsScreen extends StatelessWidget {
                 body: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (category.description!.isNotEmpty)
+                    if (category.description != null &&
+                        category.description!.isNotEmpty)
                       FadeInUp(
                         duration: const Duration(milliseconds: 500),
                         child: Padding(
@@ -117,7 +115,7 @@ class CategoryDetailsScreen extends StatelessWidget {
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            '${places.places.length} lugares',
+                            '${places.length} lugares',
                             style: Theme.of(context).textTheme.titleMedium
                                 ?.copyWith(fontWeight: FontWeight.bold),
                           ),
@@ -126,7 +124,7 @@ class CategoryDetailsScreen extends StatelessWidget {
                     ),
                     Expanded(
                       child:
-                          places.places.isEmpty
+                          places.isEmpty
                               ? Center(
                                 child: FadeIn(
                                   duration: const Duration(milliseconds: 500),
@@ -160,9 +158,9 @@ class CategoryDetailsScreen extends StatelessWidget {
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 16,
                                 ),
-                                itemCount: places.places.length,
+                                itemCount: places.length,
                                 itemBuilder: (context, index) {
-                                  final place = places.places[index];
+                                  final place = places[index];
                                   return FadeInLeft(
                                     duration: Duration(
                                       milliseconds: 300 + (index * 100),

@@ -22,6 +22,7 @@ import '../widgets/business_details/business_header.dart';
 import '../widgets/business_details/description_section.dart';
 import '../widgets/business_details/offer_section.dart';
 import '../widgets/business_details/review_section.dart';
+import 'package:turbo/app/routes/router/app_router.gr.dart';
 
 @RoutePage()
 class BusinessDetailsScreen extends StatefulWidget {
@@ -457,7 +458,7 @@ class BottomActionBar extends StatelessWidget {
                   label: const Text('Llamar'),
                   onPressed: onCall,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    backgroundColor: Colors.grey.shade600,
                     foregroundColor: Colors.white,
                     elevation: 0,
                     padding: const EdgeInsets.symmetric(vertical: 12),
@@ -467,12 +468,41 @@ class BottomActionBar extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 8),
               Expanded(
                 child: ElevatedButton.icon(
                   icon: const Icon(Icons.directions, size: 18),
                   label: const Text('Ir'),
                   onPressed: onNavigate,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.grey.shade600,
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: ElevatedButton.icon(
+                  icon: const Icon(Icons.calendar_today, size: 18),
+                  label: const Text('Reservar'),
+                  onPressed: () {
+                    // Navegar a la pantalla de reservas
+                    context.router.push(
+                      BookingRoute(
+                        placeId: place.id,
+                        placeName: place.name,
+                        placeImage:
+                            place.imageUrls.isNotEmpty
+                                ? place.imageUrls.first
+                                : null,
+                      ),
+                    );
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Theme.of(context).colorScheme.primary,
                     foregroundColor: Colors.white,

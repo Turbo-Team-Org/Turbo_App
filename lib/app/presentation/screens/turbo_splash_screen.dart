@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:turbo/app/cache/presentation/cubit/sync_cubit.dart';
-import 'package:turbo/app/core/theme/turbo_design_system.dart';
+
 import 'package:turbo/app/routes/router/app_router.gr.dart';
 
 @RoutePage()
@@ -101,7 +101,7 @@ class _TurboSplashScreenState extends State<TurboSplashScreen>
         },
         child: Container(
           decoration: const BoxDecoration(
-            color: TurboDesignSystem.primary, // Rojo sólido como ROCKY
+            color: Color(0xFFE53E3E), // Rojo sólido como ROCKY
           ),
           child: SafeArea(
             child: AnimatedBuilder(

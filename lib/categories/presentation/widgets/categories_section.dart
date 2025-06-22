@@ -59,10 +59,15 @@ class CategoriesSection extends StatelessWidget {
                         width: 160,
                         child: CategoryCard(
                           category: category,
-                          onTap:
-                              () => context.router.push(
-                                CategoryDetailsRoute(categoryId: category.id),
-                              ),
+                          onTap: () {
+                            // Cargar los lugares de la categoría y navegar
+                            context.read<CategoryCubit>().getPlacesByCategory(
+                              categoryId: category.id,
+                            );
+                            context.router.push(
+                              CategoryDetailsRoute(category: category),
+                            );
+                          },
                         ),
                       );
                     },

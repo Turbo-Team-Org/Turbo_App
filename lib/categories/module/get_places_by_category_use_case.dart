@@ -1,14 +1,17 @@
 import 'package:core/core.dart';
 
 class GetPlacesByCategoryUseCase {
-  final CategoryRepository _categoryRepository;
+  final PlaceCategoryRepository _placeCategoryRepository;
 
-  GetPlacesByCategoryUseCase({required CategoryRepository categoryRepository})
-    : _categoryRepository = categoryRepository;
+  GetPlacesByCategoryUseCase({
+    required PlaceCategoryRepository placeCategoryRepository,
+  }) : _placeCategoryRepository = placeCategoryRepository;
 
-  Future<PlaceCategory> call(String categoryId) async {
-    final places = await _categoryRepository.getPlacesByCategory(categoryId);
-    final category = await _categoryRepository.getCategoryById(categoryId);
-    return PlaceCategory(places: places, categories: category!);
+  Future<List<Place>> call(String categoryId) async {
+    final places = await _placeCategoryRepository.getPlacesInCategory(
+      categoryId,
+    );
+
+    return places;
   }
 }

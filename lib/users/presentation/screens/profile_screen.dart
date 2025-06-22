@@ -5,7 +5,6 @@ import 'package:turbo/app/routes/router/app_router.gr.dart';
 import 'package:turbo/authentication/state_management/auth_cubit/cubit/auth_cubit_cubit.dart';
 import 'package:turbo/authentication/state_management/sign_out_cubit/cubit/sign_out_cubit.dart';
 import 'package:turbo/places/presentation/widgets/feed_widgets.dart';
-import 'package:turbo/mock_data/sample_data_loader.dart';
 import 'package:turbo/mock_data/data_loader_manager.dart';
 
 import '../../../app/view/widgets/global_widgets.dart';
@@ -191,36 +190,123 @@ class ProfileScreen extends StatelessWidget {
                           //   context.pushRoute(const EditProfileRoute());
                         },
                       ),
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 20),
 
-                      ListTile(
-                        leading: const Icon(
-                          Icons.dark_mode,
-                          color: Colors.black,
+                      // Sección de opciones del perfil
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.1),
+                              spreadRadius: 1,
+                              blurRadius: 10,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
                         ),
-                        title: const Text(
-                          "Modo Oscuro",
-                          style: TextStyle(color: Colors.black),
-                        ),
-                        trailing: Switch(
-                          activeColor: Colors.red,
-                          value: true,
-                          // context.read<ThemeCubit>().isDarkMode,
-                          onChanged: (value) {
-                            //  context.read<ThemeCubit>().toggleTheme();
-                          },
-                        ),
-                      ),
+                        child: Column(
+                          children: [
+                            ListTile(
+                              leading: Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: Colors.red.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: const Icon(
+                                  Icons.calendar_today,
+                                  color: Colors.red,
+                                  size: 20,
+                                ),
+                              ),
+                              title: const Text(
+                                "Mis Reservas",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              subtitle: const Text(
+                                "Ver y gestionar tus reservaciones",
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 12,
+                                ),
+                              ),
+                              trailing: const Icon(
+                                Icons.arrow_forward_ios,
+                                color: Colors.grey,
+                                size: 16,
+                              ),
+                              onTap: () {
+                                context.router.push(
+                                  const MyReservationsRoute(),
+                                );
+                              },
+                            ),
 
-                      ListTile(
-                        leading: const Icon(Icons.logout, color: Colors.red),
-                        title: const Text(
-                          "Cerrar Sesión",
-                          style: TextStyle(color: Colors.red),
+                            const Divider(height: 1, indent: 16, endIndent: 16),
+
+                            ListTile(
+                              leading: Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: Colors.blue.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: const Icon(
+                                  Icons.dark_mode,
+                                  color: Colors.blue,
+                                  size: 20,
+                                ),
+                              ),
+                              title: const Text(
+                                "Modo Oscuro",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              trailing: Switch(
+                                activeColor: Colors.red,
+                                value: true,
+                                // context.read<ThemeCubit>().isDarkMode,
+                                onChanged: (value) {
+                                  //  context.read<ThemeCubit>().toggleTheme();
+                                },
+                              ),
+                            ),
+
+                            const Divider(height: 1, indent: 16, endIndent: 16),
+
+                            ListTile(
+                              leading: Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: Colors.red.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: const Icon(
+                                  Icons.logout,
+                                  color: Colors.red,
+                                  size: 20,
+                                ),
+                              ),
+                              title: const Text(
+                                "Cerrar Sesión",
+                                style: TextStyle(
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              onTap: () {
+                                context.read<SignOutCubit>().signOut();
+                              },
+                            ),
+                          ],
                         ),
-                        onTap: () {
-                          context.read<SignOutCubit>().signOut();
-                        },
                       ),
                     ],
                   ),

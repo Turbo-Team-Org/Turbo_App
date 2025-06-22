@@ -47,6 +47,7 @@ import 'package:turbo/app/cache/presentation/cubit/sync_cubit.dart';
 import 'package:turbo/app/cache/data/repositories/places_cache_repository.dart';
 import 'package:turbo/app/cache/data/repositories/events_cache_repository.dart';
 import 'package:turbo/app/cache/data/repositories/favorites_cache_repository.dart';
+import 'package:turbo/reservations/module/reservations_module.dart';
 
 ///The init order of dependencies is Service/ Repository/ Use Cases (Module)/ State Managament(Cubit or Bloc)
 
@@ -184,7 +185,7 @@ FutureOr<void> initDependencies(GetIt sl) async {
     )
     ..registerLazySingleton<GetPlacesByCategoryUseCase>(
       () => GetPlacesByCategoryUseCase(
-        categoryRepository: sl<CategoryRepository>(),
+        placeCategoryRepository: sl<PlaceCategoryRepository>(),
       ),
     )
     ..registerLazySingleton<UpdatePlaceCategoriesUseCase>(
@@ -241,4 +242,7 @@ FutureOr<void> initDependencies(GetIt sl) async {
     ..registerLazySingleton(
       () => ImageManagementCubit(repository: sl<ImageManagementRepository>()),
     );
+
+  ///Initializing reservations module
+  ReservationsModule.setup();
 }

@@ -19,7 +19,7 @@ class CategoriesScreen extends StatelessWidget {
             case SelectedCategory():
               // Navegar a los detalles cuando se selecciona una categoría
               context.router.push(
-                CategoryDetailsRoute(categoryId: state.category.id),
+                CategoryDetailsRoute(category: state.category),
               );
             case CategoryError():
               final message = state.message;
@@ -43,8 +43,11 @@ class CategoriesScreen extends StatelessWidget {
               return CategoryGrid(
                 categories: categories,
                 onCategoryTap: (category) {
-                  // Seleccionar la categoría y cargar sus lugares
-                  context.read<CategoryCubit>().loadCategoryById(category.id);
+                  // Cargar los lugares de la categoría y navegar
+                  context.read<CategoryCubit>().getPlacesByCategory(
+                    categoryId: category.id,
+                  );
+                  context.router.push(CategoryDetailsRoute(category: category));
                 },
               );
             case CategoryError():

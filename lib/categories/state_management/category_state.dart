@@ -9,7 +9,6 @@ sealed class CategoryState with _$CategoryState {
   const factory CategoryState.error(String message) = CategoryError;
   const factory CategoryState.selectedCategory({required Category category}) =
       SelectedCategory;
-  const factory CategoryState.placesInCategory({
-    required PlaceCategory places,
-  }) = PlacesInCategory;
+  const factory CategoryState.placesInCategory({required List<Place> places}) =
+      PlacesInCategory;
 }

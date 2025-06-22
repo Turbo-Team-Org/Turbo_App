@@ -16,6 +16,7 @@ import 'package:core/core.dart';
 import 'package:turbo/places/presentation/screens/business_detail.dart';
 import 'package:turbo/places/state_management/place_bloc/cubit/place_cubit.dart';
 import 'package:turbo/events/presentation/widgets/welcome_events_dialog.dart';
+import 'package:turbo/reservations/presentation/widgets/quick_reservations_widget.dart';
 import 'package:intl/intl.dart';
 
 const _lastWelcomeDialogShownDateKey = 'last_welcome_dialog_shown_date';
@@ -301,6 +302,7 @@ class _FeedScreenState extends State<FeedScreen> with TickerProviderStateMixin {
                               _buildWelcomeSection(),
                               _buildSearchBar(),
                               _buildCategoryTabs(),
+                              const QuickReservationsWidget(),
                               _buildPromoSection(),
                             ],
                           ),

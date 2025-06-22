@@ -15,6 +15,9 @@ import 'package:turbo/location/state_management/location_bloc/cubit/location_cub
 import 'package:turbo/places/state_management/place_bloc/cubit/place_cubit.dart';
 import 'package:turbo/events/state_management/event_bloc/cubit/event_cubit.dart';
 import 'package:turbo/app/cache/presentation/cubit/sync_cubit.dart';
+import 'package:turbo/reservations/state_management/booking_cubit/booking_cubit.dart';
+import 'package:turbo/reservations/state_management/booking_form_cubit/booking_form_cubit.dart';
+import 'package:turbo/reservations/state_management/my_reservations_cubit/my_reservations_cubit.dart';
 
 import '../../../boostrap.dart';
 import '../../../favorites/state_management/cubit/favorite_cubit.dart';
@@ -41,6 +44,11 @@ class MyApp extends StatelessWidget {
         BlocProvider.value(value: sl<CategoryCubit>()),
         BlocProvider.value(value: sl<ImageManagementCubit>()),
         BlocProvider.value(value: sl<SyncCubit>()),
+
+        // Reservations BlocProviders
+        BlocProvider(create: (context) => sl<BookingCubit>()),
+        BlocProvider(create: (context) => sl<BookingFormCubit>()),
+        BlocProvider(create: (context) => sl<MyReservationsCubit>()),
       ],
       child: BlocListener<AuthCubit, AuthCubitState>(
         listenWhen: (previous, current) => previous != current,

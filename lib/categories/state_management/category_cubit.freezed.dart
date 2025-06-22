@@ -323,10 +323,16 @@ $CategoryCopyWith<$Res> get category {
 
 
 class PlacesInCategory implements CategoryState {
-  const PlacesInCategory({required this.places});
+  const PlacesInCategory({required final  List<Place> places}): _places = places;
   
 
- final  PlaceCategory places;
+ final  List<Place> _places;
+ List<Place> get places {
+  if (_places is EqualUnmodifiableListView) return _places;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_places);
+}
+
 
 /// Create a copy of CategoryState
 /// with the given fields replaced by the non-null parameter values.
@@ -338,12 +344,12 @@ $PlacesInCategoryCopyWith<PlacesInCategory> get copyWith => _$PlacesInCategoryCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is PlacesInCategory&&(identical(other.places, places) || other.places == places));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PlacesInCategory&&const DeepCollectionEquality().equals(other._places, _places));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,places);
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_places));
 
 @override
 String toString() {
@@ -358,7 +364,7 @@ abstract mixin class $PlacesInCategoryCopyWith<$Res> implements $CategoryStateCo
   factory $PlacesInCategoryCopyWith(PlacesInCategory value, $Res Function(PlacesInCategory) _then) = _$PlacesInCategoryCopyWithImpl;
 @useResult
 $Res call({
- PlaceCategory places
+ List<Place> places
 });
 
 
@@ -377,8 +383,8 @@ class _$PlacesInCategoryCopyWithImpl<$Res>
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') $Res call({Object? places = null,}) {
   return _then(PlacesInCategory(
-places: null == places ? _self.places : places // ignore: cast_nullable_to_non_nullable
-as PlaceCategory,
+places: null == places ? _self._places : places // ignore: cast_nullable_to_non_nullable
+as List<Place>,
   ));
 }
 

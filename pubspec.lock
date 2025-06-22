@@ -261,8 +261,8 @@ packages:
     dependency: "direct main"
     description:
       path: core
-      ref: "85ce660f2a62ca358fde77afbb252a0098ad2ffe"
-      resolved-ref: "85ce660f2a62ca358fde77afbb252a0098ad2ffe"
+      ref: "088d013aa53a11f76d7c36987790fb874f7646d9"
+      resolved-ref: "088d013aa53a11f76d7c36987790fb874f7646d9"
       url: "git@github.com:Turbo-Team-Org/Turbo_Core.git"
     source: git
     version: "0.1.0+1"
