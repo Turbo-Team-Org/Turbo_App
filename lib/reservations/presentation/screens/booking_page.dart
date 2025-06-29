@@ -8,6 +8,7 @@ import 'package:turbo/reservations/state_management/booking_cubit/booking_state.
 import 'package:turbo/reservations/presentation/widgets/time_slot_card.dart';
 import 'package:turbo/reservations/presentation/widgets/booking_calendar.dart';
 import 'package:turbo/app/core/theme/app_themes.dart';
+import 'package:turbo/app/routes/router/app_router.gr.dart';
 
 @RoutePage()
 class BookingPage extends StatefulWidget {
@@ -294,9 +295,14 @@ class _BookingPageState extends State<BookingPage> {
   }
 
   void _continueToForm(ReservationTimeSlot slot) {
-    // Navegar al formulario de reserva
-    context.router.pushPath(
-      '/booking-form?placeId=${widget.placeId}&placeName=${widget.placeName}&selectedDate=${selectedDate.toIso8601String()}',
+    // Navegar al formulario de reserva usando routing tipado
+    context.router.push(
+      BookingFormRoute(
+        placeId: widget.placeId,
+        placeName: widget.placeName,
+        selectedDate: selectedDate,
+        selectedSlot: slot,
+      ),
     );
   }
 }
