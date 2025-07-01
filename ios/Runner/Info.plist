@@ -89,5 +89,8 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<!-- Google Maps API Key para iOS -->
+	<key>GoogleMapsAPIKey</key>
+	<string>AIzaSyBxWmQAmpbY7yZO4KHk6rPYbZuNmohtv6o</string>
 </dict>
 </plist>

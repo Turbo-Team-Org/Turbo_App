@@ -29,6 +29,7 @@ import 'package:turbo/location/module/request_location_permission_use_case.dart'
 import 'package:turbo/location/state_management/location_bloc/cubit/location_cubit.dart';
 import 'package:turbo/places/module/get_places_use_case.dart';
 import 'package:turbo/places/state_management/place_bloc/cubit/place_cubit.dart';
+import 'package:turbo/places/state_management/places_search_cubit.dart';
 import '../../authentication/module/sign_with_google_use_case.dart';
 import '../../authentication/state_management/sign_in_cubit/cubit/sign_in_cubit.dart';
 import '../../favorites/module/get_favorites_use_case.dart';
@@ -122,6 +123,7 @@ FutureOr<void> initDependencies(GetIt sl) async {
         getPlacesByCategoryUseCase: sl<GetPlacesByCategoryUseCase>(),
       ),
     )
+    ..registerFactory<PlacesSearchCubit>(() => PlacesSearchCubit())
     ..registerLazySingleton<GetAllReviewsUseCase>(
       () => GetAllReviewsUseCase(reviewRepository: sl<ReviewRepository>()),
     )

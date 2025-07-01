@@ -17,6 +17,7 @@ import 'package:turbo/places/presentation/screens/business_detail.dart';
 import 'package:turbo/places/state_management/place_bloc/cubit/place_cubit.dart';
 import 'package:turbo/events/presentation/widgets/welcome_events_dialog.dart';
 import 'package:turbo/reservations/presentation/widgets/quick_reservations_widget.dart';
+import 'package:turbo/app/routes/router/app_router.gr.dart';
 import 'package:intl/intl.dart';
 
 const _lastWelcomeDialogShownDateKey = 'last_welcome_dialog_shown_date';
@@ -185,6 +186,31 @@ class _FeedScreenState extends State<FeedScreen> with TickerProviderStateMixin {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('location_permission_requested', true);
     _locationPermissionRequested = true;
+  }
+
+  void _onTabTapped(int index, List<Category> categories) {
+    // Efecto háptico
+    HapticFeedback.mediumImpact();
+
+    if (index == 0) {
+      // Tab "Todos" - solo hacer scroll hacia arriba para mostrar todos los lugares
+      _scrollController.animateTo(
+        300, // Posición después del header
+        duration: const Duration(milliseconds: 800),
+        curve: Curves.easeOutQuint,
+      );
+    } else {
+      // Navegar a la pantalla de búsqueda con la categoría seleccionada
+      final selectedCategory =
+          categories[index - 1]; // -1 porque el primer tab es "Todos"
+
+      context.router.push(
+        PlacesSearchRoute(
+          categoryId: selectedCategory.id,
+          categoryName: selectedCategory.name,
+        ),
+      );
+    }
   }
 
   Future<void> _showWelcomeDialogIfNeeded() async {
@@ -641,15 +667,43 @@ class _FeedScreenState extends State<FeedScreen> with TickerProviderStateMixin {
             // Efecto haptico
             HapticFeedback.mediumImpact();
 
-            // Si es una categoría válida, cambiar a esa pestaña
-            if (index < _tabController.length) {
-              _tabController.animateTo(index);
-              // Scroll hacia arriba para mostrar los resultados
-              _scrollController.animateTo(
-                250, // Posición aproximada después del header
-                duration: const Duration(milliseconds: 800),
-                curve: Curves.easeOutQuint,
-              );
+            // Navegar a búsqueda con filtro específico según la categoría
+            String? searchQuery;
+            switch (index) {
+              case 0: // Popular
+                searchQuery = 'popular';
+                break;
+              case 1: // Favoritos
+                context.router.pushPath('/home/favorites');
+                return;
+              case 2: // Trending
+                searchQuery = 'trending';
+                break;
+              case 3: // Buen Precio
+                searchQuery = 'precio';
+                break;
+              case 4: // Top Rated
+                searchQuery = 'rating';
+                break;
+              case 5: // Reseñas
+                searchQuery = 'reviews';
+                break;
+              case 6: // Comida
+                searchQuery = 'restaurantes';
+                break;
+              case 7: // Bebidas
+                searchQuery = 'bares';
+                break;
+              case 8: // Ofertas
+                searchQuery = 'ofertas';
+                break;
+              case 9: // Cerca
+                searchQuery = 'cerca';
+                break;
+            }
+
+            if (searchQuery != null) {
+              context.router.push(PlacesSearchRoute(initialQuery: searchQuery));
             }
           },
           splashColor: color.withOpacity(0.4),
@@ -723,24 +777,8 @@ class _FeedScreenState extends State<FeedScreen> with TickerProviderStateMixin {
             // Efecto haptico sutil
             HapticFeedback.lightImpact();
 
-            // Implementar búsqueda
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  'Búsqueda no implementada aún',
-                  style: AppTextStyles.bodyMedium(
-                    context,
-                  ).copyWith(color: Colors.white),
-                ),
-                backgroundColor: AppColors.primaryDarkRed,
-                duration: const Duration(seconds: 2),
-                behavior: SnackBarBehavior.floating,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                margin: const EdgeInsets.all(16),
-              ),
-            );
+            // Navegar a la pantalla de búsqueda
+            context.router.push(PlacesSearchRoute());
           },
           onTapCancel: () {
             _searchAnimationController.reverse();
@@ -940,6 +978,7 @@ class _FeedScreenState extends State<FeedScreen> with TickerProviderStateMixin {
                     dividerColor: Colors.transparent,
                     labelColor: Colors.red,
                     unselectedLabelColor: Colors.grey,
+                    onTap: (index) => _onTabTapped(index, state.categories),
                     tabs: [
                       const Tab(text: 'Todos'),
                       ...state.categories.map(

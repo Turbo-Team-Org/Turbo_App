@@ -30,7 +30,13 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-                    <meta-data
+        
+        <!-- Google Maps API Key para Android -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyA0VnO4AEfcS_NbCYMHR9KBZOn6UWEFynM"/>
+            
+        <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="high_importance_channel" />
         <meta-data

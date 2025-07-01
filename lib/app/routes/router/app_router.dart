@@ -21,6 +21,9 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: BusinessDetailsRoute.page, path: '/business-detail'),
     AutoRoute(page: PlacesShowcaseRoute.page, path: '/places-showcase'),
 
+    // Rutas de lugares y búsqueda
+    AutoRoute(page: PlacesSearchRoute.page, path: '/places-search'),
+
     // Rutas de reservaciones
     AutoRoute(page: BookingRoute.page, path: '/booking'),
     AutoRoute(page: BookingFormRoute.page, path: '/booking-form'),
