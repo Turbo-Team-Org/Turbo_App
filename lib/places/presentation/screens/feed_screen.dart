@@ -18,6 +18,7 @@ import 'package:turbo/places/state_management/place_bloc/cubit/place_cubit.dart'
 import 'package:turbo/events/presentation/widgets/welcome_events_dialog.dart';
 import 'package:turbo/reservations/presentation/widgets/quick_reservations_widget.dart';
 import 'package:turbo/app/routes/router/app_router.gr.dart';
+import 'package:turbo/places/presentation/widgets/animated_search_bar.dart';
 import 'package:intl/intl.dart';
 
 const _lastWelcomeDialogShownDateKey = 'last_welcome_dialog_shown_date';
@@ -39,10 +40,6 @@ class _FeedScreenState extends State<FeedScreen> with TickerProviderStateMixin {
 
   // Controlador para la animación de pulsación en las tarjetas
   late Map<String, AnimationController> _cardAnimationControllers = {};
-
-  // Controlador para la animación del search bar
-  late AnimationController _searchAnimationController;
-  late Animation<double> _searchScaleAnimation;
 
   // Ubicación actual del usuario
   LocationData? _currentLocation;
@@ -77,26 +74,14 @@ class _FeedScreenState extends State<FeedScreen> with TickerProviderStateMixin {
       }
     });
 
-    // Configurar animación para la barra de búsqueda
-    _searchAnimationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 150),
-    );
-    _searchScaleAnimation = Tween<double>(begin: 1.0, end: 0.98).animate(
-      CurvedAnimation(
-        parent: _searchAnimationController,
-        curve: Curves.easeInOut,
-      ),
-    );
-
-    // Añadir listener para detectar scroll
-    _scrollController.addListener(_onScroll);
-
     // Verificar permisos de localización al iniciar
     _checkLocationPermission();
 
     // Mostrar el diálogo de bienvenida después de un breve retardo
     _showWelcomeDialogIfNeeded();
+
+    // Añadir listener para detectar scroll
+    _scrollController.addListener(_onScroll);
   }
 
   @override
@@ -104,9 +89,6 @@ class _FeedScreenState extends State<FeedScreen> with TickerProviderStateMixin {
     _tabController.dispose();
     _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
-
-    // Disponer del controlador de animación de la barra de búsqueda
-    _searchAnimationController.dispose();
 
     // Disponer de todos los controladores de animación de tarjetas
     for (var controller in _cardAnimationControllers.values) {
@@ -326,7 +308,7 @@ class _FeedScreenState extends State<FeedScreen> with TickerProviderStateMixin {
                           child: Column(
                             children: [
                               _buildWelcomeSection(),
-                              _buildSearchBar(),
+                              const AnimatedSearchBar(),
                               _buildCategoryTabs(),
                               const QuickReservationsWidget(),
                               _buildPromoSection(),
@@ -755,156 +737,6 @@ class _FeedScreenState extends State<FeedScreen> with TickerProviderStateMixin {
                   overflow: TextOverflow.ellipsis,
                 ),
               ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSearchBar() {
-    return FadeInUp(
-      duration: const Duration(milliseconds: 700),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 15, 20, 20),
-        child: GestureDetector(
-          onTapDown: (_) {
-            _searchAnimationController.forward();
-          },
-          onTapUp: (_) {
-            _searchAnimationController.reverse();
-
-            // Efecto haptico sutil
-            HapticFeedback.lightImpact();
-
-            // Navegar a la pantalla de búsqueda
-            context.router.push(PlacesSearchRoute());
-          },
-          onTapCancel: () {
-            _searchAnimationController.reverse();
-          },
-          child: AnimatedBuilder(
-            animation: _searchScaleAnimation,
-            builder: (context, child) {
-              return Transform.scale(
-                scale: _searchScaleAnimation.value,
-                child: child,
-              );
-            },
-            child: Container(
-              height: 56,
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surface,
-                borderRadius: BorderRadius.circular(28),
-                boxShadow: [
-                  // Sombra principal - más pronunciada
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.12),
-                    offset: const Offset(0, 6),
-                    blurRadius: 14,
-                    spreadRadius: 0,
-                  ),
-                  // Sombra secundaria con toque de color
-                  BoxShadow(
-                    color: AppColors.primaryRed.withOpacity(0.08),
-                    offset: const Offset(0, 3),
-                    blurRadius: 20,
-                    spreadRadius: 2,
-                  ),
-                  // Sombra de brillo superior
-                  BoxShadow(
-                    color: Colors.white.withOpacity(0.9),
-                    offset: const Offset(0, -2),
-                    blurRadius: 4,
-                    spreadRadius: 0,
-                  ),
-                ],
-                // Gradiente sutil que da sensación de volumen
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [Colors.white, Theme.of(context).colorScheme.surface],
-                  stops: const [0.1, 1.0],
-                ),
-                border: Border.all(
-                  color: Colors.white.withOpacity(0.6),
-                  width: 1.2,
-                ),
-              ),
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  splashColor: AppColors.primaryRed.withOpacity(0.12),
-                  highlightColor: AppColors.primaryRed.withOpacity(0.05),
-                  borderRadius: BorderRadius.circular(28),
-                  onTap:
-                      () {}, // Vacío porque manejamos el tap en el GestureDetector
-                  child: Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Icon(
-                          Icons.search_rounded,
-                          color: AppColors.primaryRed,
-                          size: 24,
-                        ),
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          child: Text(
-                            'Buscar lugares, ofertas, etc...',
-                            style: AppTextStyles.bodyMedium(context).copyWith(
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.onSurface.withOpacity(0.6),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        margin: const EdgeInsets.only(right: 8),
-                        decoration: BoxDecoration(
-                          color: AppColors.primaryRed.withOpacity(0.08),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Material(
-                          color: Colors.transparent,
-                          shape: const CircleBorder(),
-                          clipBehavior: Clip.antiAlias,
-                          child: IconButton(
-                            icon: const Icon(
-                              Icons.mic_rounded,
-                              size: 22,
-                              color: AppColors.primaryRed,
-                            ),
-                            onPressed: () {
-                              HapticFeedback.mediumImpact();
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    'Búsqueda por voz no implementada aún',
-                                    style: AppTextStyles.bodyMedium(
-                                      context,
-                                    ).copyWith(color: Colors.white),
-                                  ),
-                                  backgroundColor: AppColors.primaryDarkRed,
-                                  duration: const Duration(seconds: 2),
-                                  behavior: SnackBarBehavior.floating,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  margin: const EdgeInsets.all(16),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
             ),
           ),
         ),
