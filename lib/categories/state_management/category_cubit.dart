@@ -50,7 +50,7 @@ class CategoryCubit extends Cubit<CategoryState> {
   Future<void> getPlacesByCategory({required String categoryId}) async {
     emit(CategoryState.loading());
     try {
-      final places = await _getPlacesByCategoryUseCase(categoryId);
+      final places = await _getPlacesByCategoryUseCase.callLegacy(categoryId);
       emit(CategoryState.placesInCategory(places: places));
     } catch (e) {
       emit(CategoryState.error(e.toString()));

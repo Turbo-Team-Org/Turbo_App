@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:core/core.dart';
-import 'package:turbo/places/state_management/places_search_cubit.dart';
+import 'package:turbo/places/state_management/place_search_cubit/places_search_cubit.dart';
 
 class PlacesMapView extends StatefulWidget {
   const PlacesMapView({super.key});

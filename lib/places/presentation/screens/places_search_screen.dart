@@ -4,9 +4,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:core/core.dart';
-import 'package:turbo/places/state_management/places_search_cubit.dart';
+import 'package:turbo/places/state_management/place_search_cubit/places_search_cubit.dart';
 import 'package:turbo/places/presentation/widgets/places_search_bar.dart';
 import 'package:turbo/places/presentation/widgets/place_compact_card.dart';
+import 'dart:math' as math;
 
 @RoutePage()
 class PlacesSearchScreen extends StatefulWidget {
@@ -33,8 +34,17 @@ class _PlacesSearchScreenState extends State<PlacesSearchScreen>
   late AnimationController _fabAnimationController;
   late Animation<double> _fabAnimation;
 
+  // Nuevos controladores para animaciones de zoom
+  late AnimationController _zoomAnimationController;
+  late Animation<double> _zoomAnimation;
+  late Animation<Offset> _slideAnimation;
+
   bool _isMapMode = true;
   double _panelPosition = 0.0;
+
+  // Estado para el lugar seleccionado
+  Place? _selectedPlace;
+  Set<Marker> _markers = {};
 
   // Posición inicial del mapa (La Habana, Cuba)
   static const CameraPosition _initialPosition = CameraPosition(
@@ -55,6 +65,27 @@ class _PlacesSearchScreenState extends State<PlacesSearchScreen>
       CurvedAnimation(parent: _fabAnimationController, curve: Curves.easeInOut),
     );
 
+    // Inicializar animaciones de zoom
+    _zoomAnimationController = AnimationController(
+      duration: const Duration(milliseconds: 800),
+      vsync: this,
+    );
+    _zoomAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _zoomAnimationController,
+        curve: Curves.easeInOut,
+      ),
+    );
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 1),
+      end: Offset.zero,
+    ).animate(
+      CurvedAnimation(
+        parent: _zoomAnimationController,
+        curve: Curves.easeOutBack,
+      ),
+    );
+
     // Inicializar búsqueda
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<PlacesSearchCubit>().initializeSearch(
@@ -67,6 +98,7 @@ class _PlacesSearchScreenState extends State<PlacesSearchScreen>
   @override
   void dispose() {
     _fabAnimationController.dispose();
+    _zoomAnimationController.dispose();
     super.dispose();
   }
 
@@ -134,6 +166,9 @@ class _PlacesSearchScreenState extends State<PlacesSearchScreen>
             if (_panelPosition > 0.3) {
               _panelController.animatePanelToPosition(0.0);
             }
+
+            // Limpiar selección al tocar el mapa
+            _clearSelection();
           },
           onCameraMove: (CameraPosition position) {
             context.read<PlacesSearchCubit>().updateMapCenter(position.target);
@@ -184,6 +219,96 @@ class _PlacesSearchScreenState extends State<PlacesSearchScreen>
             ),
           ),
         ),
+
+        // Overlay de información del lugar seleccionado
+        if (_selectedPlace != null)
+          Positioned(
+            bottom: 100,
+            left: 16,
+            right: 16,
+            child: SlideTransition(
+              position: _slideAnimation,
+              child: FadeTransition(
+                opacity: _zoomAnimation,
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        blurRadius: 8,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.location_on,
+                            color: Theme.of(context).primaryColor,
+                            size: 20,
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              _selectedPlace!.name ?? 'Lugar sin nombre',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              setState(() {
+                                _selectedPlace = null;
+                              });
+                              _zoomAnimationController.reverse();
+                            },
+                            icon: const Icon(Icons.close, size: 20),
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                          ),
+                        ],
+                      ),
+                      if (_selectedPlace!.address != null) ...[
+                        const SizedBox(height: 4),
+                        Text(
+                          _selectedPlace!.address!,
+                          style: TextStyle(
+                            color: Colors.grey.shade600,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                      if (_selectedPlace!.rating != null) ...[
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            Icon(Icons.star, color: Colors.amber, size: 16),
+                            const SizedBox(width: 4),
+                            Text(
+                              '${_selectedPlace!.rating!.toStringAsFixed(1)}',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
       ],
     );
   }
@@ -316,17 +441,43 @@ class _PlacesSearchScreenState extends State<PlacesSearchScreen>
   }
 
   Set<Marker> _createMarkersFromPlaces(List<Place> places) {
-    return places
-        .where((place) => place.latitude != null && place.longitude != null)
-        .map((place) {
-          return Marker(
-            markerId: MarkerId(place.id),
-            position: LatLng(place.latitude!, place.longitude!),
-            infoWindow: InfoWindow(title: place.name, snippet: place.address),
-            onTap: () => _selectPlace(place),
-          );
-        })
-        .toSet();
+    final markers = <Marker>{};
+
+    for (final place in places) {
+      if (place.latitude == null || place.longitude == null) continue;
+
+      final isSelected = _selectedPlace?.id == place.id;
+
+      markers.add(
+        Marker(
+          markerId: MarkerId(place.id ?? ''),
+          position: LatLng(place.latitude!, place.longitude!),
+          infoWindow: InfoWindow(
+            title: place.name ?? 'Lugar sin nombre',
+            snippet: place.address ?? '',
+          ),
+          onTap: () => _selectPlace(place),
+          // Marcador especial para el lugar seleccionado
+          icon:
+              isSelected
+                  ? BitmapDescriptor.defaultMarkerWithHue(
+                    BitmapDescriptor.hueRed,
+                  )
+                  : BitmapDescriptor.defaultMarkerWithHue(
+                    BitmapDescriptor.hueBlue,
+                  ),
+          // Hacer el marcador seleccionado más grande
+          anchor: isSelected ? const Offset(0.5, 1.0) : const Offset(0.5, 1.0),
+          // Añadir animación al marcador seleccionado
+          flat: !isSelected,
+          rotation: isSelected ? 0.0 : 0.0,
+          // Información adicional para el marcador seleccionado
+          consumeTapEvents: true,
+        ),
+      );
+    }
+
+    return markers;
   }
 
   void _updateMapMarkersAndCamera(PlacesSearchState state) {
@@ -349,25 +500,112 @@ class _PlacesSearchScreenState extends State<PlacesSearchScreen>
   }
 
   void _selectPlace(Place place) {
+    // Actualizar el estado del cubit
     context.read<PlacesSearchCubit>().selectPlace(place);
 
-    // Animar cámara al lugar seleccionado
+    // Actualizar el lugar seleccionado localmente
+    setState(() {
+      _selectedPlace = place;
+    });
+
+    // Animar cámara al lugar seleccionado con efecto de zoom suave
     if (_mapController != null &&
         place.latitude != null &&
         place.longitude != null) {
-      _mapController!.animateCamera(
-        CameraUpdate.newCameraPosition(
-          CameraPosition(
-            target: LatLng(place.latitude!, place.longitude!),
-            zoom: 16.0,
-          ),
-        ),
-      );
+      // Crear una animación de zoom más sofisticada
+      _animateToPlace(place);
     }
 
     // Cerrar panel si está muy arriba
     if (_panelPosition > 0.7) {
       _panelController.animatePanelToPosition(0.3);
+    }
+  }
+
+  /// Anima la cámara hacia un lugar específico con efectos visuales
+  void _animateToPlace(Place place) {
+    if (_mapController == null ||
+        place.latitude == null ||
+        place.longitude == null)
+      return;
+
+    final targetPosition = LatLng(place.latitude!, place.longitude!);
+
+    // Obtener la posición actual de la cámara
+    _mapController!.getVisibleRegion().then((bounds) {
+      // Calcular la distancia actual al lugar
+      final currentCenter = LatLng(
+        (bounds.northeast.latitude + bounds.southwest.latitude) / 2,
+        (bounds.northeast.longitude + bounds.southwest.longitude) / 2,
+      );
+
+      // Determinar el nivel de zoom basado en la distancia
+      final distance = _calculateDistance(currentCenter, targetPosition);
+      final zoomLevel = _calculateOptimalZoom(distance);
+
+      // Crear la animación de cámara
+      final cameraPosition = CameraPosition(
+        target: targetPosition,
+        zoom: zoomLevel,
+        tilt: 45.0, // Añadir inclinación para efecto 3D
+        bearing: 0.0,
+      );
+
+      // Ejecutar la animación con duración personalizada
+      _mapController!
+          .animateCamera(CameraUpdate.newCameraPosition(cameraPosition))
+          .then((_) {
+            // Después de la animación, mostrar información del lugar
+            _showPlaceInfo(place);
+          });
+    });
+  }
+
+  /// Calcula la distancia entre dos puntos (aproximación simple)
+  double _calculateDistance(LatLng point1, LatLng point2) {
+    // Usar una aproximación simple para evitar problemas con math
+    final latDiff = (point2.latitude - point1.latitude).abs();
+    final lonDiff = (point2.longitude - point1.longitude).abs();
+
+    // Aproximación: 1 grado ≈ 111 km
+    final latDistance = latDiff * 111000; // metros
+    final lonDistance =
+        lonDiff * 111000 * math.cos(point1.latitude * 0.0174533); // metros
+
+    return math.sqrt(latDistance * latDistance + lonDistance * lonDistance);
+  }
+
+  /// Calcula el nivel de zoom óptimo basado en la distancia
+  double _calculateOptimalZoom(double distance) {
+    if (distance < 100) return 18.0; // Muy cerca
+    if (distance < 500) return 16.0; // Cerca
+    if (distance < 2000) return 14.0; // Media distancia
+    if (distance < 5000) return 12.0; // Lejos
+    return 10.0; // Muy lejos
+  }
+
+  /// Muestra información del lugar seleccionado
+  void _showPlaceInfo(Place place) {
+    // Iniciar animación de información
+    _zoomAnimationController.forward();
+
+    // El overlay se mostrará automáticamente cuando _selectedPlace no sea null
+  }
+
+  void _clearSelection() {
+    // Actualizar el estado del cubit para limpiar la selección
+    context.read<PlacesSearchCubit>().clearSelectedPlace();
+
+    // Limpiar el lugar seleccionado localmente
+    setState(() {
+      _selectedPlace = null;
+    });
+
+    // Animar la cámara de vuelta a la posición inicial
+    if (_mapController != null) {
+      _mapController!.animateCamera(
+        CameraUpdate.newCameraPosition(_initialPosition),
+      );
     }
   }
 

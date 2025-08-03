@@ -23,8 +23,18 @@ class AuthGuard extends AutoRouteGuard {
       return;
     }
 
-    // Si no estamos seguros, esperar por el primer evento del stream
-    print("🔐 AuthGuard - Esperando cambio de estado de autenticación...");
+    if (currentState is Unauthenticated) {
+      print(
+        "🔐 AuthGuard - Usuario no autenticado, redirigiendo a login inmediatamente",
+      );
+      router.replace(SignInRoute());
+      return;
+    }
+
+    // Solo esperar por el stream si el estado es Initial
+    print(
+      "🔐 AuthGuard - Estado inicial, esperando cambio de estado de autenticación...",
+    );
     authCubit.stream.first.then((state) {
       print("🔐 AuthGuard - Nuevo estado recibido: $state");
 

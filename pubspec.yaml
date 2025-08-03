@@ -36,7 +36,7 @@ dependencies:
   core:
     git:
       url: git@github.com:Turbo-Team-Org/Turbo_Core.git
-      ref: 2737f6401aeee7538cd089888f9cc9a2cfdcd8ce
+      ref: f783792021ee4261ec136a44cd04e0dc4c625e82
       path: core
   flutter_bloc: ^9.1.0
   bloc: ^9.0.0

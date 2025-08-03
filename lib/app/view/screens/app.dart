@@ -13,7 +13,7 @@ import 'package:turbo/authentication/state_management/sign_up_cubit/cubit/sign_u
 import 'package:turbo/categories/state_management/category_cubit.dart';
 import 'package:turbo/location/state_management/location_bloc/cubit/location_cubit.dart';
 import 'package:turbo/places/state_management/place_bloc/cubit/place_cubit.dart';
-import 'package:turbo/places/state_management/places_search_cubit.dart';
+import 'package:turbo/places/state_management/place_search_cubit/places_search_cubit.dart';
 import 'package:turbo/events/state_management/event_bloc/cubit/event_cubit.dart';
 import 'package:turbo/app/cache/presentation/cubit/sync_cubit.dart';
 import 'package:turbo/reservations/state_management/booking_cubit/booking_cubit.dart';

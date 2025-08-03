@@ -44,22 +44,6 @@ class _FeedScreenState extends State<FeedScreen> with TickerProviderStateMixin {
   // Ubicación actual del usuario
   LocationData? _currentLocation;
 
-  final List<String> _categories = [
-    'Restaurantes',
-    'Bares',
-    'Hoteles',
-    'Cafeterías',
-    'Bodegones',
-    'Tiendas',
-    'Centros Recreativos',
-    'Museos',
-    'Gimnasios',
-    'Barberías',
-    'Salones de Belleza',
-
-    'Eventos de Fiestas',
-  ];
-
   @override
   void initState() {
     super.initState();

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:core/core.dart';
-import 'package:turbo/places/state_management/places_search_cubit.dart';
+import 'package:turbo/places/state_management/place_search_cubit/places_search_cubit.dart';
 import 'package:turbo/places/presentation/widgets/place_compact_card.dart';
 
 class PlacesListSlide extends StatelessWidget {

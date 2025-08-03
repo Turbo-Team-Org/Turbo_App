@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:turbo/app/image_management/data/repositories/image_management_repository_impl.dart';
 import 'package:turbo/app/image_management/domain/repositories/image_management_repository.dart';
@@ -17,7 +18,6 @@ import 'package:turbo/authentication/state_management/sign_up_cubit/cubit/sign_u
 import 'package:turbo/categories/module/get_categories_use_case.dart';
 import 'package:turbo/categories/module/get_category_by_id_use_case.dart';
 import 'package:turbo/categories/module/get_places_by_category_use_case.dart';
-import 'package:turbo/categories/module/update_place_categories_use_case.dart';
 import 'package:turbo/categories/state_management/category_cubit.dart';
 import 'package:turbo/events/module/get_events_use_case.dart';
 import 'package:turbo/events/module/get_today_events_use_case.dart';
@@ -29,7 +29,7 @@ import 'package:turbo/location/module/request_location_permission_use_case.dart'
 import 'package:turbo/location/state_management/location_bloc/cubit/location_cubit.dart';
 import 'package:turbo/places/module/get_places_use_case.dart';
 import 'package:turbo/places/state_management/place_bloc/cubit/place_cubit.dart';
-import 'package:turbo/places/state_management/places_search_cubit.dart';
+import 'package:turbo/places/state_management/place_search_cubit/places_search_cubit.dart';
 import '../../authentication/module/sign_with_google_use_case.dart';
 import '../../authentication/state_management/sign_in_cubit/cubit/sign_in_cubit.dart';
 import '../../favorites/module/get_favorites_use_case.dart';
@@ -49,6 +49,9 @@ import 'package:turbo/app/cache/data/repositories/places_cache_repository.dart';
 import 'package:turbo/app/cache/data/repositories/events_cache_repository.dart';
 import 'package:turbo/app/cache/data/repositories/favorites_cache_repository.dart';
 import 'package:turbo/reservations/module/reservations_module.dart';
+import 'package:turbo/places/module/search_places_use_case.dart';
+import 'package:turbo/places/module/get_places_by_location_use_case.dart';
+import 'package:turbo/places/module/search_nearby_places_use_case.dart';
 
 ///The init order of dependencies is Service/ Repository/ Use Cases (Module)/ State Managament(Cubit or Bloc)
 
@@ -60,7 +63,15 @@ FutureOr<void> initDependencies(GetIt sl) async {
   );
 
   ///Initializing core package
-  await initCoreDependencies(firebaseApp: firebaseInstance, sl: sl);
+  /// Determining environment
+  final environment =
+      kDebugMode ? TurboEnvironment.staging : TurboEnvironment.dev;
+  await initCoreDependencies(
+    enableDebugLogs: true,
+    // firebaseApp: firebaseInstance,
+    sl: sl,
+    environment: environment,
+  );
 
   ///Initializing cache system
   final cacheManager = CacheManager();
@@ -117,13 +128,47 @@ FutureOr<void> initDependencies(GetIt sl) async {
     ..registerLazySingleton<GetPlacesUseCase>(
       () => GetPlacesUseCase(placeRepository: sl<PlaceRepository>()),
     )
+    // Nuevos casos de uso de búsqueda
+    ..registerLazySingleton<SearchPlacesUseCase>(
+      () => SearchPlacesUseCase(
+        placeRepository: sl<PlaceRepository>(),
+        locationRepository: sl<LocationRepository>(),
+      ),
+    )
+    ..registerLazySingleton<GetPlacesByLocationUseCase>(
+      () => GetPlacesByLocationUseCase(
+        locationRepository: sl<LocationRepository>(),
+        placeRepository: sl<PlaceRepository>(),
+      ),
+    )
+    ..registerLazySingleton<SearchNearbyPlacesUseCase>(
+      () => SearchNearbyPlacesUseCase(
+        locationRepository: sl<LocationRepository>(),
+        placeRepository: sl<PlaceRepository>(),
+      ),
+    )
+    // Actualizar GetPlacesByCategoryUseCase para incluir LocationRepository
+    ..registerLazySingleton<GetPlacesByCategoryUseCase>(
+      () => GetPlacesByCategoryUseCase(
+        placeCategoryRepository: sl<PlaceCategoryRepository>(),
+        locationRepository: sl<LocationRepository>(),
+      ),
+    )
     ..registerLazySingleton<PlaceCubit>(
       () => PlaceCubit(
         getPlacesUseCase: sl<GetPlacesUseCase>(),
         getPlacesByCategoryUseCase: sl<GetPlacesByCategoryUseCase>(),
       ),
     )
-    ..registerFactory<PlacesSearchCubit>(() => PlacesSearchCubit())
+    // Actualizar PlacesSearchCubit con todos los casos de uso
+    ..registerFactory<PlacesSearchCubit>(
+      () => PlacesSearchCubit(
+        getPlacesByCategoryUseCase: sl<GetPlacesByCategoryUseCase>(),
+        searchPlacesUseCase: sl<SearchPlacesUseCase>(),
+        getPlacesByLocationUseCase: sl<GetPlacesByLocationUseCase>(),
+        searchNearbyPlacesUseCase: sl<SearchNearbyPlacesUseCase>(),
+      ),
+    )
     ..registerLazySingleton<GetAllReviewsUseCase>(
       () => GetAllReviewsUseCase(reviewRepository: sl<ReviewRepository>()),
     )
@@ -184,16 +229,6 @@ FutureOr<void> initDependencies(GetIt sl) async {
     )
     ..registerLazySingleton<GetCategoryByIdUseCase>(
       () => GetCategoryByIdUseCase(repository: sl<CategoryRepository>()),
-    )
-    ..registerLazySingleton<GetPlacesByCategoryUseCase>(
-      () => GetPlacesByCategoryUseCase(
-        placeCategoryRepository: sl<PlaceCategoryRepository>(),
-      ),
-    )
-    ..registerLazySingleton<UpdatePlaceCategoriesUseCase>(
-      () => UpdatePlaceCategoriesUseCase(
-        categoryRepository: sl<CategoryRepository>(),
-      ),
     )
     ..registerLazySingleton<CategoryCubit>(
       () => CategoryCubit(
