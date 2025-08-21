@@ -2,148 +2,87 @@ import 'package:core/core.dart';
 import 'package:turbo/app/core/use_case.dart';
 import 'package:turbo/places/module/params/search_places_params.dart';
 
-/// Caso de uso para búsqueda de lugares por texto
-/// Utiliza tanto el PlaceRepository como el LocationRepository para búsquedas comprehensivas
+/// Caso de uso para búsqueda avanzada de lugares
+/// Utiliza los nuevos métodos robustos del Core
 class SearchPlacesUseCase
     implements UseCase<Future<List<Place>>, SearchPlacesParams> {
   final PlaceRepository _placeRepository;
-  final LocationRepository _locationRepository;
 
-  SearchPlacesUseCase({
-    required PlaceRepository placeRepository,
-    required LocationRepository locationRepository,
-  }) : _placeRepository = placeRepository,
-       _locationRepository = locationRepository;
+  SearchPlacesUseCase({required PlaceRepository placeRepository})
+    : _placeRepository = placeRepository;
 
   @override
   Future<List<Place>> call(SearchPlacesParams params) async {
     try {
-      // Primero intentamos búsqueda por nombre en nuestra base de datos
-      List<Place> localResults = [];
-
-      try {
-        final placeByName = await _placeRepository.getPlaceByName(params.query);
-        localResults.add(placeByName);
-      } catch (e) {
-        // No se encontró lugar exacto por nombre, continuar con búsqueda general
-      }
-
-      // Obtener todos los lugares y filtrar por query
-      final allPlaces = await _placeRepository.getPlaces();
-
-      // Filtrar por texto (nombre, descripción, dirección)
-      final filteredPlaces =
-          allPlaces.where((place) {
-            final searchText = params.query.toLowerCase();
-            final nameMatch =
-                place.name?.toLowerCase().contains(searchText) ?? false;
-            final descriptionMatch =
-                place.description?.toLowerCase().contains(searchText) ?? false;
-            final addressMatch =
-                place.address?.toLowerCase().contains(searchText) ?? false;
-
-            return nameMatch || descriptionMatch || addressMatch;
-          }).toList();
-
-      // Combinar resultados y eliminar duplicados
-      final Set<String> seenIds = {};
-      final combinedResults = <Place>[];
-
-      for (final place in [...localResults, ...filteredPlaces]) {
-        if (!seenIds.contains(place.id)) {
-          seenIds.add(place.id!);
-          combinedResults.add(place);
-        }
-      }
-
-      // Aplicar filtros adicionales
-      List<Place> filteredResults = combinedResults;
-
-      // Filtro por categoría
-      if (params.categoryId != null) {
-        filteredResults =
-            filteredResults
-                .where((place) => place.categoryId == params.categoryId)
-                .toList();
-      }
-
-      // Filtro por rating
-      if (params.minRating != null) {
-        filteredResults =
-            filteredResults
-                .where((place) => (place.rating ?? 0) >= params.minRating!)
-                .toList();
-      }
-
-      // Filtros por precio
-      if (params.minPrice != null) {
-        filteredResults =
-            filteredResults
-                .where((place) => (place.averagePrice ?? 0) >= params.minPrice!)
-                .toList();
-      }
-
-      if (params.maxPrice != null) {
-        filteredResults =
-            filteredResults
-                .where(
-                  (place) =>
-                      (place.averagePrice ?? double.infinity) <=
-                      params.maxPrice!,
-                )
-                .toList();
-      }
-
-      // Filtro por distancia (si se proporciona ubicación)
-      if (params.location != null && params.maxDistance != null) {
-        filteredResults =
-            filteredResults.where((place) {
-              if (place.latitude == null || place.longitude == null)
-                return false;
-
-              final distance = _locationRepository.calculateDistanceHaversine(
-                lat1: params.location!.latitude,
-                lon1: params.location!.longitude,
-                lat2: place.latitude!,
-                lon2: place.longitude!,
-              );
-
-              return distance <= params.maxDistance!;
-            }).toList();
-      }
-
-      // Ordenar por relevancia (por ahora por rating)
-      filteredResults.sort((a, b) {
-        // Si tenemos ubicación, ordenar por distancia
-        if (params.location != null &&
-            a.latitude != null &&
-            a.longitude != null &&
-            b.latitude != null &&
-            b.longitude != null) {
-          final distanceA = _locationRepository.calculateDistanceHaversine(
-            lat1: params.location!.latitude,
-            lon1: params.location!.longitude,
-            lat2: a.latitude!,
-            lon2: a.longitude!,
-          );
-
-          final distanceB = _locationRepository.calculateDistanceHaversine(
-            lat1: params.location!.latitude,
-            lon1: params.location!.longitude,
-            lat2: b.latitude!,
-            lon2: b.longitude!,
-          );
-
-          return distanceA.compareTo(distanceB);
-        }
-
-        // Sino, ordenar por rating
-        return (b.rating ?? 0).compareTo(a.rating ?? 0);
-      });
-
-      return filteredResults;
+      // Usar el nuevo método de búsqueda inteligente del Core
+      return await _placeRepository.intelligentSearch(
+        params.query,
+        categoryId: params.categoryId,
+        minRating: params.minRating,
+        maxPrice: params.maxPrice,
+        minPrice: params.minPrice,
+        limit: 50,
+      );
     } catch (e) {
       throw Exception('Error al buscar lugares: ${e.toString()}');
+    }
+  }
+}
+
+/// Caso de uso para búsqueda por voz
+class SearchPlacesByVoiceUseCase
+    implements UseCase<Future<List<Place>>, SearchPlacesParams> {
+  final PlaceRepository _placeRepository;
+
+  SearchPlacesByVoiceUseCase({required PlaceRepository placeRepository})
+    : _placeRepository = placeRepository;
+
+  @override
+  Future<List<Place>> call(SearchPlacesParams params) async {
+    try {
+      // Usar el nuevo método de búsqueda por voz del Core
+      return await _placeRepository.searchPlacesByVoice(
+        params.query,
+        categoryId: params.categoryId,
+        minRating: params.minRating,
+        maxPrice: params.maxPrice,
+        minPrice: params.minPrice,
+        limit: 50,
+      );
+    } catch (e) {
+      throw Exception('Error al buscar lugares por voz: ${e.toString()}');
+    }
+  }
+}
+
+/// Caso de uso para búsqueda por ubicación
+class SearchPlacesByLocationUseCase
+    implements UseCase<Future<List<Place>>, SearchPlacesParams> {
+  final PlaceRepository _placeRepository;
+
+  SearchPlacesByLocationUseCase({required PlaceRepository placeRepository})
+    : _placeRepository = placeRepository;
+
+  @override
+  Future<List<Place>> call(SearchPlacesParams params) async {
+    try {
+      if (params.location == null) {
+        throw Exception('Ubicación requerida para búsqueda por ubicación');
+      }
+
+      // Usar el nuevo método de búsqueda por ubicación del Core
+      return await _placeRepository.searchPlacesByLocation(
+        latitude: params.location!.latitude,
+        longitude: params.location!.longitude,
+        radiusKm: (params.maxDistance ?? 5000) / 1000, // Convertir metros a km
+        categoryId: params.categoryId,
+        minRating: params.minRating,
+        maxPrice: params.maxPrice,
+        minPrice: params.minPrice,
+        limit: 50,
+      );
+    } catch (e) {
+      throw Exception('Error al buscar lugares por ubicación: ${e.toString()}');
     }
   }
 }

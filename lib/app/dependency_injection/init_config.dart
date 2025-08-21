@@ -132,7 +132,7 @@ FutureOr<void> initDependencies(GetIt sl) async {
     ..registerLazySingleton<SearchPlacesUseCase>(
       () => SearchPlacesUseCase(
         placeRepository: sl<PlaceRepository>(),
-        locationRepository: sl<LocationRepository>(),
+        // locationRepository: sl<LocationRepository>(),
       ),
     )
     ..registerLazySingleton<GetPlacesByLocationUseCase>(
@@ -146,6 +146,9 @@ FutureOr<void> initDependencies(GetIt sl) async {
         locationRepository: sl<LocationRepository>(),
         placeRepository: sl<PlaceRepository>(),
       ),
+    )
+    ..registerLazySingleton<SearchPlacesByVoiceUseCase>(
+      () => SearchPlacesByVoiceUseCase(placeRepository: sl<PlaceRepository>()),
     )
     // Actualizar GetPlacesByCategoryUseCase para incluir LocationRepository
     ..registerLazySingleton<GetPlacesByCategoryUseCase>(
@@ -163,6 +166,7 @@ FutureOr<void> initDependencies(GetIt sl) async {
     // Actualizar PlacesSearchCubit con todos los casos de uso
     ..registerFactory<PlacesSearchCubit>(
       () => PlacesSearchCubit(
+        searchPlacesByVoiceUseCase: sl<SearchPlacesByVoiceUseCase>(),
         getPlacesByCategoryUseCase: sl<GetPlacesByCategoryUseCase>(),
         searchPlacesUseCase: sl<SearchPlacesUseCase>(),
         getPlacesByLocationUseCase: sl<GetPlacesByLocationUseCase>(),

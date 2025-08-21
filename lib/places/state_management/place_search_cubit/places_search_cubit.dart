@@ -16,16 +16,19 @@ class PlacesSearchCubit extends Cubit<PlacesSearchState> {
   PlacesSearchCubit({
     required GetPlacesByCategoryUseCase getPlacesByCategoryUseCase,
     required SearchPlacesUseCase searchPlacesUseCase,
+    required SearchPlacesByVoiceUseCase searchPlacesByVoiceUseCase,
     required GetPlacesByLocationUseCase getPlacesByLocationUseCase,
     required SearchNearbyPlacesUseCase searchNearbyPlacesUseCase,
   }) : _getPlacesByCategoryUseCase = getPlacesByCategoryUseCase,
        _searchPlacesUseCase = searchPlacesUseCase,
+       _searchPlacesByVoiceUseCase = searchPlacesByVoiceUseCase,
        _getPlacesByLocationUseCase = getPlacesByLocationUseCase,
        _searchNearbyPlacesUseCase = searchNearbyPlacesUseCase,
        super(const PlacesSearchState());
 
   final GetPlacesByCategoryUseCase _getPlacesByCategoryUseCase;
   final SearchPlacesUseCase _searchPlacesUseCase;
+  final SearchPlacesByVoiceUseCase _searchPlacesByVoiceUseCase;
   final GetPlacesByLocationUseCase _getPlacesByLocationUseCase;
   final SearchNearbyPlacesUseCase _searchNearbyPlacesUseCase;
 
@@ -69,6 +72,18 @@ class PlacesSearchCubit extends Cubit<PlacesSearchState> {
       ),
     );
     _debounceSearch();
+  }
+
+  /// 🎤 Búsqueda por voz
+  void searchByVoice(String voiceQuery) {
+    emit(
+      state.copyWith(
+        searchQuery: voiceQuery,
+        searchType: PlaceSearchType.query,
+        isLoading: true,
+      ),
+    );
+    _loadPlacesByVoice(voiceQuery);
   }
 
   void selectCategory(String categoryId) {
@@ -328,6 +343,52 @@ class PlacesSearchCubit extends Cubit<PlacesSearchState> {
         state.copyWith(
           isLoading: false,
           error: 'Error cargando lugares: ${e.toString()}',
+        ),
+      );
+    }
+  }
+
+  /// 🎤 Carga lugares por búsqueda de voz
+  void _loadPlacesByVoice(String voiceQuery) async {
+    try {
+      emit(state.copyWith(isLoading: true, error: null));
+
+      final places = await _searchPlacesByVoiceUseCase(
+        SearchPlacesParams(
+          query: voiceQuery,
+          location: state.userLocation,
+          maxDistance: state.maxDistance,
+          minRating: state.minRating,
+          maxPrice: state.maxPrice,
+          minPrice: state.minPrice,
+          categoryId: state.selectedCategoryId,
+        ),
+      );
+
+      // Aplicar filtros avanzados
+      final filteredPlaces = _applyAdvancedFilters(places);
+
+      emit(
+        state.copyWith(
+          places: filteredPlaces,
+          isLoading: false,
+          mapCenter:
+              state.mapCenter ??
+              (filteredPlaces.isNotEmpty &&
+                      filteredPlaces.first.latitude != null &&
+                      filteredPlaces.first.longitude != null
+                  ? LatLng(
+                    filteredPlaces.first.latitude!,
+                    filteredPlaces.first.longitude!,
+                  )
+                  : const LatLng(23.1136, -82.3666)), // La Habana por defecto
+        ),
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          isLoading: false,
+          error: 'Error en búsqueda por voz: ${e.toString()}',
         ),
       );
     }

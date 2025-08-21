@@ -7,6 +7,8 @@ import 'package:turbo/app/core/theme/app_themes.dart';
 import 'package:turbo/app/core/theme/text_styles.dart';
 import 'package:turbo/app/routes/router/app_router.gr.dart';
 import 'package:turbo/categories/state_management/category_cubit.dart';
+import 'package:turbo/places/state_management/place_search_cubit/places_search_cubit.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 class AnimatedSearchBar extends StatefulWidget {
   final double height;
@@ -28,10 +30,23 @@ class _AnimatedSearchBarState extends State<AnimatedSearchBar>
   int _currentCategoryIndex = 0;
   bool _showCategory = true;
 
+  // Speech to text
+  final stt.SpeechToText _speech = stt.SpeechToText();
+  bool _speechEnabled = false;
+  bool _isListening = false;
+
   @override
   void initState() {
     super.initState();
     _loadCategories();
+    _initSpeech();
+  }
+
+  void _initSpeech() async {
+    _speechEnabled = await _speech.initialize(
+      onError: (error) => print('Error: $error'),
+      onStatus: (status) => print('Status: $status'),
+    );
   }
 
   void _loadCategories() {
@@ -66,6 +81,83 @@ class _AnimatedSearchBarState extends State<AnimatedSearchBar>
         _showCategory = true;
       });
     }
+  }
+
+  /// 🎤 Inicia la búsqueda por voz
+  void _startVoiceSearch() async {
+    if (!_speechEnabled) {
+      _showSpeechNotAvailableDialog();
+      return;
+    }
+
+    setState(() => _isListening = true);
+
+    try {
+      await _speech.listen(
+        onResult: (result) {
+          if (result.finalResult) {
+            final query = result.recognizedWords.trim();
+            if (query.isNotEmpty) {
+              // Navegar a la pantalla de búsqueda con la consulta de voz
+              context.router.push(PlacesSearchRoute(initialQuery: query));
+            }
+            setState(() => _isListening = false);
+          }
+        },
+        listenFor: const Duration(seconds: 10),
+        pauseFor: const Duration(seconds: 3),
+        partialResults: true,
+        localeId: 'es_ES', // Español para Cuba
+      );
+    } catch (e) {
+      setState(() => _isListening = false);
+      _showErrorDialog('Error al iniciar búsqueda por voz: $e');
+    }
+  }
+
+  /// 🛑 Detiene la búsqueda por voz
+  void _stopVoiceSearch() async {
+    await _speech.stop();
+    setState(() => _isListening = false);
+  }
+
+  /// 📱 Muestra diálogo si el reconocimiento de voz no está disponible
+  void _showSpeechNotAvailableDialog() {
+    showDialog(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Reconocimiento de Voz'),
+            content: const Text(
+              'El reconocimiento de voz no está disponible en este dispositivo. '
+              'Puedes usar la búsqueda por texto en su lugar.',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Entendido'),
+              ),
+            ],
+          ),
+    );
+  }
+
+  /// ❌ Muestra diálogo de error
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Error'),
+            content: Text(message),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+    );
   }
 
   @override
@@ -198,9 +290,12 @@ class _AnimatedSearchBarState extends State<AnimatedSearchBar>
                 Container(
                   margin: const EdgeInsets.only(right: 8),
                   decoration: BoxDecoration(
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.primary.withOpacity(0.08),
+                    color:
+                        _isListening
+                            ? Theme.of(context).colorScheme.primary
+                            : Theme.of(
+                              context,
+                            ).colorScheme.primary.withOpacity(0.08),
                     shape: BoxShape.circle,
                   ),
                   child: Material(
@@ -209,32 +304,46 @@ class _AnimatedSearchBarState extends State<AnimatedSearchBar>
                     clipBehavior: Clip.antiAlias,
                     child: IconButton(
                       icon: Icon(
-                        Icons.mic_rounded,
+                        _isListening ? Icons.mic : Icons.mic_rounded,
                         size: 22,
-                        color: Theme.of(context).colorScheme.primary,
+                        color:
+                            _isListening
+                                ? Colors.white
+                                : Theme.of(context).colorScheme.primary,
                       ),
-                      onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              'Búsqueda por voz no implementada aún',
-                              style: AppTextStyles.bodyMedium(
-                                context,
-                              ).copyWith(color: Colors.white),
-                            ),
-                            backgroundColor: Colors.red,
-                            duration: const Duration(seconds: 2),
-                            behavior: SnackBarBehavior.floating,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            margin: const EdgeInsets.all(16),
-                          ),
-                        );
-                      },
+                      onPressed:
+                          _isListening ? _stopVoiceSearch : _startVoiceSearch,
                     ),
                   ),
                 ),
+
+                // Indicador de escucha
+                if (_isListening)
+                  Container(
+                    margin: const EdgeInsets.only(right: 8),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: 8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            color: Colors.red,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          'Escuchando...',
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
               ],
             ),
           ),
