@@ -13,6 +13,7 @@ import 'package:turbo/categories/state_management/category_cubit.dart';
 import 'package:turbo/favorites/state_management/cubit/favorite_cubit.dart';
 import 'package:turbo/location/state_management/location_bloc/cubit/location_cubit.dart';
 import 'package:core/core.dart';
+import 'package:get_it/get_it.dart';
 import 'package:turbo/places/presentation/screens/business_detail.dart';
 import 'package:turbo/places/state_management/place_bloc/cubit/place_cubit.dart';
 import 'package:turbo/events/presentation/widgets/welcome_events_dialog.dart';
@@ -21,6 +22,7 @@ import 'package:turbo/app/routes/router/app_router.gr.dart';
 import 'package:turbo/places/presentation/widgets/animated_search_bar.dart';
 import 'package:intl/intl.dart';
 
+final sl = GetIt.instance;
 const _lastWelcomeDialogShownDateKey = 'last_welcome_dialog_shown_date';
 
 @RoutePage()
@@ -103,8 +105,8 @@ class _FeedScreenState extends State<FeedScreen> with TickerProviderStateMixin {
         _requestLocationPermission();
       });
     } else {
-      // Si ya se solicitó permiso anteriormente, intentamos obtener la ubicación actual
-      context.read<LocationCubit>().getCurrentLocation();
+      // Si ya se solicitó permiso anteriormente, no hacemos nada automáticamente
+      // La ubicación se obtendrá solo cuando sea necesaria (pull-to-refresh, etc.)
     }
   }
 
@@ -223,7 +225,9 @@ class _FeedScreenState extends State<FeedScreen> with TickerProviderStateMixin {
             stops: [0.0, 0.3],
           ),
         ),
-        child: BlocListener<LocationCubit, LocationState>(
+        child: BlocProvider.value(
+          value: sl<LocationCubit>(),
+          child: BlocListener<LocationCubit, LocationState>(
           listener: (context, state) {
             print("LocationCubit cambió a estado: $state");
             if (state is LocationObtained) {
@@ -309,6 +313,7 @@ class _FeedScreenState extends State<FeedScreen> with TickerProviderStateMixin {
           ),
         ),
       ),
+        ),
     );
   }
 
