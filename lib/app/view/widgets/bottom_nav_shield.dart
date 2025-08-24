@@ -1,10 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:turbo/app/routes/router/app_router.gr.dart';
-import 'package:turbo/location/state_management/location_bloc/cubit/location_cubit.dart';
-
-import '../../../boostrap.dart';
 
 @RoutePage()
 class BottomNavShellWidget extends StatelessWidget {
@@ -12,9 +8,7 @@ class BottomNavShellWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider.value(
-      value: sl<LocationCubit>(),
-      child: AutoTabsScaffold(
+    return AutoTabsScaffold(
         animationDuration: const Duration(milliseconds: 300),
         transitionBuilder: (context, child, animation) {
           return FadeTransition(opacity: animation, child: child);
@@ -91,8 +85,7 @@ class BottomNavShellWidget extends StatelessWidget {
             ),
           );
         },
-      ),
-    );
+      );
   }
 
   Widget _buildNavItem(
