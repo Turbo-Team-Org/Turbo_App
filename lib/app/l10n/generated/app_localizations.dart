@@ -62,7 +62,8 @@ import 'app_localizations_es.dart';
 /// be consistent with the languages listed in the AppLocalizations.supportedLocales
 /// property.
 abstract class AppLocalizations {
-  AppLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+  AppLocalizations(String locale)
+    : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -70,7 +71,8 @@ abstract class AppLocalizations {
     return Localizations.of<AppLocalizations>(context, AppLocalizations)!;
   }
 
-  static const LocalizationsDelegate<AppLocalizations> delegate = _AppLocalizationsDelegate();
+  static const LocalizationsDelegate<AppLocalizations> delegate =
+      _AppLocalizationsDelegate();
 
   /// A list of this localizations delegate along with the default localizations
   /// delegates.
@@ -82,17 +84,18 @@ abstract class AppLocalizations {
   /// Additional delegates can be added by appending to this list in
   /// MaterialApp. This list does not have to be used at all if a custom list
   /// of delegates is preferred or required.
-  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = <LocalizationsDelegate<dynamic>>[
-    delegate,
-    GlobalMaterialLocalizations.delegate,
-    GlobalCupertinoLocalizations.delegate,
-    GlobalWidgetsLocalizations.delegate,
-  ];
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
+      <LocalizationsDelegate<dynamic>>[
+        delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ];
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
     Locale('en'),
-    Locale('es')
+    Locale('es'),
   ];
 
   /// Nombre de la aplicación
@@ -2152,9 +2155,94 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Seguir editando'**
   String get dialogKeepEditing;
+
+  /// No description provided for @onboardingSkip.
+  ///
+  /// In es, this message translates to:
+  /// **'Omitir'**
+  String get onboardingSkip;
+
+  /// No description provided for @onboardingNext.
+  ///
+  /// In es, this message translates to:
+  /// **'Siguiente'**
+  String get onboardingNext;
+
+  /// No description provided for @onboardingGetStarted.
+  ///
+  /// In es, this message translates to:
+  /// **'Comenzar'**
+  String get onboardingGetStarted;
+
+  /// No description provided for @onboardingBack.
+  ///
+  /// In es, this message translates to:
+  /// **'Atrás'**
+  String get onboardingBack;
+
+  /// No description provided for @onboarding1Title.
+  ///
+  /// In es, this message translates to:
+  /// **'Descubre Cuba'**
+  String get onboarding1Title;
+
+  /// No description provided for @onboarding1Subtitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Explora los mejores restaurantes, bares, hoteles y experiencias que Cuba tiene para ofrecer'**
+  String get onboarding1Subtitle;
+
+  /// No description provided for @onboarding2Title.
+  ///
+  /// In es, this message translates to:
+  /// **'Reserva Fácilmente'**
+  String get onboarding2Title;
+
+  /// No description provided for @onboarding2Subtitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Haz reservaciones en segundos. Sin llamadas, sin esperas. Tu mesa te espera con un solo toque'**
+  String get onboarding2Subtitle;
+
+  /// No description provided for @onboarding3Title.
+  ///
+  /// In es, this message translates to:
+  /// **'Eventos Únicos'**
+  String get onboarding3Title;
+
+  /// No description provided for @onboarding3Subtitle.
+  ///
+  /// In es, this message translates to:
+  /// **'No te pierdas los eventos más exclusivos. Música en vivo, gastronomía, arte y cultura cubana'**
+  String get onboarding3Subtitle;
+
+  /// No description provided for @onboarding4Title.
+  ///
+  /// In es, this message translates to:
+  /// **'Guarda tus Favoritos'**
+  String get onboarding4Title;
+
+  /// No description provided for @onboarding4Subtitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Crea tu propia colección de lugares favoritos y accede a ellos cuando quieras'**
+  String get onboarding4Subtitle;
+
+  /// No description provided for @onboardingWelcome.
+  ///
+  /// In es, this message translates to:
+  /// **'Bienvenido a'**
+  String get onboardingWelcome;
+
+  /// No description provided for @onboardingReadyToExplore.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Listo para explorar?'**
+  String get onboardingReadyToExplore;
 }
 
-class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
+class _AppLocalizationsDelegate
+    extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();
 
   @override
@@ -2163,25 +2251,26 @@ class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> 
   }
 
   @override
-  bool isSupported(Locale locale) => <String>['en', 'es'].contains(locale.languageCode);
+  bool isSupported(Locale locale) =>
+      <String>['en', 'es'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
 }
 
 AppLocalizations lookupAppLocalizations(Locale locale) {
-
-
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
-    case 'en': return AppLocalizationsEn();
-    case 'es': return AppLocalizationsEs();
+    case 'en':
+      return AppLocalizationsEn();
+    case 'es':
+      return AppLocalizationsEs();
   }
 
   throw FlutterError(
     'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
     'an issue with the localizations generation tool. Please file an issue '
     'on GitHub with a reproducible sample app and the gen-l10n configuration '
-    'that was used.'
+    'that was used.',
   );
 }

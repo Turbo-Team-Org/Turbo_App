@@ -15,6 +15,7 @@ class AppRouter extends RootStackRouter {
   @override
   List<AutoRoute> get routes => [
     AutoRoute(page: TurboSplashRoute.page, path: '/'),
+    AutoRoute(page: OnboardingRoute.page, path: '/onboarding'),
     AutoRoute(page: SignUpRoute.page, path: '/sign-up'),
     AutoRoute(page: SignInRoute.page, path: '/sign-in'),
 

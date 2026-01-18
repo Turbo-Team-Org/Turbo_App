@@ -202,13 +202,15 @@ class AppLocalizationsEs extends AppLocalizations {
   String get reservationConfirmTitle => 'Confirmar Reserva';
 
   @override
-  String get reservationConfirmMessage => '¿Estás seguro de realizar esta reserva?';
+  String get reservationConfirmMessage =>
+      '¿Estás seguro de realizar esta reserva?';
 
   @override
   String get reservationCancelTitle => 'Cancelar Reserva';
 
   @override
-  String get reservationCancelMessage => '¿Estás seguro de cancelar esta reserva?';
+  String get reservationCancelMessage =>
+      '¿Estás seguro de cancelar esta reserva?';
 
   @override
   String get reservationSuccess => '¡Reserva realizada con éxito!';
@@ -244,7 +246,8 @@ class AppLocalizationsEs extends AppLocalizations {
   String get promoTitle => '¡Oferta especial!';
 
   @override
-  String get promoDescription => 'Disfruta 20% de descuento en tours por La Habana';
+  String get promoDescription =>
+      'Disfruta 20% de descuento en tours por La Habana';
 
   @override
   String get promoButton => 'Ver Oferta';
@@ -463,16 +466,19 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get locationNotAvailable => 'Ubicación no disponible. Mostrando todos los lugares.';
+  String get locationNotAvailable =>
+      'Ubicación no disponible. Mostrando todos los lugares.';
 
   @override
-  String get requestingLocation => 'Solicitando tu ubicación para mostrar lugares cercanos...';
+  String get requestingLocation =>
+      'Solicitando tu ubicación para mostrar lugares cercanos...';
 
   @override
   String get locationPermissionTitle => 'Permiso de ubicación';
 
   @override
-  String get locationPermissionMessage => 'Necesitamos acceso a tu ubicación para mostrarte los lugares más cercanos';
+  String get locationPermissionMessage =>
+      'Necesitamos acceso a tu ubicación para mostrarte los lugares más cercanos';
 
   @override
   String get locationPermissionAllow => 'Permitir';
@@ -487,7 +493,8 @@ class AppLocalizationsEs extends AppLocalizations {
   String get locationDenied => 'Permiso de ubicación denegado';
 
   @override
-  String get locationDisabled => 'Los servicios de ubicación están desactivados';
+  String get locationDisabled =>
+      'Los servicios de ubicación están desactivados';
 
   @override
   String get themeSystem => 'Sistema';
@@ -559,7 +566,8 @@ class AppLocalizationsEs extends AppLocalizations {
   String get profileLogout => 'Cerrar Sesión';
 
   @override
-  String get profileLogoutConfirm => '¿Estás seguro de que deseas cerrar sesión?';
+  String get profileLogoutConfirm =>
+      '¿Estás seguro de que deseas cerrar sesión?';
 
   @override
   String get profileSettings => 'Configuración';
@@ -600,7 +608,8 @@ class AppLocalizationsEs extends AppLocalizations {
   String get profileGuest => 'Invitado';
 
   @override
-  String get profileLoginPrompt => 'Inicia sesión para acceder a todas las funciones';
+  String get profileLoginPrompt =>
+      'Inicia sesión para acceder a todas las funciones';
 
   @override
   String get favoritesTitle => 'Favoritos';
@@ -689,7 +698,8 @@ class AppLocalizationsEs extends AppLocalizations {
   String get eventsWelcomeTitle => '¡Descubre los mejores eventos!';
 
   @override
-  String get eventsWelcomeSubtitle => 'No te pierdas los eventos más destacados de Cuba';
+  String get eventsWelcomeSubtitle =>
+      'No te pierdas los eventos más destacados de Cuba';
 
   @override
   String get eventsWelcomeButton => 'Ver Eventos';
@@ -770,7 +780,8 @@ class AppLocalizationsEs extends AppLocalizations {
   String get authInvalidEmail => 'Correo electrónico inválido';
 
   @override
-  String get authInvalidPassword => 'La contraseña debe tener al menos 6 caracteres';
+  String get authInvalidPassword =>
+      'La contraseña debe tener al menos 6 caracteres';
 
   @override
   String get authPasswordMismatch => 'Las contraseñas no coinciden';
@@ -791,7 +802,8 @@ class AppLocalizationsEs extends AppLocalizations {
   String get authResetPassword => 'Restablecer contraseña';
 
   @override
-  String get authResetPasswordSent => 'Se ha enviado un correo para restablecer tu contraseña';
+  String get authResetPasswordSent =>
+      'Se ha enviado un correo para restablecer tu contraseña';
 
   @override
   String get authContinueAsGuest => 'Continuar como invitado';
@@ -1106,4 +1118,50 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get dialogKeepEditing => 'Seguir editando';
+
+  @override
+  String get onboardingSkip => 'Omitir';
+
+  @override
+  String get onboardingNext => 'Siguiente';
+
+  @override
+  String get onboardingGetStarted => 'Comenzar';
+
+  @override
+  String get onboardingBack => 'Atrás';
+
+  @override
+  String get onboarding1Title => 'Descubre Cuba';
+
+  @override
+  String get onboarding1Subtitle =>
+      'Explora los mejores restaurantes, bares, hoteles y experiencias que Cuba tiene para ofrecer';
+
+  @override
+  String get onboarding2Title => 'Reserva Fácilmente';
+
+  @override
+  String get onboarding2Subtitle =>
+      'Haz reservaciones en segundos. Sin llamadas, sin esperas. Tu mesa te espera con un solo toque';
+
+  @override
+  String get onboarding3Title => 'Eventos Únicos';
+
+  @override
+  String get onboarding3Subtitle =>
+      'No te pierdas los eventos más exclusivos. Música en vivo, gastronomía, arte y cultura cubana';
+
+  @override
+  String get onboarding4Title => 'Guarda tus Favoritos';
+
+  @override
+  String get onboarding4Subtitle =>
+      'Crea tu propia colección de lugares favoritos y accede a ellos cuando quieras';
+
+  @override
+  String get onboardingWelcome => 'Bienvenido a';
+
+  @override
+  String get onboardingReadyToExplore => '¿Listo para explorar?';
 }

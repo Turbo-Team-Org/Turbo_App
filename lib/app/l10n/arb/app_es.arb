@@ -380,5 +380,25 @@
   "dialogDeleteConfirm": "¿Estás seguro de que deseas eliminar?",
   "dialogUnsavedChanges": "Tienes cambios sin guardar",
   "dialogDiscard": "Descartar",
-  "dialogKeepEditing": "Seguir editando"
+  "dialogKeepEditing": "Seguir editando",
+
+  "onboardingSkip": "Omitir",
+  "onboardingNext": "Siguiente",
+  "onboardingGetStarted": "Comenzar",
+  "onboardingBack": "Atrás",
+  
+  "onboarding1Title": "Descubre Cuba",
+  "onboarding1Subtitle": "Explora los mejores restaurantes, bares, hoteles y experiencias que Cuba tiene para ofrecer",
+  
+  "onboarding2Title": "Reserva Fácilmente",
+  "onboarding2Subtitle": "Haz reservaciones en segundos. Sin llamadas, sin esperas. Tu mesa te espera con un solo toque",
+  
+  "onboarding3Title": "Eventos Únicos",
+  "onboarding3Subtitle": "No te pierdas los eventos más exclusivos. Música en vivo, gastronomía, arte y cultura cubana",
+  
+  "onboarding4Title": "Guarda tus Favoritos",
+  "onboarding4Subtitle": "Crea tu propia colección de lugares favoritos y accede a ellos cuando quieras",
+
+  "onboardingWelcome": "Bienvenido a",
+  "onboardingReadyToExplore": "¿Listo para explorar?"
 }
