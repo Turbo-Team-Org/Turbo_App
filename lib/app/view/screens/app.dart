@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:auto_route/auto_route.dart';
-import 'package:turbo/app/core/theme/app_themes.dart';
+import 'package:turbo_ui/turbo_ui.dart';
 import 'package:turbo/app/core/theme/theme_cubit.dart';
-import 'package:turbo/app/core/theme/theme_state.dart';
 import 'package:turbo/app/image_management/presentation/cubit/image_management_cubit.dart';
 import 'package:turbo/app/routes/guards/authentication_guards.dart';
 import 'package:turbo/authentication/state_management/auth_cubit/cubit/auth_cubit_cubit.dart';
@@ -19,6 +17,7 @@ import 'package:turbo/app/cache/presentation/cubit/sync_cubit.dart';
 import 'package:turbo/reservations/state_management/booking_cubit/booking_cubit.dart';
 import 'package:turbo/reservations/state_management/booking_form_cubit/booking_form_cubit.dart';
 import 'package:turbo/reservations/state_management/my_reservations_cubit/my_reservations_cubit.dart';
+import 'package:turbo/theme_selector/theme_selector.dart';
 
 import '../../../boostrap.dart';
 import '../../../favorites/state_management/cubit/favorite_cubit.dart';
@@ -27,7 +26,7 @@ import '../../routes/router/app_router.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-  // This widget is the root of your application.
+
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
@@ -46,6 +45,8 @@ class MyApp extends StatelessWidget {
         BlocProvider.value(value: sl<CategoryCubit>()),
         BlocProvider.value(value: sl<ImageManagementCubit>()),
         BlocProvider.value(value: sl<SyncCubit>()),
+        // Nuevo ThemeBloc con persistencia
+        BlocProvider.value(value: sl<ThemeBloc>()),
 
         // Reservations BlocProviders
         BlocProvider(create: (context) => sl<BookingCubit>()),
@@ -55,7 +56,7 @@ class MyApp extends StatelessWidget {
       child: BlocListener<AuthCubit, AuthCubitState>(
         listenWhen: (previous, current) => previous != current,
         listener: (context, state) {
-          print("MyApp - AuthCubit cambió de estado: $state");
+          debugPrint("MyApp - AuthCubit cambió de estado: $state");
         },
         child: const AppView(),
       ),
@@ -68,30 +69,26 @@ class AppView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("AppView - Construyendo AppView");
+    debugPrint("AppView - Construyendo AppView");
     final authCubit = context.read<AuthCubit>();
-    print("AppView - Estado actual de AuthCubit: ${authCubit.state}");
+    debugPrint("AppView - Estado actual de AuthCubit: ${authCubit.state}");
 
     final appRouter = AppRouter(authGuard: AuthGuard(authCubit));
 
-    return BlocBuilder<ThemeCubit, ThemeState>(
+    // Usar el nuevo ThemeBloc con TurboTheme
+    return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, themeState) {
-        final themeMode =
-            (themeState is ThemeLoaded)
-                ? (themeState.isDarkMode ? ThemeMode.dark : ThemeMode.light)
-                : ThemeMode.system;
-
         return MaterialApp.router(
           debugShowCheckedModeBanner: false,
-          theme: AppThemes.lightTheme(),
-          darkTheme: AppThemes.darkTheme(),
-          themeMode: themeMode,
+          // Usar los nuevos TurboThemes
+          theme: TurboTheme.light,
+          darkTheme: TurboTheme.dark,
+          themeMode: themeState.themeMode,
           routerConfig: appRouter.config(
-            // Habilita registros de depuración para el router
             navigatorObservers: () => [_NavigationObserver()],
           ),
           builder: (context, child) {
-            print("AppView - Builder llamado");
+            debugPrint("AppView - Builder llamado");
             return child ?? const SizedBox();
           },
         );
@@ -104,7 +101,7 @@ class AppView extends StatelessWidget {
 class _NavigationObserver extends NavigatorObserver {
   @override
   void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
-    print(
+    debugPrint(
       'Navegación: Pushed ${route.settings.name} (from: ${previousRoute?.settings.name})',
     );
     super.didPush(route, previousRoute);
@@ -112,7 +109,7 @@ class _NavigationObserver extends NavigatorObserver {
 
   @override
   void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
-    print(
+    debugPrint(
       'Navegación: Popped ${route.settings.name} (to: ${previousRoute?.settings.name})',
     );
     super.didPop(route, previousRoute);
@@ -120,7 +117,7 @@ class _NavigationObserver extends NavigatorObserver {
 
   @override
   void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) {
-    print(
+    debugPrint(
       'Navegación: Replaced ${oldRoute?.settings.name} → ${newRoute?.settings.name}',
     );
     super.didReplace(newRoute: newRoute, oldRoute: oldRoute);
@@ -128,7 +125,7 @@ class _NavigationObserver extends NavigatorObserver {
 
   @override
   void didRemove(Route<dynamic> route, Route<dynamic>? previousRoute) {
-    print('Navegación: Removed ${route.settings.name}');
+    debugPrint('Navegación: Removed ${route.settings.name}');
     super.didRemove(route, previousRoute);
   }
 }

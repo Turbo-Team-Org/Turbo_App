@@ -40,6 +40,7 @@ import '../../reviews/module/get_reviews_from_a_place_use_case.dart';
 import '../../reviews/state_management/cubit/review_cubit.dart';
 import '../utils/app_preferences.dart';
 import 'package:turbo/app/core/theme/theme_cubit.dart';
+import 'package:turbo/theme_selector/theme_selector.dart';
 import 'package:core/src/core.dart';
 import 'package:turbo/app/cache/core/cache_manager.dart';
 import 'package:turbo/app/cache/data/repositories/categories_cache_repository.dart';
@@ -202,6 +203,8 @@ FutureOr<void> initDependencies(GetIt sl) async {
       ),
     )
     ..registerLazySingleton(() => ThemeCubit())
+    // Nuevo ThemeBloc con HydratedBloc para persistencia
+    ..registerLazySingleton(() => ThemeBloc())
     ..registerLazySingleton<GetCurrentLocationUseCase>(
       () => GetCurrentLocationUseCase(sl<LocationRepository>()),
     )
