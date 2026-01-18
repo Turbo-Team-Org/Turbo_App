@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:turbo/app/l10n/l10n.dart';
 
 /// Banner promocional con diseño atractivo
 /// 
@@ -96,15 +97,15 @@ class PromoBanner extends StatelessWidget {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.star_rounded,
                           color: Colors.white,
                           size: 14,
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          'ESPECIAL',
-                          style: TextStyle(
+                          context.l10n.promoSpecial,
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 10,
                             fontWeight: FontWeight.bold,
@@ -179,11 +180,13 @@ class PromoSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const PromoBanner(
-      title: '¡Oferta especial!',
-      description: 'Disfruta 20% de descuento en tours por La Habana',
+    final l10n = context.l10n;
+    return PromoBanner(
+      title: l10n.promoTitle,
+      description: l10n.promoDescription,
+      buttonText: l10n.promoButton,
       icon: Icons.beach_access_rounded,
-      gradientColors: [
+      gradientColors: const [
         Color(0xFF667EEA),
         Color(0xFF764BA2),
       ],

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:turbo_ui/turbo_ui.dart';
+import 'package:turbo/app/l10n/l10n.dart';
 import 'package:turbo/authentication/state_management/auth_cubit/cubit/auth_cubit_cubit.dart';
 import 'package:turbo/app/routes/router/app_router.gr.dart';
 
@@ -32,58 +33,59 @@ class WelcomeSection extends StatelessWidget {
 
   const WelcomeSection({super.key, this.onNearbyTap});
 
-  static final _quickCategories = [
+  /// Genera las categorías rápidas con textos localizados
+  List<QuickCategory> _getQuickCategories(AppLocalizations l10n) => [
     QuickCategory(
       icon: Icons.local_fire_department_rounded,
-      label: 'Popular',
+      label: l10n.categoryPopular,
       searchQuery: 'popular',
       accentColor: TurboColors.orange,
     ),
     QuickCategory(
       icon: Icons.favorite_rounded,
-      label: 'Favoritos',
+      label: l10n.categoryFavorites,
       routePath: '/home/favorites',
       accentColor: TurboColors.coral,
     ),
     QuickCategory(
       icon: Icons.trending_up_rounded,
-      label: 'Trending',
+      label: l10n.categoryTrending,
       searchQuery: 'trending',
       accentColor: TurboColors.blue,
     ),
     QuickCategory(
       icon: Icons.attach_money_rounded,
-      label: 'Económico',
+      label: l10n.categoryEconomic,
       searchQuery: 'precio',
       accentColor: TurboColors.success,
     ),
     QuickCategory(
       icon: Icons.star_rounded,
-      label: 'Top Rated',
+      label: l10n.categoryTopRated,
       searchQuery: 'rating',
       accentColor: TurboColors.gold,
     ),
     QuickCategory(
       icon: Icons.restaurant_rounded,
-      label: 'Comida',
+      label: l10n.categoryFood,
       searchQuery: 'restaurantes',
       accentColor: TurboColors.amber,
     ),
     QuickCategory(
       icon: Icons.local_bar_rounded,
-      label: 'Bebidas',
+      label: l10n.categoryDrinks,
       searchQuery: 'bares',
       accentColor: TurboColors.purple,
     ),
     QuickCategory(
       icon: Icons.local_offer_rounded,
-      label: 'Ofertas',
+      label: l10n.categoryOffers,
       searchQuery: 'ofertas',
       accentColor: TurboColors.primary,
     ),
     QuickCategory(
       icon: Icons.near_me_rounded,
-      label: 'Cerca',
+      label: l10n.categoryNearby,
       searchQuery: 'cerca',
       accentColor: TurboColors.info,
     ),
@@ -94,6 +96,7 @@ class WelcomeSection extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final isDark = theme.brightness == Brightness.dark;
+    final l10n = context.l10n;
 
     return FadeInDown(
       duration: const Duration(milliseconds: 600),
@@ -127,15 +130,15 @@ class WelcomeSection extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildGreeting(context, isDark),
-            _buildCategoriesCarousel(context, isDark),
+            _buildGreeting(context, isDark, l10n),
+            _buildCategoriesCarousel(context, isDark, l10n),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildGreeting(BuildContext context, bool isDark) {
+  Widget _buildGreeting(BuildContext context, bool isDark, AppLocalizations l10n) {
     final theme = Theme.of(context);
 
     return Padding(
@@ -148,18 +151,18 @@ class WelcomeSection extends StatelessWidget {
             children: [
               BlocBuilder<AuthCubit, AuthCubitState>(
                 builder: (context, state) {
-                  String firstName = 'Explorador';
+                  String firstName = l10n.defaultUserName;
                   if (state is Authenticated) {
                     final name = state.user.displayName ?? '';
                     firstName = name.split(' ').first;
-                    if (firstName.isEmpty) firstName = 'Explorador';
+                    if (firstName.isEmpty) firstName = l10n.defaultUserName;
                   }
 
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        _getGreetingByTime(),
+                        getTimeBasedGreeting(l10n),
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: isDark
                               ? theme.colorScheme.onSurfaceVariant
@@ -196,7 +199,7 @@ class WelcomeSection extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            'Descubre los mejores lugares en Cuba',
+            l10n.welcomeSubtitle,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: isDark
                   ? theme.colorScheme.onSurfaceVariant
@@ -208,16 +211,17 @@ class WelcomeSection extends StatelessWidget {
     );
   }
 
-  Widget _buildCategoriesCarousel(BuildContext context, bool isDark) {
+  Widget _buildCategoriesCarousel(BuildContext context, bool isDark, AppLocalizations l10n) {
+    final categories = _getQuickCategories(l10n);
     return SizedBox(
       height: 90,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         physics: const BouncingScrollPhysics(),
         padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-        itemCount: _quickCategories.length,
+        itemCount: categories.length,
         itemBuilder: (context, index) {
-          final category = _quickCategories[index];
+          final category = categories[index];
           return FadeInUp(
             duration: const Duration(milliseconds: 500),
             delay: Duration(milliseconds: 50 * index),
@@ -242,13 +246,6 @@ class WelcomeSection extends StatelessWidget {
     } else if (category.searchQuery != null) {
       context.router.push(PlacesSearchRoute(initialQuery: category.searchQuery));
     }
-  }
-
-  String _getGreetingByTime() {
-    final hour = DateTime.now().hour;
-    if (hour < 12) return '¡Buenos días!';
-    if (hour < 18) return '¡Buenas tardes!';
-    return '¡Buenas noches!';
   }
 }
 

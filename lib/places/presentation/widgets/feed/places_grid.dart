@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:core/core.dart';
 import 'package:turbo_ui/turbo_ui.dart';
+import 'package:turbo/app/l10n/l10n.dart';
 import 'package:turbo/favorites/state_management/cubit/favorite_cubit.dart';
 import 'package:turbo/places/state_management/place_bloc/cubit/place_cubit.dart';
 import 'feed_place_card.dart';
@@ -73,6 +74,7 @@ class PlacesGrid extends StatelessWidget {
 
   Widget _buildLoading(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = context.l10n;
 
     return SliverFillRemaining(
       hasScrollBody: false,
@@ -90,7 +92,7 @@ class PlacesGrid extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              'Cargando lugares...',
+              l10n.loadingPlaces,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: colorScheme.onSurfaceVariant,
               ),
@@ -103,6 +105,7 @@ class PlacesGrid extends StatelessWidget {
 
   Widget _buildEmpty(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = context.l10n;
 
     return SliverFillRemaining(
       hasScrollBody: false,
@@ -117,14 +120,14 @@ class PlacesGrid extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              'No hay lugares disponibles',
+              l10n.noPlacesAvailable,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 color: colorScheme.onSurfaceVariant,
               ),
             ),
             const SizedBox(height: 8),
             Text(
-              'Intenta con otra búsqueda',
+              l10n.tryAnotherSearch,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
               ),
@@ -137,6 +140,7 @@ class PlacesGrid extends StatelessWidget {
 
   Widget _buildError(BuildContext context, String error) {
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = context.l10n;
 
     return SliverFillRemaining(
       hasScrollBody: false,
@@ -153,7 +157,7 @@ class PlacesGrid extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                'Algo salió mal',
+                l10n.errorOccurred,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   color: colorScheme.onSurface,
                 ),
@@ -172,7 +176,7 @@ class PlacesGrid extends StatelessWidget {
               FilledButton.icon(
                 onPressed: () => context.read<PlaceCubit>().getPlaces(),
                 icon: const Icon(Icons.refresh_rounded),
-                label: const Text('Reintentar'),
+                label: Text(l10n.retry),
               ),
             ],
           ),

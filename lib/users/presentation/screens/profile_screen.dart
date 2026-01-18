@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:turbo_ui/turbo_ui.dart';
+import 'package:turbo/app/l10n/l10n.dart';
 import 'package:turbo/app/routes/router/app_router.gr.dart';
 import 'package:turbo/authentication/state_management/auth_cubit/cubit/auth_cubit_cubit.dart';
 import 'package:turbo/authentication/state_management/sign_out_cubit/cubit/sign_out_cubit.dart';
@@ -25,12 +26,11 @@ class ProfileScreen extends StatelessWidget {
       listener: (context, signoutstate) {
         switch (signoutstate) {
           case Success():
-            showDialog(
+              showDialog(
               context: context,
               builder: (_) => SuccessDialog(
-                title: "¡Cerrado de Sesión Exitoso!",
-                message:
-                    "Cerrado de Sesión Exitoso va a ser rederigido a la pantalla del Login ",
+                title: context.l10n.authLogoutSuccess,
+                message: context.l10n.authLogoutSuccess,
               ),
             );
             Future.delayed(const Duration(seconds: 2), () {
@@ -40,7 +40,7 @@ class ProfileScreen extends StatelessWidget {
           case Error(:final error):
             showDialog(
               context: context,
-              builder: (_) => ErrorDialog(title: "¡Error!", message: error!),
+              builder: (_) => ErrorDialog(title: context.l10n.commonError, message: error!),
             );
             break;
           default:
@@ -54,7 +54,7 @@ class ProfileScreen extends StatelessWidget {
               return Scaffold(
                 appBar: AppBar(
                   title: Text(
-                    "Perfil",
+                    context.l10n.profileTitle,
                     style: theme.textTheme.titleLarge,
                   ),
                   backgroundColor: Colors.transparent,
@@ -117,7 +117,7 @@ class ProfileScreen extends StatelessWidget {
 
                       // Nombre del usuario
                       Text(
-                        user.displayName ?? "Usuario",
+                        user.displayName ?? context.l10n.profileGuest,
                         style: theme.textTheme.headlineSmall?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
@@ -148,7 +148,7 @@ class ProfileScreen extends StatelessWidget {
                             ),
                           ),
                           icon: const Icon(Icons.edit),
-                          label: const Text("Editar Perfil"),
+                          label: Text(context.l10n.profileEdit),
                           onPressed: () {
                             // TODO: Navegar a pantalla de edición
                           },
@@ -196,8 +196,8 @@ class ProfileScreen extends StatelessWidget {
             context: context,
             icon: Icons.calendar_today,
             iconColor: TurboColors.primary,
-            title: "Mis Reservas",
-            subtitle: "Ver y gestionar tus reservaciones",
+            title: context.l10n.profileMyReservations,
+            subtitle: context.l10n.profileMyReservationsDesc,
             onTap: () => context.router.push(const MyReservationsRoute()),
           ),
 
@@ -213,8 +213,8 @@ class ProfileScreen extends StatelessWidget {
             context: context,
             icon: Icons.notifications_outlined,
             iconColor: TurboColors.amber,
-            title: "Notificaciones",
-            subtitle: "Configurar alertas y avisos",
+            title: context.l10n.profileNotifications,
+            subtitle: context.l10n.profileNotificationsDesc,
             onTap: () {
               // TODO: Navegar a configuración de notificaciones
             },
@@ -227,8 +227,8 @@ class ProfileScreen extends StatelessWidget {
             context: context,
             icon: Icons.help_outline,
             iconColor: TurboColors.blue,
-            title: "Ayuda y Soporte",
-            subtitle: "Preguntas frecuentes y contacto",
+            title: context.l10n.profileHelp,
+            subtitle: context.l10n.profileHelpDesc,
             onTap: () {
               // TODO: Navegar a ayuda
             },
@@ -241,7 +241,7 @@ class ProfileScreen extends StatelessWidget {
             context: context,
             icon: Icons.logout,
             iconColor: TurboColors.error,
-            title: "Cerrar Sesión",
+            title: context.l10n.profileLogout,
             titleColor: TurboColors.error,
             onTap: () => context.read<SignOutCubit>().signOut(),
           ),
@@ -309,22 +309,19 @@ class ProfileScreen extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Cargar lugares de prueba'),
-        content: const Text(
-          '¿Estás seguro de cargar lugares de prueba? '
-          'Esta acción agregará lugares ficticios a tu base de datos.',
-        ),
+        title: Text(context.l10n.loadingData),
+        content: Text(context.l10n.commonConfirm),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancelar'),
+            child: Text(context.l10n.commonCancel),
           ),
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
               dataLoaderManager.loadPlaces();
             },
-            child: const Text('Cargar lugares'),
+            child: Text(context.l10n.commonConfirm),
           ),
         ],
       ),
@@ -336,22 +333,19 @@ class ProfileScreen extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Cargar categorías de prueba'),
-        content: const Text(
-          '¿Estás seguro de cargar categorías de prueba? '
-          'Esta acción agregará categorías y asignará a los lugares existentes.',
-        ),
+        title: Text(context.l10n.loadingData),
+        content: Text(context.l10n.commonConfirm),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancelar'),
+            child: Text(context.l10n.commonCancel),
           ),
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
               dataLoaderManager.loadCategories();
             },
-            child: const Text('Cargar categorías'),
+            child: Text(context.l10n.commonConfirm),
           ),
         ],
       ),

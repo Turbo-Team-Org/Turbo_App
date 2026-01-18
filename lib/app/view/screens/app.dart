@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:turbo_ui/turbo_ui.dart';
+import 'package:turbo/app/l10n/l10n.dart';
 import 'package:turbo/app/core/theme/theme_cubit.dart';
 import 'package:turbo/app/image_management/presentation/cubit/image_management_cubit.dart';
 import 'package:turbo/app/routes/guards/authentication_guards.dart';
@@ -84,6 +86,15 @@ class AppView extends StatelessWidget {
           theme: TurboTheme.light,
           darkTheme: TurboTheme.dark,
           themeMode: themeState.themeMode,
+          // Localization configuration
+          locale: const Locale('es'),
+          supportedLocales: AppLocalizations.supportedLocales,
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
           routerConfig: appRouter.config(
             navigatorObservers: () => [_NavigationObserver()],
           ),

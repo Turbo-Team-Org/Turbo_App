@@ -1,7 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:turbo/app/l10n/l10n.dart';
 import 'package:turbo/app/routes/router/app_router.gr.dart';
-import 'package:turbo/app/utils/theme/style.dart';
+import 'package:turbo_ui/turbo_ui.dart';
 import 'package:turbo/authentication/presentation/widgets/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:turbo/authentication/state_management/sign_in_cubit/cubit/sign_in_cubit.dart';
@@ -29,7 +30,7 @@ class SignInScreen extends StatelessWidget {
           case Error(:final error):
             showDialog(
               context: context,
-              builder: (_) => ErrorDialog(title: "¡Error!", message: error),
+              builder: (_) => ErrorDialog(title: context.l10n.commonError, message: error),
             );
             break;
 
@@ -50,23 +51,23 @@ class SignInScreen extends StatelessWidget {
               const LoginHeader(),
               const SizedBox(height: 30),
               CustomTextfield(
-                label: 'Correo',
+                label: context.l10n.authEmail,
                 textInputType: TextInputType.emailAddress,
                 textController: email,
-                hint: 'Escriba su correo',
+                hint: context.l10n.authEmail,
               ),
               const SizedBox(height: 12),
               CustomTextfield(
-                label: 'Contraseña',
+                label: context.l10n.authPassword,
                 textInputType: TextInputType.visiblePassword,
                 textController: password,
-                hint: 'Escriba su contraseña',
+                hint: context.l10n.authPassword,
                 //obscureText: true,
               ),
               const SizedBox(height: 20),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Styles.turboRed,
+                  backgroundColor: TurboColors.primary,
                   minimumSize: const Size(double.infinity, 50),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
@@ -78,9 +79,9 @@ class SignInScreen extends StatelessWidget {
                     password.text,
                   );
                 },
-                child: const Text(
-                  'Inicia Sesión',
-                  style: TextStyle(
+                child: Text(
+                  context.l10n.authSignIn,
+                  style: const TextStyle(
                     fontWeight: FontWeight.w600,
                     color: Colors.white,
                     fontSize: 16,
@@ -88,7 +89,7 @@ class SignInScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 10),
-              const Text('O continua con', style: Styles.textTitleMedium),
+              Text(context.l10n.authOr, style: Theme.of(context).textTheme.titleMedium),
               const SizedBox(height: 10),
               ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(
@@ -102,22 +103,22 @@ class SignInScreen extends StatelessWidget {
                   context.read<SignInCubit>().signInWithGoogle();
                 },
                 icon: Image.asset('assets/images/google_logo.png', height: 24),
-                label: const Text(
-                  'Inicia Sesión con Google',
-                  style: TextStyle(color: Colors.black, fontSize: 16),
+                label: Text(
+                  context.l10n.authWithGoogle,
+                  style: const TextStyle(color: Colors.black, fontSize: 16),
                 ),
               ),
               const SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text(
-                    "No tienes una cuenta ?",
-                    style: Styles.textBodyMedium,
+                  Text(
+                    context.l10n.authNoAccount,
+                    style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   TextButton(
                     onPressed: () => context.replaceRoute(SignUpRoute()),
-                    child: const Text('Sign Up', style: Styles.textBodyMedium),
+                    child: Text(context.l10n.authSignUp, style: Theme.of(context).textTheme.bodyMedium),
                   ),
                 ],
               ),

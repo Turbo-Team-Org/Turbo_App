@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:turbo/app/l10n/l10n.dart';
 import 'package:turbo/app/routes/router/app_router.gr.dart';
 import 'package:turbo/authentication/state_management/auth_cubit/cubit/auth_cubit_cubit.dart';
 import 'package:turbo/favorites/presentation/widgets/favorite_place_card.dart';
@@ -35,9 +36,11 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Mis Favoritos'),
+        title: Text(l10n.favoritesTitle),
         elevation: 0,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       ),
@@ -63,13 +66,13 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                         ),
                         const SizedBox(height: 24),
                         Text(
-                          'Aún no tienes favoritos',
+                          l10n.favoritesEmpty,
                           style: Theme.of(context).textTheme.headlineSmall
                               ?.copyWith(color: Colors.grey[600]),
                         ),
                         const SizedBox(height: 12),
                         Text(
-                          'Explora lugares y marca los que más te gusten',
+                          l10n.favoritesEmptyDesc,
                           style: Theme.of(context).textTheme.bodyLarge
                               ?.copyWith(color: Colors.grey[500]),
                           textAlign: TextAlign.center,
@@ -118,7 +121,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                       ),
                       const SizedBox(height: 24),
                       Text(
-                        'Ocurrió un error',
+                        l10n.errorOccurred,
                         style: Theme.of(context).textTheme.headlineSmall
                             ?.copyWith(color: Colors.red[600]),
                       ),
@@ -135,7 +138,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                       ElevatedButton.icon(
                         onPressed: _loadFavorites,
                         icon: const Icon(Icons.refresh),
-                        label: const Text('Reintentar'),
+                        label: Text(l10n.retry),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.red[400],
                           foregroundColor: Colors.white,

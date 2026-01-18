@@ -5,6 +5,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:core/core.dart';
 import 'package:turbo_ui/turbo_ui.dart';
+import 'package:turbo/app/l10n/l10n.dart';
 import 'package:turbo/authentication/state_management/auth_cubit/cubit/auth_cubit_cubit.dart';
 import 'package:turbo/favorites/state_management/cubit/favorite_cubit.dart';
 import 'package:turbo/places/presentation/screens/business_detail.dart';
@@ -341,6 +342,7 @@ class _StatusBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = context.l10n;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -368,7 +370,7 @@ class _StatusBadge extends StatelessWidget {
           ),
           const SizedBox(width: 4),
           Text(
-            isOpen ? 'Abierto' : 'Cerrado',
+            isOpen ? l10n.placeOpen : l10n.placeClosed,
             style: TextStyle(
               color: isOpen ? TurboColors.success : TurboColors.error,
               fontSize: 10,

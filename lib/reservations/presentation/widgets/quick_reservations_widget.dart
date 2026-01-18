@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:turbo/app/l10n/l10n.dart';
 import 'package:turbo/reservations/state_management/my_reservations_cubit/my_reservations_cubit.dart';
 import 'package:turbo/reservations/state_management/my_reservations_cubit/my_reservations_state.dart';
 import 'package:turbo/app/routes/router/app_router.gr.dart';
@@ -26,6 +27,7 @@ class QuickReservationsWidget extends StatelessWidget {
   Widget _buildWidget(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final l10n = context.l10n;
 
     return Container(
       key: const ValueKey('quick_reservations_widget'),
@@ -72,7 +74,7 @@ class QuickReservationsWidget extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Sistema de reservas disponible',
+                        l10n.reservationsSystem,
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: colorScheme.onSurfaceVariant,
                         ),
@@ -87,7 +89,7 @@ class QuickReservationsWidget extends StatelessWidget {
                   style: TextButton.styleFrom(
                     foregroundColor: colorScheme.primary,
                   ),
-                  child: const Text('Ver todas'),
+                  child: Text(l10n.reservationsViewAll),
                 ),
               ],
             ),
@@ -103,7 +105,7 @@ class QuickReservationsWidget extends StatelessWidget {
                   context.router.push(const CategoriesRoute());
                 },
                 icon: const Icon(Icons.add_rounded, size: 20),
-                label: const Text('Hacer Nueva Reserva'),
+                label: Text(l10n.reservationsNew),
                 style: FilledButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
@@ -122,6 +124,7 @@ class QuickReservationsWidget extends StatelessWidget {
   Widget _buildWithReservations(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final l10n = context.l10n;
 
     return BlocBuilder<MyReservationsCubit, MyReservationsState>(
       buildWhen: (previous, current) {
@@ -192,7 +195,7 @@ class QuickReservationsWidget extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Próximas Reservas',
+                            l10n.reservationsUpcoming,
                             style: theme.textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.bold,
                               color: colorScheme.onSurface,
@@ -200,7 +203,7 @@ class QuickReservationsWidget extends StatelessWidget {
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            '${upcomingReservations.length} reserva${upcomingReservations.length != 1 ? 's' : ''} pendiente${upcomingReservations.length != 1 ? 's' : ''}',
+                            l10n.reservationsPending(upcomingReservations.length),
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: colorScheme.onSurfaceVariant,
                             ),
@@ -215,7 +218,7 @@ class QuickReservationsWidget extends StatelessWidget {
                       style: TextButton.styleFrom(
                         foregroundColor: colorScheme.primary,
                       ),
-                      child: const Text('Ver todas'),
+                      child: Text(l10n.reservationsViewAll),
                     ),
                   ],
                 ),
@@ -231,7 +234,7 @@ class QuickReservationsWidget extends StatelessWidget {
                       context.router.push(const CategoriesRoute());
                     },
                     icon: const Icon(Icons.add_rounded, size: 20),
-                    label: const Text('Hacer Nueva Reserva'),
+                    label: Text(l10n.reservationsNew),
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
