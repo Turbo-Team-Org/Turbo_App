@@ -14,15 +14,17 @@ class SearchPlacesUseCase
   @override
   Future<List<Place>> call(SearchPlacesParams params) async {
     try {
+      return [];
+      /*
       // Usar el nuevo método de búsqueda inteligente del Core
       return await _placeRepository.intelligentSearch(
         params.query,
         categoryId: params.categoryId,
         minRating: params.minRating,
         maxPrice: params.maxPrice,
-        minPrice: params.minPrice,
-        limit: 50,
-      );
+            minPrice: params.minPrice,
+        limit: 50, 
+      ); */
     } catch (e) {
       throw Exception('Error al buscar lugares: ${e.toString()}');
     }
@@ -41,14 +43,16 @@ class SearchPlacesByVoiceUseCase
   Future<List<Place>> call(SearchPlacesParams params) async {
     try {
       // Usar el nuevo método de búsqueda por voz del Core
-      return await _placeRepository.searchPlacesByVoice(
-        params.query,
-        categoryId: params.categoryId,
-        minRating: params.minRating,
-        maxPrice: params.maxPrice,
-        minPrice: params.minPrice,
+      return [];
+      /*
+      return await _placeRepository.searchPlacesByVoice(  
+        params.query, 
+      /* categoryId: params.categoryId,
+      minRating: params.minRating,
+      maxPrice: params.maxPrice,
+        minPrice: params.minPrice, */
         limit: 50,
-      );
+      ); */
     } catch (e) {
       throw Exception('Error al buscar lugares por voz: ${e.toString()}');
     }
@@ -69,7 +73,8 @@ class SearchPlacesByLocationUseCase
       if (params.location == null) {
         throw Exception('Ubicación requerida para búsqueda por ubicación');
       }
-
+      return [];
+      /*
       // Usar el nuevo método de búsqueda por ubicación del Core
       return await _placeRepository.searchPlacesByLocation(
         latitude: params.location!.latitude,
@@ -80,7 +85,7 @@ class SearchPlacesByLocationUseCase
         maxPrice: params.maxPrice,
         minPrice: params.minPrice,
         limit: 50,
-      );
+      );  */
     } catch (e) {
       throw Exception('Error al buscar lugares por ubicación: ${e.toString()}');
     }

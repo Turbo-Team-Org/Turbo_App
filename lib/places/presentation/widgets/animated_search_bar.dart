@@ -39,7 +39,7 @@ class _AnimatedSearchBarState extends State<AnimatedSearchBar>
   void initState() {
     super.initState();
     _loadCategories();
-    _initSpeech();
+    // _initSpeech();
   }
 
   void _initSpeech() async {

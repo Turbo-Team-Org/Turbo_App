@@ -48,26 +48,47 @@ class _FeedScreenState extends State<FeedScreen> with TickerProviderStateMixin {
 
   @override
   void initState() {
-    super.initState();
-    // Inicializar con un valor seguro
-    _tabController = TabController(length: 1, vsync: this);
+    try {
+      print("🔍 [DEBUG] Iniciando initState()");
+      super.initState();
+      print("🔍 [DEBUG] super.initState() completado");
 
-    // Agregar listener para cambios de pestaña
-    _tabController.addListener(() {
-      // Esto puede ayudar a detectar errores de selección
-      if (_tabController.indexIsChanging) {
-        print('Cambiando a tab: ${_tabController.index}');
-      }
-    });
+      // Inicializar con un valor seguro
+      print("🔍 [DEBUG] Inicializando TabController...");
+      _tabController = TabController(length: 1, vsync: this);
+      print("🔍 [DEBUG] TabController inicializado");
 
-    // Verificar permisos de localización al iniciar
-    _checkLocationPermission();
+      // Agregar listener para cambios de pestaña
+      print("🔍 [DEBUG] Agregando listener al TabController...");
+      _tabController.addListener(() {
+        // Esto puede ayudar a detectar errores de selección
+        if (_tabController.indexIsChanging) {
+          print('Cambiando a tab: ${_tabController.index}');
+        }
+      });
+      print("🔍 [DEBUG] Listener agregado al TabController");
 
-    // Mostrar el diálogo de bienvenida después de un breve retardo
-    _showWelcomeDialogIfNeeded();
+      // NO verificar permisos de localización al iniciar - esto se hará solo cuando sea necesario
+      print(
+        "🔍 [DEBUG] Saltando verificación de permisos de ubicación en initState",
+      );
 
-    // Añadir listener para detectar scroll
-    _scrollController.addListener(_onScroll);
+      // Mostrar el diálogo de bienvenida después de un breve retardo
+      print("🔍 [DEBUG] Llamando a _showWelcomeDialogIfNeeded()...");
+      _showWelcomeDialogIfNeeded();
+      print("🔍 [DEBUG] _showWelcomeDialogIfNeeded() llamado");
+
+      // Añadir listener para detectar scroll
+      print("🔍 [DEBUG] Agregando listener al ScrollController...");
+      _scrollController.addListener(_onScroll);
+      print("🔍 [DEBUG] Listener agregado al ScrollController");
+
+      print("🔍 [DEBUG] initState() completado exitosamente");
+    } catch (e, stackTrace) {
+      print("❌ [ERROR] Error en initState(): $e");
+      print("❌ [ERROR] Stack trace: $stackTrace");
+      rethrow;
+    }
   }
 
   @override
@@ -95,65 +116,160 @@ class _FeedScreenState extends State<FeedScreen> with TickerProviderStateMixin {
   }
 
   Future<void> _checkLocationPermission() async {
-    final prefs = await SharedPreferences.getInstance();
-    _locationPermissionRequested =
-        prefs.getBool('location_permission_requested') ?? false;
+    try {
+      print("🔍 [DEBUG] Iniciando _checkLocationPermission()");
 
-    if (!_locationPermissionRequested) {
-      // Esperar un momento para que la UI se cargue completamente
-      Future.delayed(const Duration(seconds: 2), () {
-        _requestLocationPermission();
-      });
-    } else {
-      // Si ya se solicitó permiso anteriormente, no hacemos nada automáticamente
-      // La ubicación se obtendrá solo cuando sea necesaria (pull-to-refresh, etc.)
+      print("🔍 [DEBUG] Obteniendo SharedPreferences...");
+      final prefs = await SharedPreferences.getInstance();
+      print("🔍 [DEBUG] SharedPreferences obtenido exitosamente");
+
+      print("🔍 [DEBUG] Leyendo valor de location_permission_requested...");
+      final permissionRequested = prefs.getBool(
+        'location_permission_requested',
+      );
+      print("🔍 [DEBUG] Valor leído: $permissionRequested");
+
+      _locationPermissionRequested = permissionRequested ?? false;
+      print(
+        "🔍 [DEBUG] _locationPermissionRequested establecido a: $_locationPermissionRequested",
+      );
+
+      if (!_locationPermissionRequested) {
+        print("🔍 [DEBUG] Permiso no solicitado anteriormente");
+        // Solo solicitar permiso la primera vez, no automáticamente
+        // _requestLocationPermission(); // Comentado para evitar solicitud automática
+      } else {
+        print("🔍 [DEBUG] Permiso ya solicitado anteriormente");
+        // Si ya se solicitó permiso anteriormente, no hacemos nada automáticamente
+        // La ubicación se obtendrá solo cuando sea necesaria (pull-to-refresh, etc.)
+      }
+
+      print("🔍 [DEBUG] _checkLocationPermission() completado exitosamente");
+    } catch (e, stackTrace) {
+      print("❌ [ERROR] Error en _checkLocationPermission(): $e");
+      print("❌ [ERROR] Stack trace: $stackTrace");
+      rethrow;
     }
   }
 
   Future<void> _requestLocationPermission() async {
-    // Mostrar diálogo para solicitar permiso
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder:
-          (context) => AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            title: const Text('Acceso a ubicación'),
-            content: const Text(
-              'Turbo necesita acceder a tu ubicación para mostrarte lugares cercanos. '
-              '¿Permitir acceso a tu ubicación?',
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  _markPermissionAsRequested();
-                },
-                child: const Text('Ahora no'),
+    try {
+      print("🔍 [DEBUG] Iniciando _requestLocationPermission()");
+      print("🔍 [DEBUG] Context es válido: ${context.mounted}");
+
+      // Mostrar diálogo para solicitar permiso
+      print("🔍 [DEBUG] Mostrando diálogo de permiso...");
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder:
+            (context) => AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
               ),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  _markPermissionAsRequested();
-                  context.read<LocationCubit>().requestLocationPermission();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Styles.turboRed,
-                  foregroundColor: Colors.white,
+              title: const Text('Acceso a ubicación'),
+              content: const Text(
+                'Turbo necesita acceder a tu ubicación para mostrarte lugares cercanos. '
+                '¿Permitir acceso a tu ubicación?',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    print("🔍 [DEBUG] Botón 'Ahora no' presionado");
+                    try {
+                      Navigator.pop(context);
+                      print("🔍 [DEBUG] Diálogo cerrado exitosamente");
+                      _markPermissionAsRequested();
+                      print("🔍 [DEBUG] _markPermissionAsRequested() llamado");
+                    } catch (e) {
+                      print("❌ [ERROR] Error al cerrar diálogo: $e");
+                    }
+                  },
+                  child: const Text('Ahora no'),
                 ),
-                child: const Text('Permitir'),
-              ),
-            ],
-          ),
-    );
+                ElevatedButton(
+                  onPressed: () {
+                    print("🔍 [DEBUG] Botón 'Permitir' presionado");
+                    try {
+                      Navigator.pop(context);
+                      print("🔍 [DEBUG] Diálogo cerrado exitosamente");
+                      _markPermissionAsRequested();
+                      print("🔍 [DEBUG] _markPermissionAsRequested() llamado");
+                      context.read<LocationCubit>().requestLocationPermission();
+                      print(
+                        "🔍 [DEBUG] LocationCubit.requestLocationPermission() llamado",
+                      );
+                    } catch (e) {
+                      print("❌ [ERROR] Error al procesar permiso: $e");
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Styles.turboRed,
+                    foregroundColor: Colors.white,
+                  ),
+                  child: const Text('Permitir'),
+                ),
+              ],
+            ),
+      );
+      print("🔍 [DEBUG] Diálogo mostrado exitosamente");
+    } catch (e, stackTrace) {
+      print("❌ [ERROR] Error en _requestLocationPermission(): $e");
+      print("❌ [ERROR] Stack trace: $stackTrace");
+      rethrow;
+    }
   }
 
   Future<void> _markPermissionAsRequested() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('location_permission_requested', true);
-    _locationPermissionRequested = true;
+    try {
+      print("🔍 [DEBUG] Iniciando _markPermissionAsRequested()");
+
+      print("🔍 [DEBUG] Obteniendo SharedPreferences...");
+      final prefs = await SharedPreferences.getInstance();
+      print("🔍 [DEBUG] SharedPreferences obtenido exitosamente");
+
+      print("🔍 [DEBUG] Guardando location_permission_requested = true...");
+      await prefs.setBool('location_permission_requested', true);
+      print("🔍 [DEBUG] Valor guardado exitosamente");
+
+      _locationPermissionRequested = true;
+      print(
+        "🔍 [DEBUG] _locationPermissionRequested actualizado a: $_locationPermissionRequested",
+      );
+
+      print("🔍 [DEBUG] _markPermissionAsRequested() completado exitosamente");
+    } catch (e, stackTrace) {
+      print("❌ [ERROR] Error en _markPermissionAsRequested(): $e");
+      print("❌ [ERROR] Stack trace: $stackTrace");
+      rethrow;
+    }
+  }
+
+  /// Solicita ubicación manualmente cuando sea necesario
+  void _requestLocationIfNeeded() {
+    try {
+      print("🔍 [DEBUG] Iniciando _requestLocationIfNeeded()");
+      print("🔍 [DEBUG] _currentLocation es: $_currentLocation");
+
+      if (_currentLocation == null) {
+        print("📍 Solicitando ubicación manualmente...");
+        print(
+          "🔍 [DEBUG] Llamando a context.read<LocationCubit>().requestLocationPermission()",
+        );
+        context.read<LocationCubit>().requestLocationPermission();
+        print("🔍 [DEBUG] Llamada a requestLocationPermission() completada");
+      } else {
+        print(
+          "📍 Ya tenemos ubicación: ${_currentLocation!.latitude}, ${_currentLocation!.longitude}",
+        );
+      }
+
+      print("🔍 [DEBUG] _requestLocationIfNeeded() completado exitosamente");
+    } catch (e, stackTrace) {
+      print("❌ [ERROR] Error en _requestLocationIfNeeded(): $e");
+      print("❌ [ERROR] Stack trace: $stackTrace");
+      rethrow;
+    }
   }
 
   void _onTabTapped(int index, List<Category> categories) {
@@ -182,34 +298,89 @@ class _FeedScreenState extends State<FeedScreen> with TickerProviderStateMixin {
   }
 
   Future<void> _showWelcomeDialogIfNeeded() async {
-    // Esperar un momento para que la UI inicial cargue
-    await Future.delayed(const Duration(milliseconds: 1500));
-    if (!mounted) return;
+    try {
+      print("🔍 [DEBUG] Iniciando _showWelcomeDialogIfNeeded()");
 
-    final prefs = await SharedPreferences.getInstance();
-    final today = DateFormat('yyyy-MM-dd').format(DateTime.now());
-    final lastShownDate = prefs.getString(_lastWelcomeDialogShownDateKey);
+      // Esperar un momento para que la UI inicial cargue
+      print("🔍 [DEBUG] Esperando 1.5 segundos...");
+      await Future.delayed(const Duration(milliseconds: 1500));
+      print("🔍 [DEBUG] Espera completada");
 
-    print('Hoy: $today, Última vez mostrado: $lastShownDate'); // Debug
-
-    if (lastShownDate != today) {
-      // Obtener el nombre del usuario actual
-      final authState = context.read<AuthCubit>().state;
-      String userName = 'Aventurero'; // Nombre por defecto
-      if (authState is Authenticated) {
-        userName = authState.user.displayName?.split(' ').first ?? 'Aventurero';
+      if (!mounted) {
+        print("🔍 [DEBUG] Widget no montado, retornando");
+        return;
       }
 
-      // Mostrar el diálogo
-      if (mounted) {
-        print('Mostrando diálogo de bienvenida...'); // Debug
-        showWelcomeEventsDialog(context, userName);
-        // Guardar la fecha actual
-        await prefs.setString(_lastWelcomeDialogShownDateKey, today);
-        print('Fecha guardada: $today'); // Debug
+      print("🔍 [DEBUG] Obteniendo SharedPreferences...");
+      SharedPreferences prefs;
+      try {
+        prefs = await SharedPreferences.getInstance();
+        print("🔍 [DEBUG] SharedPreferences obtenido exitosamente");
+      } catch (e) {
+        print("❌ [ERROR] Error al obtener SharedPreferences: $e");
+        return; // Salir del método si no se puede obtener SharedPreferences
       }
-    } else {
-      print('Diálogo ya mostrado hoy.'); // Debug
+
+      print("🔍 [DEBUG] Formateando fecha actual...");
+      String today;
+      try {
+        // Usar formato manual para evitar problemas con DateFormat
+        final now = DateTime.now();
+        today =
+            '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
+        print("🔍 [DEBUG] Fecha actual: $today");
+      } catch (e) {
+        print("❌ [ERROR] Error al formatear fecha: $e");
+        // Fallback simple
+        today = DateTime.now().toIso8601String().split('T')[0];
+        print("🔍 [DEBUG] Fecha actual (fallback): $today");
+      }
+
+      print("🔍 [DEBUG] Leyendo última fecha mostrada...");
+      final lastShownDate = prefs.getString(_lastWelcomeDialogShownDateKey);
+      print("🔍 [DEBUG] Última fecha mostrada: $lastShownDate");
+
+      print('Hoy: $today, Última vez mostrado: $lastShownDate'); // Debug
+
+      if (lastShownDate != today) {
+        print("🔍 [DEBUG] Diálogo no mostrado hoy, procediendo...");
+
+        // Obtener el nombre del usuario actual
+        print("🔍 [DEBUG] Leyendo estado de autenticación...");
+        final authState = context.read<AuthCubit>().state;
+        print("🔍 [DEBUG] Estado de autenticación: $authState");
+
+        String userName = 'Aventurero'; // Nombre por defecto
+        if (authState is Authenticated) {
+          print("🔍 [DEBUG] Usuario autenticado, obteniendo nombre...");
+          userName =
+              authState.user.displayName?.split(' ').first ?? 'Aventurero';
+          print("🔍 [DEBUG] Nombre de usuario: $userName");
+        }
+
+        // Mostrar el diálogo
+        if (mounted) {
+          print('Mostrando diálogo de bienvenida...'); // Debug
+          print("🔍 [DEBUG] Llamando a showWelcomeEventsDialog...");
+          showWelcomeEventsDialog(context, userName);
+          print("🔍 [DEBUG] showWelcomeEventsDialog llamado");
+
+          // Guardar la fecha actual
+          print("🔍 [DEBUG] Guardando fecha actual...");
+          await prefs.setString(_lastWelcomeDialogShownDateKey, today);
+          print('Fecha guardada: $today'); // Debug
+        } else {
+          print("🔍 [DEBUG] Widget no montado después de obtener datos");
+        }
+      } else {
+        print('Diálogo ya mostrado hoy.'); // Debug
+      }
+
+      print("🔍 [DEBUG] _showWelcomeDialogIfNeeded() completado exitosamente");
+    } catch (e, stackTrace) {
+      print("❌ [ERROR] Error en _showWelcomeDialogIfNeeded(): $e");
+      print("❌ [ERROR] Stack trace: $stackTrace");
+      rethrow;
     }
   }
 
@@ -228,92 +399,130 @@ class _FeedScreenState extends State<FeedScreen> with TickerProviderStateMixin {
         child: BlocProvider.value(
           value: sl<LocationCubit>(),
           child: BlocListener<LocationCubit, LocationState>(
-          listener: (context, state) {
-            print("LocationCubit cambió a estado: $state");
-            if (state is LocationObtained) {
-              setState(() {
-                _currentLocation = state.location;
-              });
-              // Obtenemos lugares después de obtener la ubicación
-              context.read<PlaceCubit>().getPlaces();
-            } else if (state is LocationError) {
-              // Mostrar un mensaje de error, pero seguir intentando cargar los lugares
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    'Error al obtener ubicación: ${state.message}',
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                  backgroundColor: Colors.red,
-                ),
-              );
-              // Intentar cargar lugares de todos modos
-              context.read<PlaceCubit>().getPlaces();
-            } else if (state is LocationPermissionGranted) {
-              // Cuando se otorga el permiso, solicitar la ubicación
-              context.read<LocationCubit>().getCurrentLocation();
-            } else if (state is LocationPermissionDenied) {
-              // Mostrar mensaje y cargar lugares sin filtro de ubicación
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text(
-                    'Ubicación no disponible. Mostrando todos los lugares.',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  backgroundColor: Colors.orange,
-                ),
-              );
-              context.read<PlaceCubit>().getPlaces();
-            }
-          },
-          child: BlocConsumer<PlaceCubit, PlaceState>(
-            listener: (context, placeState) {
-              if (placeState is PlacesError) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Error: ${placeState.error}'),
-                    backgroundColor: Colors.red,
-                  ),
-                );
-              }
-            },
-            builder: (context, placeState) {
-              return BlocBuilder<FavoriteCubit, FavoriteState>(
-                builder: (context, favoriteState) {
-                  return RefreshIndicator(
-                    color: AppColors.primaryRed,
-                    onRefresh: () async {
-                      await context.read<PlaceCubit>().getPlaces();
-                      // También actualizar ubicación al hacer pull-to-refresh
-                      context.read<LocationCubit>().getCurrentLocation();
-                    },
-                    child: CustomScrollView(
-                      controller: _scrollController,
-                      physics: const BouncingScrollPhysics(),
-                      slivers: [
-                        _buildAppBar(context),
-                        SliverToBoxAdapter(
-                          child: Column(
-                            children: [
-                              _buildWelcomeSection(),
-                              const AnimatedSearchBar(),
-                              _buildCategoryTabs(),
-                              const QuickReservationsWidget(),
-                              _buildPromoSection(),
-                            ],
-                          ),
-                        ),
-                        _buildPlacesList(context, placeState, favoriteState),
-                      ],
+            listener: (context, state) {
+              print("LocationCubit cambió a estado: $state");
+
+              switch (state.runtimeType) {
+                case LocationObtained:
+                  final locationState = state as LocationObtained;
+                  setState(() {
+                    _currentLocation = locationState.location;
+                  });
+                  print(
+                    "✅ Ubicación obtenida: ${locationState.location.latitude}, ${locationState.location.longitude}",
+                  );
+                  // Cargar lugares después de obtener la ubicación
+                  context.read<PlaceCubit>().getPlaces();
+                  break;
+
+                case LocationError:
+                  final errorState = state as LocationError;
+                  print("❌ Error de ubicación: ${errorState.message}");
+                  // Mostrar mensaje de error pero continuar
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        'Error al obtener ubicación: ${errorState.message}',
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                      backgroundColor: Colors.red,
+                      duration: const Duration(seconds: 3),
                     ),
                   );
-                },
-              );
+                  // Cargar lugares sin filtro de ubicación
+                  context.read<PlaceCubit>().getPlaces();
+                  break;
+
+                case LocationPermissionGranted:
+                  print("✅ Permiso de ubicación concedido");
+                  // Solicitar ubicación actual
+                  context.read<LocationCubit>().getCurrentLocation();
+                  break;
+
+                case LocationPermissionDenied:
+                  print("❌ Permiso de ubicación denegado");
+                  // Mostrar mensaje y continuar sin ubicación
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                        'Ubicación no disponible. Mostrando todos los lugares.',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      backgroundColor: Colors.orange,
+                      duration: const Duration(seconds: 3),
+                    ),
+                  );
+                  // Cargar lugares sin filtro de ubicación
+                  context.read<PlaceCubit>().getPlaces();
+                  break;
+
+                case LocationLoading:
+                  print("⏳ Cargando ubicación...");
+                  break;
+
+                default:
+                  print("📍 Estado de ubicación: $state");
+                  break;
+              }
             },
+            child: BlocConsumer<PlaceCubit, PlaceState>(
+              listener: (context, placeState) {
+                if (placeState is PlacesError) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Error: ${placeState.error}'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
+              },
+              builder: (context, placeState) {
+                return BlocBuilder<FavoriteCubit, FavoriteState>(
+                  builder: (context, favoriteState) {
+                    return RefreshIndicator(
+                      color: AppColors.primaryRed,
+                      onRefresh: () async {
+                        print("🔄 Pull-to-refresh iniciado");
+                        // Primero actualizar lugares
+                        await context.read<PlaceCubit>().getPlaces();
+
+                        // Solo solicitar ubicación si no la tenemos o si han pasado más de 5 minutos
+                        if (_currentLocation == null) {
+                          print("📍 No hay ubicación, solicitando...");
+                          context.read<LocationCubit>().getCurrentLocation();
+                        } else {
+                          print(
+                            "📍 Ya tenemos ubicación, no solicitando de nuevo",
+                          );
+                        }
+                      },
+                      child: CustomScrollView(
+                        controller: _scrollController,
+                        physics: const BouncingScrollPhysics(),
+                        slivers: [
+                          _buildAppBar(context),
+                          SliverToBoxAdapter(
+                            child: Column(
+                              children: [
+                                _buildWelcomeSection(),
+                                const AnimatedSearchBar(),
+                                _buildCategoryTabs(),
+                                const QuickReservationsWidget(),
+                                _buildPromoSection(),
+                              ],
+                            ),
+                          ),
+                          _buildPlacesList(context, placeState, favoriteState),
+                        ],
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
           ),
         ),
       ),
-        ),
     );
   }
 
@@ -669,7 +878,28 @@ class _FeedScreenState extends State<FeedScreen> with TickerProviderStateMixin {
                 searchQuery = 'ofertas';
                 break;
               case 9: // Cerca
-                searchQuery = 'cerca';
+                // Si no tenemos ubicación, solicitarla primero
+                if (_currentLocation == null) {
+                  print("📍 Botón 'Cerca' tocado, solicitando ubicación...");
+                  _requestLocationIfNeeded();
+                  // Mostrar mensaje informativo
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                        'Solicitando tu ubicación para mostrar lugares cercanos...',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      backgroundColor: Colors.blue,
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                  return; // No navegar aún
+                } else {
+                  print(
+                    "📍 Ubicación disponible, navegando a búsqueda cercana",
+                  );
+                  searchQuery = 'cerca';
+                }
                 break;
             }
 

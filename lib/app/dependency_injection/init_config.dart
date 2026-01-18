@@ -64,8 +64,7 @@ FutureOr<void> initDependencies(GetIt sl) async {
 
   ///Initializing core package
   /// Determining environment
-  final environment =
-      kDebugMode ? TurboEnvironment.staging : TurboEnvironment.dev;
+  final environment = kDebugMode ? TurboEnvironment.dev : TurboEnvironment.dev;
   await initCoreDependencies(
     enableDebugLogs: true,
     // firebaseApp: firebaseInstance,

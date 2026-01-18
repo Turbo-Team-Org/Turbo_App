@@ -31,12 +31,15 @@ dependencies:
   flutter:
     sdk: flutter
 
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
+  # Turbo UI - Sistema de diseño local
+  turbo_ui:
+    path: packages/turbo_ui
+
+  # Core package - Lógica de negocio
   core:
     git:
       url: https://github.com/Turbo-Team-Org/Turbo_Core.git
-      ref: 4460c86786fae8ba27ac266d734edbfdee6cd091
+      ref: 40d88293e0040ddac63a52cbf3910305a3746036
       path: core
   flutter_bloc: ^9.1.0
   bloc: ^9.0.0
@@ -81,6 +84,8 @@ dev_dependencies:
   auto_route_generator: ^10.0.1
   json_serializable: ^6.7.0
   analyzer: ^7.3.0
+  bloc_test: ^10.0.0
+  mocktail: ^1.0.0
 
 flutter_launcher_icons:
   android: true
