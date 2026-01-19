@@ -1,6 +1,5 @@
-// dart format width=80
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -41,6 +40,160 @@ class $CategoryStateCopyWith<$Res>  {
 $CategoryStateCopyWith(CategoryState _, $Res Function(CategoryState) __);
 }
 
+
+/// Adds pattern-matching-related methods to [CategoryState].
+extension CategoryStatePatterns on CategoryState {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( CategoryInitial value)?  initial,TResult Function( CategoryLoading value)?  loading,TResult Function( CategoryLoaded value)?  loaded,TResult Function( CategoryError value)?  error,TResult Function( SelectedCategory value)?  selectedCategory,TResult Function( PlacesInCategory value)?  placesInCategory,required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case CategoryInitial() when initial != null:
+return initial(_that);case CategoryLoading() when loading != null:
+return loading(_that);case CategoryLoaded() when loaded != null:
+return loaded(_that);case CategoryError() when error != null:
+return error(_that);case SelectedCategory() when selectedCategory != null:
+return selectedCategory(_that);case PlacesInCategory() when placesInCategory != null:
+return placesInCategory(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( CategoryInitial value)  initial,required TResult Function( CategoryLoading value)  loading,required TResult Function( CategoryLoaded value)  loaded,required TResult Function( CategoryError value)  error,required TResult Function( SelectedCategory value)  selectedCategory,required TResult Function( PlacesInCategory value)  placesInCategory,}){
+final _that = this;
+switch (_that) {
+case CategoryInitial():
+return initial(_that);case CategoryLoading():
+return loading(_that);case CategoryLoaded():
+return loaded(_that);case CategoryError():
+return error(_that);case SelectedCategory():
+return selectedCategory(_that);case PlacesInCategory():
+return placesInCategory(_that);}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( CategoryInitial value)?  initial,TResult? Function( CategoryLoading value)?  loading,TResult? Function( CategoryLoaded value)?  loaded,TResult? Function( CategoryError value)?  error,TResult? Function( SelectedCategory value)?  selectedCategory,TResult? Function( PlacesInCategory value)?  placesInCategory,}){
+final _that = this;
+switch (_that) {
+case CategoryInitial() when initial != null:
+return initial(_that);case CategoryLoading() when loading != null:
+return loading(_that);case CategoryLoaded() when loaded != null:
+return loaded(_that);case CategoryError() when error != null:
+return error(_that);case SelectedCategory() when selectedCategory != null:
+return selectedCategory(_that);case PlacesInCategory() when placesInCategory != null:
+return placesInCategory(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( List<Category> categories)?  loaded,TResult Function( String message)?  error,TResult Function( Category category)?  selectedCategory,TResult Function( List<Place> places)?  placesInCategory,required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case CategoryInitial() when initial != null:
+return initial();case CategoryLoading() when loading != null:
+return loading();case CategoryLoaded() when loaded != null:
+return loaded(_that.categories);case CategoryError() when error != null:
+return error(_that.message);case SelectedCategory() when selectedCategory != null:
+return selectedCategory(_that.category);case PlacesInCategory() when placesInCategory != null:
+return placesInCategory(_that.places);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( List<Category> categories)  loaded,required TResult Function( String message)  error,required TResult Function( Category category)  selectedCategory,required TResult Function( List<Place> places)  placesInCategory,}) {final _that = this;
+switch (_that) {
+case CategoryInitial():
+return initial();case CategoryLoading():
+return loading();case CategoryLoaded():
+return loaded(_that.categories);case CategoryError():
+return error(_that.message);case SelectedCategory():
+return selectedCategory(_that.category);case PlacesInCategory():
+return placesInCategory(_that.places);}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( List<Category> categories)?  loaded,TResult? Function( String message)?  error,TResult? Function( Category category)?  selectedCategory,TResult? Function( List<Place> places)?  placesInCategory,}) {final _that = this;
+switch (_that) {
+case CategoryInitial() when initial != null:
+return initial();case CategoryLoading() when loading != null:
+return loading();case CategoryLoaded() when loaded != null:
+return loaded(_that.categories);case CategoryError() when error != null:
+return error(_that.message);case SelectedCategory() when selectedCategory != null:
+return selectedCategory(_that.category);case PlacesInCategory() when placesInCategory != null:
+return placesInCategory(_that.places);case _:
+  return null;
+
+}
+}
+
+}
 
 /// @nodoc
 

@@ -240,7 +240,7 @@ class WelcomeSection extends StatelessWidget {
     HapticFeedback.lightImpact();
 
     if (category.routePath != null) {
-      context.router.pushPath(category.routePath!);
+      context.router.pushNamed(category.routePath!);
     } else if (category.searchQuery == 'cerca') {
       onNearbyTap?.call();
     } else if (category.searchQuery != null) {

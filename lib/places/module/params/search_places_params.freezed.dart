@@ -1,6 +1,5 @@
-// dart format width=80
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -78,6 +77,130 @@ as String?,
 
 }
 
+
+/// Adds pattern-matching-related methods to [SearchPlacesParams].
+extension SearchPlacesParamsPatterns on SearchPlacesParams {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _SearchPlacesParams value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _SearchPlacesParams() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _SearchPlacesParams value)  $default,){
+final _that = this;
+switch (_that) {
+case _SearchPlacesParams():
+return $default(_that);}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _SearchPlacesParams value)?  $default,){
+final _that = this;
+switch (_that) {
+case _SearchPlacesParams() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String query,  LatLng? location,  double? maxDistance,  double? minRating,  double? maxPrice,  double? minPrice,  String? categoryId)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _SearchPlacesParams() when $default != null:
+return $default(_that.query,_that.location,_that.maxDistance,_that.minRating,_that.maxPrice,_that.minPrice,_that.categoryId);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String query,  LatLng? location,  double? maxDistance,  double? minRating,  double? maxPrice,  double? minPrice,  String? categoryId)  $default,) {final _that = this;
+switch (_that) {
+case _SearchPlacesParams():
+return $default(_that.query,_that.location,_that.maxDistance,_that.minRating,_that.maxPrice,_that.minPrice,_that.categoryId);}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String query,  LatLng? location,  double? maxDistance,  double? minRating,  double? maxPrice,  double? minPrice,  String? categoryId)?  $default,) {final _that = this;
+switch (_that) {
+case _SearchPlacesParams() when $default != null:
+return $default(_that.query,_that.location,_that.maxDistance,_that.minRating,_that.maxPrice,_that.minPrice,_that.categoryId);case _:
+  return null;
+
+}
+}
+
+}
 
 /// @nodoc
 
@@ -225,6 +348,130 @@ as String,
 }
 
 
+/// Adds pattern-matching-related methods to [GetPlacesByLocationParams].
+extension GetPlacesByLocationParamsPatterns on GetPlacesByLocationParams {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _GetPlacesByLocationParams value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _GetPlacesByLocationParams() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _GetPlacesByLocationParams value)  $default,){
+final _that = this;
+switch (_that) {
+case _GetPlacesByLocationParams():
+return $default(_that);}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _GetPlacesByLocationParams value)?  $default,){
+final _that = this;
+switch (_that) {
+case _GetPlacesByLocationParams() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( LatLng location,  double radius,  double? minRating,  double? maxPrice,  double? minPrice,  String? categoryId,  int limit,  String sortBy)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _GetPlacesByLocationParams() when $default != null:
+return $default(_that.location,_that.radius,_that.minRating,_that.maxPrice,_that.minPrice,_that.categoryId,_that.limit,_that.sortBy);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( LatLng location,  double radius,  double? minRating,  double? maxPrice,  double? minPrice,  String? categoryId,  int limit,  String sortBy)  $default,) {final _that = this;
+switch (_that) {
+case _GetPlacesByLocationParams():
+return $default(_that.location,_that.radius,_that.minRating,_that.maxPrice,_that.minPrice,_that.categoryId,_that.limit,_that.sortBy);}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( LatLng location,  double radius,  double? minRating,  double? maxPrice,  double? minPrice,  String? categoryId,  int limit,  String sortBy)?  $default,) {final _that = this;
+switch (_that) {
+case _GetPlacesByLocationParams() when $default != null:
+return $default(_that.location,_that.radius,_that.minRating,_that.maxPrice,_that.minPrice,_that.categoryId,_that.limit,_that.sortBy);case _:
+  return null;
+
+}
+}
+
+}
+
 /// @nodoc
 
 
@@ -371,6 +618,130 @@ as int,
 }
 
 
+/// Adds pattern-matching-related methods to [SearchNearbyPlacesParams].
+extension SearchNearbyPlacesParamsPatterns on SearchNearbyPlacesParams {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _SearchNearbyPlacesParams value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _SearchNearbyPlacesParams() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _SearchNearbyPlacesParams value)  $default,){
+final _that = this;
+switch (_that) {
+case _SearchNearbyPlacesParams():
+return $default(_that);}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _SearchNearbyPlacesParams value)?  $default,){
+final _that = this;
+switch (_that) {
+case _SearchNearbyPlacesParams() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( LatLng location,  double radius,  String? keyword,  String? categoryId,  double? minRating,  int limit)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _SearchNearbyPlacesParams() when $default != null:
+return $default(_that.location,_that.radius,_that.keyword,_that.categoryId,_that.minRating,_that.limit);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( LatLng location,  double radius,  String? keyword,  String? categoryId,  double? minRating,  int limit)  $default,) {final _that = this;
+switch (_that) {
+case _SearchNearbyPlacesParams():
+return $default(_that.location,_that.radius,_that.keyword,_that.categoryId,_that.minRating,_that.limit);}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( LatLng location,  double radius,  String? keyword,  String? categoryId,  double? minRating,  int limit)?  $default,) {final _that = this;
+switch (_that) {
+case _SearchNearbyPlacesParams() when $default != null:
+return $default(_that.location,_that.radius,_that.keyword,_that.categoryId,_that.minRating,_that.limit);case _:
+  return null;
+
+}
+}
+
+}
+
 /// @nodoc
 
 
@@ -514,6 +885,130 @@ as String,
 
 }
 
+
+/// Adds pattern-matching-related methods to [GetPlacesByCategoryParams].
+extension GetPlacesByCategoryParamsPatterns on GetPlacesByCategoryParams {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _GetPlacesByCategoryParams value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _GetPlacesByCategoryParams() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _GetPlacesByCategoryParams value)  $default,){
+final _that = this;
+switch (_that) {
+case _GetPlacesByCategoryParams():
+return $default(_that);}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _GetPlacesByCategoryParams value)?  $default,){
+final _that = this;
+switch (_that) {
+case _GetPlacesByCategoryParams() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String categoryId,  LatLng? location,  double? maxDistance,  double? minRating,  double? maxPrice,  double? minPrice,  int limit,  String sortBy)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _GetPlacesByCategoryParams() when $default != null:
+return $default(_that.categoryId,_that.location,_that.maxDistance,_that.minRating,_that.maxPrice,_that.minPrice,_that.limit,_that.sortBy);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String categoryId,  LatLng? location,  double? maxDistance,  double? minRating,  double? maxPrice,  double? minPrice,  int limit,  String sortBy)  $default,) {final _that = this;
+switch (_that) {
+case _GetPlacesByCategoryParams():
+return $default(_that.categoryId,_that.location,_that.maxDistance,_that.minRating,_that.maxPrice,_that.minPrice,_that.limit,_that.sortBy);}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String categoryId,  LatLng? location,  double? maxDistance,  double? minRating,  double? maxPrice,  double? minPrice,  int limit,  String sortBy)?  $default,) {final _that = this;
+switch (_that) {
+case _GetPlacesByCategoryParams() when $default != null:
+return $default(_that.categoryId,_that.location,_that.maxDistance,_that.minRating,_that.maxPrice,_that.minPrice,_that.limit,_that.sortBy);case _:
+  return null;
+
+}
+}
+
+}
 
 /// @nodoc
 

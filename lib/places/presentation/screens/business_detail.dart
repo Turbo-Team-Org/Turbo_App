@@ -233,7 +233,7 @@ class _BusinessDetailsScreenState extends State<BusinessDetailsScreen> {
                                           color: Theme.of(context)
                                               .colorScheme
                                               .primary
-                                              .withOpacity(0.3),
+                                              .withValues(alpha: 0.3),
                                           blurRadius: 8,
                                           offset: const Offset(0, 4),
                                         ),
@@ -279,7 +279,7 @@ class _BusinessDetailsScreenState extends State<BusinessDetailsScreen> {
                                                 ),
                                                 decoration: BoxDecoration(
                                                   color: Colors.white
-                                                      .withOpacity(0.2),
+                                                      .withValues(alpha: 0.2),
                                                   shape: BoxShape.circle,
                                                 ),
                                                 child: const Icon(
@@ -304,7 +304,7 @@ class _BusinessDetailsScreenState extends State<BusinessDetailsScreen> {
                                                 ),
                                                 decoration: BoxDecoration(
                                                   color: Colors.white
-                                                      .withOpacity(0.2),
+                                                      .withValues(alpha: 0.2),
                                                   shape: BoxShape.circle,
                                                 ),
                                                 child: const Icon(
@@ -394,7 +394,7 @@ class _BusinessDetailsScreenState extends State<BusinessDetailsScreen> {
                   ),
                   const SizedBox(height: 20),
                   ElevatedButton(
-                    onPressed: () => context.router.pop(),
+                    onPressed: () => context.router.maybePop(),
                     child: Text(context.l10n.commonBack),
                   ),
                 ],
@@ -437,7 +437,7 @@ class BottomActionBar extends StatelessWidget {
           color: Theme.of(context).colorScheme.surface,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 10,
               offset: const Offset(0, -5),
             ),

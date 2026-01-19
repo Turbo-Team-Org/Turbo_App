@@ -856,6 +856,53 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bookingPolicyText => 'Free cancellation up to 24 hours before';
 
   @override
+  String get bookingFullName => 'Full name';
+
+  @override
+  String get bookingNameRequired => 'Name is required';
+
+  @override
+  String get bookingEmail => 'Email address';
+
+  @override
+  String get bookingEmailRequired => 'Email is required';
+
+  @override
+  String get bookingEmailInvalid => 'Invalid email';
+
+  @override
+  String get bookingPhone => 'Phone number';
+
+  @override
+  String get bookingPhoneRequired => 'Phone is required';
+
+  @override
+  String get bookingSpecialRequestsOptional => 'Special requests (optional)';
+
+  @override
+  String get bookingSpecialRequestsHint =>
+      'E.g.: Table by the window, special celebration...';
+
+  @override
+  String get bookingPartySize => 'How many guests?';
+
+  @override
+  String get bookingPeopleCount => 'Number of people:';
+
+  @override
+  String get bookingCancellationPolicy => 'Cancellation policy';
+
+  @override
+  String get bookingCancellationPolicyText =>
+      'You can cancel your reservation up to 2 hours before the scheduled time at no cost.';
+
+  @override
+  String get bookingConfirming => 'Confirming booking...';
+
+  @override
+  String get bookingLoginRequired => 'You must log in to make a reservation';
+
+  @override
   String get mapTitle => 'Map';
 
   @override

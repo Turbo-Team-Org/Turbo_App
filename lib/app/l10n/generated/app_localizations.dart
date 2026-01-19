@@ -1694,6 +1694,96 @@ abstract class AppLocalizations {
   /// **'Cancelación gratuita hasta 24 horas antes'**
   String get bookingPolicyText;
 
+  /// No description provided for @bookingFullName.
+  ///
+  /// In es, this message translates to:
+  /// **'Nombre completo'**
+  String get bookingFullName;
+
+  /// No description provided for @bookingNameRequired.
+  ///
+  /// In es, this message translates to:
+  /// **'El nombre es requerido'**
+  String get bookingNameRequired;
+
+  /// No description provided for @bookingEmail.
+  ///
+  /// In es, this message translates to:
+  /// **'Correo electrónico'**
+  String get bookingEmail;
+
+  /// No description provided for @bookingEmailRequired.
+  ///
+  /// In es, this message translates to:
+  /// **'El correo es requerido'**
+  String get bookingEmailRequired;
+
+  /// No description provided for @bookingEmailInvalid.
+  ///
+  /// In es, this message translates to:
+  /// **'Correo inválido'**
+  String get bookingEmailInvalid;
+
+  /// No description provided for @bookingPhone.
+  ///
+  /// In es, this message translates to:
+  /// **'Número de teléfono'**
+  String get bookingPhone;
+
+  /// No description provided for @bookingPhoneRequired.
+  ///
+  /// In es, this message translates to:
+  /// **'El teléfono es requerido'**
+  String get bookingPhoneRequired;
+
+  /// No description provided for @bookingSpecialRequestsOptional.
+  ///
+  /// In es, this message translates to:
+  /// **'Solicitudes especiales (opcional)'**
+  String get bookingSpecialRequestsOptional;
+
+  /// No description provided for @bookingSpecialRequestsHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Ej: Mesa cerca de la ventana, celebración especial...'**
+  String get bookingSpecialRequestsHint;
+
+  /// No description provided for @bookingPartySize.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Para cuántas personas?'**
+  String get bookingPartySize;
+
+  /// No description provided for @bookingPeopleCount.
+  ///
+  /// In es, this message translates to:
+  /// **'Número de personas:'**
+  String get bookingPeopleCount;
+
+  /// No description provided for @bookingCancellationPolicy.
+  ///
+  /// In es, this message translates to:
+  /// **'Política de cancelación'**
+  String get bookingCancellationPolicy;
+
+  /// No description provided for @bookingCancellationPolicyText.
+  ///
+  /// In es, this message translates to:
+  /// **'Puedes cancelar tu reserva hasta 2 horas antes del horario programado sin costo alguno.'**
+  String get bookingCancellationPolicyText;
+
+  /// No description provided for @bookingConfirming.
+  ///
+  /// In es, this message translates to:
+  /// **'Confirmando reserva...'**
+  String get bookingConfirming;
+
+  /// No description provided for @bookingLoginRequired.
+  ///
+  /// In es, this message translates to:
+  /// **'Debes iniciar sesión para hacer una reserva'**
+  String get bookingLoginRequired;
+
   /// No description provided for @mapTitle.
   ///
   /// In es, this message translates to:
