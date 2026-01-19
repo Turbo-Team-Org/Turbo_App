@@ -380,9 +380,7 @@ class _BookingFormPageState extends State<BookingFormPage> {
       final user = FirebaseAuth.instance.currentUser;
       if (user == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(context.l10n.bookingLoginRequired),
-          ),
+          SnackBar(content: Text(context.l10n.bookingLoginRequired)),
         );
         return;
       }
