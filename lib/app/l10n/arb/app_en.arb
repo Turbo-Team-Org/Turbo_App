@@ -412,5 +412,41 @@
   "onboarding4Subtitle": "Create your own collection of favorite places and access them whenever you want",
 
   "onboardingWelcome": "Welcome to",
-  "onboardingReadyToExplore": "Ready to explore?"
+  "onboardingReadyToExplore": "Ready to explore?",
+
+  "reviewsTitle": "Reviews",
+  "reviewsSectionTitle": "Customer reviews",
+  "reviewsSeeAll": "See all",
+  "reviewsEmpty": "Be the first to share your opinion",
+  "reviewsWriteReview": "Write a review",
+  "reviewsAddTitle": "New review",
+  "reviewsEditTitle": "Edit review",
+  "reviewsCommentHint": "Tell us about your experience",
+  "reviewsCommentMinLength": "Write at least {count} characters",
+  "@reviewsCommentMinLength": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "reviewsSelectRating": "Please select a rating",
+  "reviewsSubmit": "Post",
+  "reviewsSave": "Save",
+  "reviewsDelete": "Delete",
+  "reviewsEdit": "Edit",
+  "reviewsAverageLabel": "Average rating",
+  "reviewsCount": "{count, plural, =0{No reviews} =1{1 review} other{{count} reviews}}",
+  "@reviewsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "reviewsLoadError": "Could not load reviews",
+  "reviewsAuthRequired": "Sign in to post a review",
+  "reviewsDeleteConfirmTitle": "Delete review?",
+  "reviewsDeleteConfirmMessage": "This action cannot be undone.",
+  "reviewsCancel": "Cancel"
 }

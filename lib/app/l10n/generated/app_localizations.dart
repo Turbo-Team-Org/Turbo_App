@@ -716,8 +716,8 @@ abstract class AppLocalizations {
   /// No description provided for @reviewsCount.
   ///
   /// In es, this message translates to:
-  /// **'{count, plural, =1{1 reseña} other{{count} reseñas}}'**
-  String reviewsCount(num count);
+  /// **'{count, plural, =0{Sin reseñas} =1{1 reseña} other{{count} reseñas}}'**
+  String reviewsCount(int count);
 
   /// No description provided for @reviewsRating.
   ///
@@ -740,13 +740,13 @@ abstract class AppLocalizations {
   /// No description provided for @reviewsCommentHint.
   ///
   /// In es, this message translates to:
-  /// **'Cuéntanos tu experiencia...'**
+  /// **'Cuéntanos tu experiencia'**
   String get reviewsCommentHint;
 
   /// No description provided for @reviewsSubmit.
   ///
   /// In es, this message translates to:
-  /// **'Enviar Reseña'**
+  /// **'Publicar'**
   String get reviewsSubmit;
 
   /// No description provided for @reviewsSuccess.
@@ -2326,6 +2326,108 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'¿Listo para explorar?'**
   String get onboardingReadyToExplore;
+
+  /// No description provided for @reviewsSectionTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Reseñas de clientes'**
+  String get reviewsSectionTitle;
+
+  /// No description provided for @reviewsSeeAll.
+  ///
+  /// In es, this message translates to:
+  /// **'Ver todas'**
+  String get reviewsSeeAll;
+
+  /// No description provided for @reviewsEmpty.
+  ///
+  /// In es, this message translates to:
+  /// **'Sé el primero en opinar'**
+  String get reviewsEmpty;
+
+  /// No description provided for @reviewsWriteReview.
+  ///
+  /// In es, this message translates to:
+  /// **'Escribir reseña'**
+  String get reviewsWriteReview;
+
+  /// No description provided for @reviewsAddTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Nueva reseña'**
+  String get reviewsAddTitle;
+
+  /// No description provided for @reviewsEditTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Editar reseña'**
+  String get reviewsEditTitle;
+
+  /// No description provided for @reviewsCommentMinLength.
+  ///
+  /// In es, this message translates to:
+  /// **'Escribe al menos {count} caracteres'**
+  String reviewsCommentMinLength(int count);
+
+  /// No description provided for @reviewsSelectRating.
+  ///
+  /// In es, this message translates to:
+  /// **'Selecciona una calificación'**
+  String get reviewsSelectRating;
+
+  /// No description provided for @reviewsSave.
+  ///
+  /// In es, this message translates to:
+  /// **'Guardar'**
+  String get reviewsSave;
+
+  /// No description provided for @reviewsDelete.
+  ///
+  /// In es, this message translates to:
+  /// **'Eliminar'**
+  String get reviewsDelete;
+
+  /// No description provided for @reviewsEdit.
+  ///
+  /// In es, this message translates to:
+  /// **'Editar'**
+  String get reviewsEdit;
+
+  /// No description provided for @reviewsAverageLabel.
+  ///
+  /// In es, this message translates to:
+  /// **'Valoración media'**
+  String get reviewsAverageLabel;
+
+  /// No description provided for @reviewsLoadError.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudieron cargar las reseñas'**
+  String get reviewsLoadError;
+
+  /// No description provided for @reviewsAuthRequired.
+  ///
+  /// In es, this message translates to:
+  /// **'Inicia sesión para publicar una reseña'**
+  String get reviewsAuthRequired;
+
+  /// No description provided for @reviewsDeleteConfirmTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Eliminar reseña?'**
+  String get reviewsDeleteConfirmTitle;
+
+  /// No description provided for @reviewsDeleteConfirmMessage.
+  ///
+  /// In es, this message translates to:
+  /// **'Esta acción no se puede deshacer.'**
+  String get reviewsDeleteConfirmMessage;
+
+  /// No description provided for @reviewsCancel.
+  ///
+  /// In es, this message translates to:
+  /// **'Cancelar'**
+  String get reviewsCancel;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

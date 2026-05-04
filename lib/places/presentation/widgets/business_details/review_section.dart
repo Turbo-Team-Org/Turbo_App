@@ -1,11 +1,14 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:core/core.dart';
 import 'package:turbo/app/core/theme/text_styles.dart';
+import 'package:turbo/app/l10n/l10n.dart';
 import 'package:animate_do/animate_do.dart';
-import 'package:turbo/places/presentation/widgets/business_details/review_card.dart';
-import 'package:turbo/places/presentation/widgets/business_details/add_review_dialog.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:turbo/reviews/presentation/widgets/review_card.dart';
+import 'package:turbo/reviews/presentation/widgets/reviews_summary_widget.dart';
 import 'package:turbo/reviews/state_management/cubit/review_cubit.dart';
+import 'package:turbo/app/routes/router/app_router.gr.dart';
 
 class ReviewSection extends StatefulWidget {
   final Place place;
@@ -20,40 +23,58 @@ class _ReviewSectionState extends State<ReviewSection> {
   @override
   void initState() {
     super.initState();
-    // Cargar las reseñas del lugar al iniciar
     context.read<ReviewCubit>().getReviewsFromAPlace(widget.place.id);
-  }
-
-  void _showAddReviewDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AddReviewDialog(placeId: widget.place.id),
-    );
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ReviewCubit, ReviewState>(
       builder: (context, state) {
-        switch (state) {
-          case ReviewState.initial:
-            return _buildReviewSection(widget.place.reviews);
-          case ReviewState.loading:
-            return const Center(child: CircularProgressIndicator.adaptive());
-          case ReviewLoaded():
-            final reviews = state.reviews;
-            return _buildReviewSection(reviews);
-          case ReviewError():
-            final message = state.message;
-            return _errorReviewWidget(message: message);
-          default:
-            return _buildReviewSection(widget.place.reviews);
-        }
+        return switch (state) {
+          ReviewInitial() => const Center(
+            child: Padding(
+              padding: EdgeInsets.all(24),
+              child: CircularProgressIndicator.adaptive(),
+            ),
+          ),
+          ReviewLoading() => const Center(
+            child: Padding(
+              padding: EdgeInsets.all(24),
+              child: CircularProgressIndicator.adaptive(),
+            ),
+          ),
+          ReviewLoaded(:final reviews) => _buildSection(context, reviews),
+          ReviewError(:final message) => _errorBlock(context, message),
+        };
       },
     );
   }
 
-  Widget _buildReviewSection(List<Review> reviews) {
+  Widget _errorBlock(BuildContext context, String message) {
+    final l10n = context.l10n;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      child: Column(
+        children: [
+          Text(l10n.reviewsLoadError, style: AppTextStyles.titleSmall(context)),
+          const SizedBox(height: 8),
+          Text(message, textAlign: TextAlign.center),
+          const SizedBox(height: 12),
+          FilledButton.icon(
+            onPressed:
+                () => context.read<ReviewCubit>().getReviewsFromAPlace(
+                  widget.place.id,
+                ),
+            icon: const Icon(Icons.refresh),
+            label: Text(l10n.retry),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSection(BuildContext context, List<Review> reviews) {
+    final l10n = context.l10n;
     return FadeInUp(
       delay: const Duration(milliseconds: 300),
       duration: const Duration(milliseconds: 400),
@@ -70,7 +91,7 @@ class _ReviewSectionState extends State<ReviewSection> {
                     decoration: BoxDecoration(
                       color: Theme.of(
                         context,
-                      ).colorScheme.primary.withOpacity(0.1),
+                      ).colorScheme.primary.withValues(alpha: 0.1),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
@@ -81,7 +102,7 @@ class _ReviewSectionState extends State<ReviewSection> {
                   ),
                   const SizedBox(width: 10),
                   Text(
-                    'Reseñas de Clientes',
+                    l10n.reviewsSectionTitle,
                     style: AppTextStyles.titleMedium(
                       context,
                     ).copyWith(fontWeight: FontWeight.bold),
@@ -90,9 +111,15 @@ class _ReviewSectionState extends State<ReviewSection> {
               ),
               if (reviews.isNotEmpty)
                 TextButton(
-                  onPressed: () {},
+                  onPressed:
+                      () => context.router.push(
+                        ReviewsListRoute(
+                          placeId: widget.place.id,
+                          placeName: widget.place.name,
+                        ),
+                      ),
                   child: Text(
-                    'Ver todas',
+                    l10n.reviewsSeeAll,
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.primary,
                       fontWeight: FontWeight.w500,
@@ -100,6 +127,11 @@ class _ReviewSectionState extends State<ReviewSection> {
                   ),
                 ),
             ],
+          ),
+          const SizedBox(height: 12),
+          ReviewsSummaryWidget(
+            reviews: reviews,
+            fallbackRating: widget.place.rating,
           ),
           const SizedBox(height: 16),
           if (reviews.isEmpty)
@@ -113,29 +145,39 @@ class _ReviewSectionState extends State<ReviewSection> {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'No hay reseñas aún',
+                    l10n.reviewsEmpty,
                     style: TextStyle(color: Colors.grey.shade600, fontSize: 16),
                   ),
                 ],
               ),
             )
           else
-            ...reviews.map(
-              (review) => FadeInLeft(
-                delay: Duration(milliseconds: 100 * reviews.indexOf(review)),
-                duration: const Duration(milliseconds: 400),
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 16),
-                  child: ReviewCard(review: review),
-                ),
-              ),
+            ...List.generate(
+              reviews.length > 3 ? 3 : reviews.length,
+              (i) {
+                final review = reviews[i];
+                return FadeInLeft(
+                  delay: Duration(milliseconds: 100 * i),
+                  duration: const Duration(milliseconds: 400),
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: ReviewCard(review: review),
+                  ),
+                );
+              },
             ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 8),
           Center(
             child: TextButton.icon(
-              onPressed: _showAddReviewDialog,
+              onPressed:
+                  () => context.router.push(
+                    AddReviewRoute(
+                      placeId: widget.place.id,
+                      placeName: widget.place.name,
+                    ),
+                  ),
               icon: const Icon(Icons.add_comment_outlined),
-              label: const Text('Escribir una reseña'),
+              label: Text(l10n.reviewsWriteReview),
               style: TextButton.styleFrom(
                 foregroundColor: Theme.of(context).colorScheme.primary,
                 padding: const EdgeInsets.symmetric(
@@ -147,7 +189,7 @@ class _ReviewSectionState extends State<ReviewSection> {
                   side: BorderSide(
                     color: Theme.of(
                       context,
-                    ).colorScheme.primary.withOpacity(0.5),
+                    ).colorScheme.primary.withValues(alpha: 0.5),
                     width: 1,
                   ),
                 ),
@@ -158,8 +200,4 @@ class _ReviewSectionState extends State<ReviewSection> {
       ),
     );
   }
-}
-
-Widget _errorReviewWidget({required String message}) {
-  return Center(child: Column(children: [Text(message)]));
 }

@@ -338,12 +338,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get reviewsBeFirst => 'Sé el primero en opinar';
 
   @override
-  String reviewsCount(num count) {
+  String reviewsCount(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
       other: '$count reseñas',
       one: '1 reseña',
+      zero: 'Sin reseñas',
     );
     return '$_temp0';
   }
@@ -358,10 +359,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get reviewsComment => 'Tu comentario';
 
   @override
-  String get reviewsCommentHint => 'Cuéntanos tu experiencia...';
+  String get reviewsCommentHint => 'Cuéntanos tu experiencia';
 
   @override
-  String get reviewsSubmit => 'Enviar Reseña';
+  String get reviewsSubmit => 'Publicar';
 
   @override
   String get reviewsSuccess => '¡Reseña enviada!';
@@ -1193,4 +1194,57 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get onboardingReadyToExplore => '¿Listo para explorar?';
+
+  @override
+  String get reviewsSectionTitle => 'Reseñas de clientes';
+
+  @override
+  String get reviewsSeeAll => 'Ver todas';
+
+  @override
+  String get reviewsEmpty => 'Sé el primero en opinar';
+
+  @override
+  String get reviewsWriteReview => 'Escribir reseña';
+
+  @override
+  String get reviewsAddTitle => 'Nueva reseña';
+
+  @override
+  String get reviewsEditTitle => 'Editar reseña';
+
+  @override
+  String reviewsCommentMinLength(int count) {
+    return 'Escribe al menos $count caracteres';
+  }
+
+  @override
+  String get reviewsSelectRating => 'Selecciona una calificación';
+
+  @override
+  String get reviewsSave => 'Guardar';
+
+  @override
+  String get reviewsDelete => 'Eliminar';
+
+  @override
+  String get reviewsEdit => 'Editar';
+
+  @override
+  String get reviewsAverageLabel => 'Valoración media';
+
+  @override
+  String get reviewsLoadError => 'No se pudieron cargar las reseñas';
+
+  @override
+  String get reviewsAuthRequired => 'Inicia sesión para publicar una reseña';
+
+  @override
+  String get reviewsDeleteConfirmTitle => '¿Eliminar reseña?';
+
+  @override
+  String get reviewsDeleteConfirmMessage => 'Esta acción no se puede deshacer.';
+
+  @override
+  String get reviewsCancel => 'Cancelar';
 }

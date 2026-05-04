@@ -10,10 +10,7 @@ import 'package:turbo/authentication/state_management/auth_cubit/cubit/auth_cubi
 import 'package:turbo/favorites/state_management/cubit/favorite_cubit.dart';
 import 'package:turbo/places/state_management/place_bloc/cubit/place_cubit.dart';
 import 'package:turbo/reviews/state_management/cubit/review_cubit.dart';
-import 'package:turbo/reviews/module/add_review_use_case.dart';
-import 'package:turbo/reviews/module/get_all_reviews_use_case.dart';
-import 'package:turbo/reviews/module/get_reviews_from_a_place_use_case.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:turbo/boostrap.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:core/core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -41,7 +38,6 @@ class _BusinessDetailsScreenState extends State<BusinessDetailsScreen> {
   String _userName = "explorador";
   String _userPhotoUrl = "";
   final prefs = AppPreferences();
-  late final ReviewCubit _reviewCubit;
 
   @override
   void initState() {
@@ -56,20 +52,6 @@ class _BusinessDetailsScreenState extends State<BusinessDetailsScreen> {
 
     // Cargar datos del usuario
     _loadUserData();
-
-    // Inicializar el ReviewCubit
-    final reviewRepository = ReviewRepository(
-      reviewService: ReviewService(firestore: FirebaseFirestore.instance),
-    );
-    _reviewCubit = ReviewCubit(
-      addReviewUseCase: AddReviewUseCase(reviewRepository: reviewRepository),
-      getAllReviewsUseCase: GetAllReviewsUseCase(
-        reviewRepository: reviewRepository,
-      ),
-      getReviewsFromAPlaceUseCase: GetReviewsFromAPlaceUseCase(
-        reviewRepository: reviewRepository,
-      ),
-    );
   }
 
   Future<void> _loadUserData() async {
@@ -106,7 +88,6 @@ class _BusinessDetailsScreenState extends State<BusinessDetailsScreen> {
   @override
   void dispose() {
     _scrollController.dispose();
-    _reviewCubit.close();
     super.dispose();
   }
 
@@ -182,7 +163,7 @@ class _BusinessDetailsScreenState extends State<BusinessDetailsScreen> {
           }
 
           return BlocProvider.value(
-            value: _reviewCubit,
+            value: sl<ReviewCubit>(),
             child: Scaffold(
               body: CustomScrollView(
                 controller: _scrollController,

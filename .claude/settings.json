@@ -1,0 +1,118 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings",
+  "project": {
+    "name": "Turbo App",
+    "type": "flutter",
+    "version": "1.0.0+1",
+    "language": "dart",
+    "framework": "flutter",
+    "fvmManaged": true,
+    "monorepo": true,
+    "workspaceRoot": "/Users/david/Desktop/Turbo_Workspace"
+  },
+  "context": {
+    "primaryGuide": "CLAUDE.md",
+    "documentationFolder": "doc/",
+    "agentsFolder": ".claude/agents/",
+    "workflowsFolder": ".claude/workflows/",
+    "commandsFolder": ".claude/commands/",
+    "templatesFolder": ".claude/templates/"
+  },
+  "rules": {
+    "language": "es",
+    "alwaysReadFirst": [
+      "CLAUDE.md",
+      "doc/AGENTIC_DEVELOPMENT.md"
+    ],
+    "tdd": {
+      "enabled": true,
+      "minimumTestsPerFeature": 3,
+      "requiredTestTypes": [
+        "initial_state",
+        "success_case",
+        "error_case"
+      ],
+      "coverageThreshold": 80
+    },
+    "codeGeneration": {
+      "useFreezedSealed": true,
+      "useFreezedForStates": true,
+      "useAutoRouteForNavigation": true,
+      "useGetItForDI": true,
+      "useTurboUiForStyling": true,
+      "useContextL10nForStrings": true
+    },
+    "forbidden": [
+      "print()",
+      "Color(0xFF...)",
+      ".withOpacity(",
+      "context.router.pop()",
+      "context.router.pushPath(",
+      "Text('literal')",
+      "const InputDecoration(labelText: 'literal')"
+    ],
+    "preferred": [
+      "debugPrint()",
+      "TurboColors.X / Theme.of(context).colorScheme.X",
+      ".withValues(alpha: X)",
+      "context.router.maybePop()",
+      "context.router.push(SomeRoute())",
+      "Text(context.l10n.key)"
+    ]
+  },
+  "agents": {
+    "planner": {
+      "file": ".claude/agents/planner.md",
+      "model": "claude-opus-4-7-thinking-xhigh",
+      "trigger": "/plan"
+    },
+    "implementer": {
+      "file": ".claude/agents/implementer.md",
+      "model": "claude-4.6-sonnet-medium-thinking",
+      "trigger": "/implement"
+    },
+    "tester": {
+      "file": ".claude/agents/tester.md",
+      "model": "claude-4.6-sonnet-medium-thinking",
+      "trigger": "/test"
+    },
+    "documenter": {
+      "file": ".claude/agents/documenter.md",
+      "model": "claude-4-sonnet",
+      "trigger": "/doc"
+    }
+  },
+  "commands": {
+    "/plan": ".claude/commands/plan.md",
+    "/tdd": ".claude/commands/tdd.md",
+    "/test": ".claude/commands/test.md",
+    "/implement": ".claude/commands/implement.md",
+    "/doc": ".claude/commands/doc.md",
+    "/feature": ".claude/commands/feature.md",
+    "/review": ".claude/commands/review.md"
+  },
+  "workflows": {
+    "newFeature": ".claude/workflows/feature_workflow.md",
+    "tddCycle": ".claude/workflows/tdd_workflow.md",
+    "mvpRelease": ".claude/workflows/mvp_workflow.md",
+    "bugFix": ".claude/workflows/bugfix_workflow.md"
+  },
+  "shell": {
+    "flutterCommand": "fvm flutter",
+    "dartCommand": "fvm dart",
+    "buildRunner": "fvm dart run build_runner build --delete-conflicting-outputs",
+    "genL10n": "fvm flutter gen-l10n",
+    "test": "fvm flutter test",
+    "testCoverage": "fvm flutter test --coverage",
+    "analyze": "fvm flutter analyze"
+  },
+  "paths": {
+    "lib": "lib/",
+    "test": "test/",
+    "doc": "doc/",
+    "i18nArb": "lib/app/l10n/arb/",
+    "diConfig": "lib/app/dependency_injection/init_config.dart",
+    "router": "lib/app/routes/router/app_router.dart",
+    "turboUi": "packages/turbo_ui/"
+  }
+}

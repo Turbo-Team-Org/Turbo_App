@@ -338,12 +338,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reviewsBeFirst => 'Be the first to review';
 
   @override
-  String reviewsCount(num count) {
+  String reviewsCount(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
       other: '$count reviews',
       one: '1 review',
+      zero: 'No reviews',
     );
     return '$_temp0';
   }
@@ -358,10 +359,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reviewsComment => 'Your comment';
 
   @override
-  String get reviewsCommentHint => 'Tell us about your experience...';
+  String get reviewsCommentHint => 'Tell us about your experience';
 
   @override
-  String get reviewsSubmit => 'Submit Review';
+  String get reviewsSubmit => 'Post';
 
   @override
   String get reviewsSuccess => 'Review submitted!';
@@ -1193,4 +1194,57 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get onboardingReadyToExplore => 'Ready to explore?';
+
+  @override
+  String get reviewsSectionTitle => 'Customer reviews';
+
+  @override
+  String get reviewsSeeAll => 'See all';
+
+  @override
+  String get reviewsEmpty => 'Be the first to share your opinion';
+
+  @override
+  String get reviewsWriteReview => 'Write a review';
+
+  @override
+  String get reviewsAddTitle => 'New review';
+
+  @override
+  String get reviewsEditTitle => 'Edit review';
+
+  @override
+  String reviewsCommentMinLength(int count) {
+    return 'Write at least $count characters';
+  }
+
+  @override
+  String get reviewsSelectRating => 'Please select a rating';
+
+  @override
+  String get reviewsSave => 'Save';
+
+  @override
+  String get reviewsDelete => 'Delete';
+
+  @override
+  String get reviewsEdit => 'Edit';
+
+  @override
+  String get reviewsAverageLabel => 'Average rating';
+
+  @override
+  String get reviewsLoadError => 'Could not load reviews';
+
+  @override
+  String get reviewsAuthRequired => 'Sign in to post a review';
+
+  @override
+  String get reviewsDeleteConfirmTitle => 'Delete review?';
+
+  @override
+  String get reviewsDeleteConfirmMessage => 'This action cannot be undone.';
+
+  @override
+  String get reviewsCancel => 'Cancel';
 }

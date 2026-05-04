@@ -415,5 +415,41 @@
   "onboarding4Subtitle": "Crea tu propia colección de lugares favoritos y accede a ellos cuando quieras",
 
   "onboardingWelcome": "Bienvenido a",
-  "onboardingReadyToExplore": "¿Listo para explorar?"
+  "onboardingReadyToExplore": "¿Listo para explorar?",
+
+  "reviewsTitle": "Reseñas",
+  "reviewsSectionTitle": "Reseñas de clientes",
+  "reviewsSeeAll": "Ver todas",
+  "reviewsEmpty": "Sé el primero en opinar",
+  "reviewsWriteReview": "Escribir reseña",
+  "reviewsAddTitle": "Nueva reseña",
+  "reviewsEditTitle": "Editar reseña",
+  "reviewsCommentHint": "Cuéntanos tu experiencia",
+  "reviewsCommentMinLength": "Escribe al menos {count} caracteres",
+  "@reviewsCommentMinLength": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "reviewsSelectRating": "Selecciona una calificación",
+  "reviewsSubmit": "Publicar",
+  "reviewsSave": "Guardar",
+  "reviewsDelete": "Eliminar",
+  "reviewsEdit": "Editar",
+  "reviewsAverageLabel": "Valoración media",
+  "reviewsCount": "{count, plural, =0{Sin reseñas} =1{1 reseña} other{{count} reseñas}}",
+  "@reviewsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "reviewsLoadError": "No se pudieron cargar las reseñas",
+  "reviewsAuthRequired": "Inicia sesión para publicar una reseña",
+  "reviewsDeleteConfirmTitle": "¿Eliminar reseña?",
+  "reviewsDeleteConfirmMessage": "Esta acción no se puede deshacer.",
+  "reviewsCancel": "Cancelar"
 }
