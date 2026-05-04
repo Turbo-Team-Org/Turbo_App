@@ -1,0 +1,10 @@
+# Flutter Localization Configuration
+# https://docs.flutter.dev/ui/accessibility-and-internationalization/internationalization
+
+arb-dir: lib/app/l10n/arb
+template-arb-file: app_es.arb
+output-localization-file: app_localizations.dart
+output-class: AppLocalizations
+output-dir: lib/app/l10n/generated
+synthetic-package: false
+nullable-getter: false

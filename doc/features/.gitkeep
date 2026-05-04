@@ -1,0 +1,12 @@
+# Carpeta para documentación por feature
+#
+# Cada feature implementada debe tener su archivo aquí, generado por el agente Planner
+# y completado por el agente Documenter al cerrar la feature.
+#
+# Nomenclatura: <feature-kebab>.md
+# Ejemplos:
+#   - password-recovery.md
+#   - notifications-push.md
+#   - user-profile-edit.md
+#
+# Plantilla: ver .claude/templates/feature_plan_template.md

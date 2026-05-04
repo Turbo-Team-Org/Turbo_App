@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:turbo/app/l10n/l10n.dart';
 import 'package:turbo/events/presentation/widgets/events_widgets.dart';
 import 'package:turbo/events/state_management/event_bloc/cubit/event_cubit.dart';
 import 'package:animate_do/animate_do.dart'; // Para animaciones
@@ -27,11 +28,13 @@ class _EventsScreenState extends State<EventsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Próximos Eventos'),
+        title: Text(l10n.eventsUpcoming),
         elevation: 1,
-        shadowColor: Colors.black.withOpacity(0.1),
+        shadowColor: Colors.black.withValues(alpha: 0.1),
       ),
       body: BlocBuilder<EventCubit, EventState>(
         builder: (context, state) {
@@ -54,13 +57,13 @@ class _EventsScreenState extends State<EventsScreen> {
                         ),
                         const SizedBox(height: 24),
                         Text(
-                          'No hay eventos próximos',
+                          l10n.eventsNoUpcoming,
                           style: Theme.of(context).textTheme.headlineSmall
                               ?.copyWith(color: Colors.grey[600]),
                         ),
                         const SizedBox(height: 12),
                         Text(
-                          'Vuelve pronto para ver novedades',
+                          l10n.eventsNoEvents,
                           style: Theme.of(context).textTheme.bodyLarge
                               ?.copyWith(color: Colors.grey[500]),
                           textAlign: TextAlign.center,
@@ -99,7 +102,7 @@ class _EventsScreenState extends State<EventsScreen> {
                       ),
                       const SizedBox(height: 24),
                       Text(
-                        'Error al cargar eventos',
+                        l10n.errorOccurred,
                         style: Theme.of(context).textTheme.headlineSmall
                             ?.copyWith(color: Colors.red[600]),
                       ),
@@ -116,7 +119,7 @@ class _EventsScreenState extends State<EventsScreen> {
                       ElevatedButton.icon(
                         onPressed: _refreshEvents,
                         icon: const Icon(Icons.refresh),
-                        label: const Text('Reintentar'),
+                        label: Text(l10n.retry),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.red[400],
                           foregroundColor: Colors.white,

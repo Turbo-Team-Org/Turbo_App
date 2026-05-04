@@ -21,7 +21,8 @@ class NotificationService {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   final FlutterLocalNotificationsPlugin _localNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
-  final FirebaseFirestore _firestore; // Inyectar Firestore
+  /// Persistencia temporal en Firestore; Sprint notifications-fix migrará a Supabase.
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // Canal de notificación para Android (debe coincidir con main.dart y AndroidManifest)
   final AndroidNotificationChannel _androidChannel =
@@ -33,8 +34,7 @@ class NotificationService {
         playSound: true,
       );
 
-  NotificationService({required FirebaseFirestore firestore})
-    : _firestore = firestore;
+  NotificationService();
 
   Future<void> initialize() async {
     print("Inicializando NotificationService..."); // Debug
@@ -193,7 +193,6 @@ class NotificationService {
   void _handleMessageInForeground(RemoteMessage message) {
     print('Mensaje recibido en PRIMER PLANO: ${message.messageId}');
     RemoteNotification? notification = message.notification;
-    AndroidNotification? android = message.notification?.android;
 
     // Si el mensaje contiene una notificación y es Android, mostrarla manualmente
     // con flutter_local_notifications para que aparezca como heads-up.

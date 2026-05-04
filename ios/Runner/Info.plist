@@ -62,6 +62,8 @@
 	<string>Esta aplicación necesita acceso a tu ubicación en segundo plano para notificarte sobre lugares cercanos incluso cuando no estás usando la app.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Esta aplicación necesita acceso a tu ubicación para mostrarte lugares cercanos.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Esta aplicación necesita acceso al reconocimiento de voz para permitirte buscar lugares usando comandos de voz.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>
@@ -89,5 +91,8 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<!-- Google Maps API Key para iOS -->
+	<key>GoogleMapsAPIKey</key>
+	<string>AIzaSyBxWmQAmpbY7yZO4KHk6rPYbZuNmohtv6o</string>
 </dict>
 </plist>

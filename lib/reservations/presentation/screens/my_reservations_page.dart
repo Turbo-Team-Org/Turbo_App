@@ -1,8 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:core/core.dart';
+import 'package:turbo/app/l10n/l10n.dart';
 import 'package:turbo/reservations/state_management/my_reservations_cubit/my_reservations_cubit.dart';
 import 'package:turbo/reservations/state_management/my_reservations_cubit/my_reservations_state.dart';
 import 'package:turbo/reservations/presentation/widgets/reservation_card.dart';
@@ -33,17 +33,19 @@ class _MyReservationsPageState extends State<MyReservationsPage>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Mis Reservas'),
+        title: Text(l10n.reservationsMyReservations),
         backgroundColor: Colors.transparent,
         elevation: 0,
         bottom: TabBar(
           controller: _tabController,
-          tabs: const [
-            Tab(icon: Icon(Icons.upcoming), text: 'Próximas'),
-            Tab(icon: Icon(Icons.history), text: 'Pasadas'),
-            Tab(icon: Icon(Icons.cancel_outlined), text: 'Canceladas'),
+          tabs: [
+            Tab(icon: const Icon(Icons.upcoming), text: l10n.reservationsUpcoming),
+            Tab(icon: const Icon(Icons.history), text: l10n.reservationsPast),
+            Tab(icon: const Icon(Icons.cancel_outlined), text: l10n.reservationsCancelled),
           ],
         ),
         actions: [
@@ -77,13 +79,13 @@ class _MyReservationsPageState extends State<MyReservationsPage>
         },
         builder: (context, state) {
           if (state.isLoading) {
-            return const Center(
+            return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CircularProgressIndicator(),
-                  SizedBox(height: 16),
-                  Text('Cargando tus reservas...'),
+                  const CircularProgressIndicator(),
+                  const SizedBox(height: 16),
+                  Text(l10n.loadingData),
                 ],
               ),
             );
@@ -119,18 +121,18 @@ class _MyReservationsPageState extends State<MyReservationsPage>
   }
 
   void _showCancelDialog(Reservation reservation) {
+    final l10n = context.l10n;
+    
     showDialog(
       context: context,
       builder:
-          (context) => AlertDialog(
-            title: const Text('Cancelar Reserva'),
+          (dialogContext) => AlertDialog(
+            title: Text(l10n.reservationCancelTitle),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  '¿Estás seguro de que quieres cancelar esta reserva?',
-                ),
+                Text(l10n.reservationCancelMessage),
                 const SizedBox(height: 16),
                 Container(
                   padding: const EdgeInsets.all(12),
@@ -147,7 +149,7 @@ class _MyReservationsPageState extends State<MyReservationsPage>
                       ),
                       const SizedBox(height: 4),
                       Text(_formatDate(reservation.reservationDate)),
-                      Text('${reservation.partySize} personas'),
+                      Text(l10n.reservationGuests(reservation.partySize)),
                     ],
                   ),
                 ),
@@ -155,19 +157,19 @@ class _MyReservationsPageState extends State<MyReservationsPage>
             ),
             actions: [
               TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Mantener'),
+                onPressed: () => Navigator.pop(dialogContext),
+                child: Text(l10n.commonCancel),
               ),
               TextButton(
                 onPressed: () {
-                  Navigator.pop(context);
+                  Navigator.pop(dialogContext);
                   context.read<MyReservationsCubit>().cancelReservation(
                     reservation.id,
                     'Cancelada por el usuario',
                   );
                 },
                 style: TextButton.styleFrom(foregroundColor: Colors.red),
-                child: const Text('Cancelar Reserva'),
+                child: Text(l10n.bookingCancel),
               ),
             ],
           ),
@@ -215,25 +217,27 @@ class _UpcomingReservationsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    
     if (reservations.isEmpty) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.event_busy, size: 64, color: Colors.grey),
-            SizedBox(height: 16),
+            const Icon(Icons.event_busy, size: 64, color: Colors.grey),
+            const SizedBox(height: 16),
             Text(
-              'No tienes reservas próximas',
-              style: TextStyle(
+              l10n.reservationsNoUpcoming,
+              style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w500,
                 color: Colors.grey,
               ),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
-              '¡Haz tu próxima reserva ahora!',
-              style: TextStyle(color: Colors.grey),
+              l10n.reservationsNew,
+              style: const TextStyle(color: Colors.grey),
             ),
           ],
         ),
@@ -270,16 +274,18 @@ class _PastReservationsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    
     if (reservations.isEmpty) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.history, size: 64, color: Colors.grey),
-            SizedBox(height: 16),
+            const Icon(Icons.history, size: 64, color: Colors.grey),
+            const SizedBox(height: 16),
             Text(
-              'No tienes reservas pasadas',
-              style: TextStyle(
+              l10n.reservationsNoReservations,
+              style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w500,
                 color: Colors.grey,
@@ -317,25 +323,27 @@ class _CancelledReservationsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    
     if (reservations.isEmpty) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.check_circle, size: 64, color: Colors.green),
-            SizedBox(height: 16),
+            const Icon(Icons.check_circle, size: 64, color: Colors.green),
+            const SizedBox(height: 16),
             Text(
-              'No tienes reservas canceladas',
-              style: TextStyle(
+              l10n.reservationsNoReservations,
+              style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w500,
                 color: Colors.grey,
               ),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
-              '¡Excelente historial!',
-              style: TextStyle(
+              l10n.commonSuccess,
+              style: const TextStyle(
                 color: Colors.green,
                 fontWeight: FontWeight.w500,
               ),

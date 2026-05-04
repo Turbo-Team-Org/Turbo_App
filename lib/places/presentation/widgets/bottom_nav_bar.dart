@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:turbo/app/l10n/l10n.dart';
 import 'package:turbo/authentication/state_management/auth_cubit/cubit/auth_cubit_cubit.dart';
 
 class BottomNavBar extends StatelessWidget {
@@ -14,6 +15,8 @@ class BottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    
     return BottomNavigationBar(
       currentIndex: currentIndex,
       onTap: (index) {
@@ -22,9 +25,9 @@ class BottomNavBar extends StatelessWidget {
           final authState = context.read<AuthCubit>().state;
           if (authState is! Authenticated) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Debes iniciar sesión para ver tus favoritos'),
-                duration: Duration(seconds: 2),
+              SnackBar(
+                content: Text(l10n.profileLoginPrompt),
+                duration: const Duration(seconds: 2),
               ),
             );
             return;
@@ -32,30 +35,30 @@ class BottomNavBar extends StatelessWidget {
         }
         onTap(index);
       },
-      selectedItemColor: const Color.fromARGB(255, 243, 33, 61),
+      selectedItemColor: Theme.of(context).colorScheme.primary,
       unselectedItemColor: Colors.grey,
       showUnselectedLabels: false,
       type: BottomNavigationBarType.fixed,
-      items: const [
+      items: [
         BottomNavigationBarItem(
-          icon: Icon(Icons.home, size: 32),
-          activeIcon: Icon(Icons.home_filled, size: 32),
-          label: "Inicio",
+          icon: const Icon(Icons.home, size: 32),
+          activeIcon: const Icon(Icons.home_filled, size: 32),
+          label: l10n.navHome,
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.grid_view, size: 32),
-          activeIcon: Icon(Icons.grid_view_sharp, size: 32),
-          label: "Explorar",
+          icon: const Icon(Icons.grid_view, size: 32),
+          activeIcon: const Icon(Icons.grid_view_sharp, size: 32),
+          label: l10n.navExplore,
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.favorite_border, size: 32),
-          activeIcon: Icon(Icons.favorite, size: 32),
-          label: "Favoritos",
+          icon: const Icon(Icons.favorite_border, size: 32),
+          activeIcon: const Icon(Icons.favorite, size: 32),
+          label: l10n.navFavorites,
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.person_outline, size: 32),
-          activeIcon: Icon(Icons.person, size: 32),
-          label: "Perfil",
+          icon: const Icon(Icons.person_outline, size: 32),
+          activeIcon: const Icon(Icons.person, size: 32),
+          label: l10n.navProfile,
         ),
       ],
     );

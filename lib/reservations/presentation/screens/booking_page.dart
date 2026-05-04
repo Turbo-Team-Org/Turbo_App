@@ -1,8 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get_it/get_it.dart';
 import 'package:core/core.dart';
+import 'package:turbo/app/l10n/l10n.dart';
 import 'package:turbo/reservations/state_management/booking_cubit/booking_cubit.dart';
 import 'package:turbo/reservations/state_management/booking_cubit/booking_state.dart';
 import 'package:turbo/reservations/presentation/widgets/time_slot_card.dart';
@@ -44,9 +44,11 @@ class _BookingPageState extends State<BookingPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    
     return Scaffold(
       appBar: AppBar(
-        title: Text('Reservar en ${widget.placeName}'),
+        title: Text('${l10n.bookingTitle} - ${widget.placeName}'),
         backgroundColor: Colors.transparent,
         elevation: 0,
         foregroundColor: Theme.of(context).colorScheme.primary,

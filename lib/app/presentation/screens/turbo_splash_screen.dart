@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:turbo/app/cache/presentation/cubit/sync_cubit.dart';
+import 'package:turbo/app/l10n/l10n.dart';
+import 'package:turbo/onboarding/onboarding.dart';
 
 import 'package:turbo/app/routes/router/app_router.gr.dart';
 
@@ -24,12 +26,14 @@ class _TurboSplashScreenState extends State<TurboSplashScreen>
 
   bool _logoAnimationComplete = false;
   bool _shouldNavigate = false;
+  bool _onboardingCompleted = false;
 
   @override
   void initState() {
     super.initState();
     _setupAnimations();
     _startAnimations();
+    _checkOnboardingStatus();
 
     // Iniciar sync después de un breve delay
     Future.delayed(const Duration(milliseconds: 800), () {
@@ -37,6 +41,15 @@ class _TurboSplashScreenState extends State<TurboSplashScreen>
         context.read<SyncCubit>().startSync();
       }
     });
+  }
+
+  Future<void> _checkOnboardingStatus() async {
+    final completed = await isOnboardingCompleted();
+    if (mounted) {
+      setState(() {
+        _onboardingCompleted = completed;
+      });
+    }
   }
 
   void _setupAnimations() {
@@ -81,7 +94,12 @@ class _TurboSplashScreenState extends State<TurboSplashScreen>
     if (_shouldNavigate) return;
     _shouldNavigate = true;
 
-    context.router.replace(const BottomNavShellWidget());
+    // Si el onboarding no está completado, ir al onboarding
+    if (!_onboardingCompleted) {
+      context.router.replace(const OnboardingRoute());
+    } else {
+      context.router.replace(const BottomNavShellWidget());
+    }
   }
 
   @override
@@ -135,11 +153,11 @@ class _TurboSplashScreenState extends State<TurboSplashScreen>
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 40),
                         child: Text(
-                          'Turbo es una aplicación móvil que conecta a los usuarios con los mejores lugares, eventos y servicios de Cuba.',
+                          context.l10n.welcomeSubtitle,
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w400,
-                            color: Colors.white.withOpacity(0.85),
+                            color: Colors.white.withValues(alpha: 0.85),
                             height: 1.4,
                             letterSpacing: 0.2,
                           ),
@@ -182,7 +200,7 @@ class _TurboSplashScreenState extends State<TurboSplashScreen>
                       height: 3,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(2),
-                        color: Colors.white.withOpacity(0.3),
+                        color: Colors.white.withValues(alpha: 0.3),
                       ),
                       child: LayoutBuilder(
                         builder: (context, constraints) {
@@ -213,7 +231,7 @@ class _TurboSplashScreenState extends State<TurboSplashScreen>
                       style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w400,
-                        color: Colors.white.withOpacity(0.8),
+                        color: Colors.white.withValues(alpha: 0.8),
                         letterSpacing: 0.3,
                       ),
                       textAlign: TextAlign.center,

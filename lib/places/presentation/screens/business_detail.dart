@@ -3,16 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:turbo/app/l10n/l10n.dart';
 import 'package:turbo/app/utils/app_preferences.dart';
-import 'package:turbo/app/utils/theme/style.dart';
+import 'package:turbo_ui/turbo_ui.dart';
 import 'package:turbo/authentication/state_management/auth_cubit/cubit/auth_cubit_cubit.dart';
 import 'package:turbo/favorites/state_management/cubit/favorite_cubit.dart';
 import 'package:turbo/places/state_management/place_bloc/cubit/place_cubit.dart';
 import 'package:turbo/reviews/state_management/cubit/review_cubit.dart';
-import 'package:turbo/reviews/module/add_review_use_case.dart';
-import 'package:turbo/reviews/module/get_all_reviews_use_case.dart';
-import 'package:turbo/reviews/module/get_reviews_from_a_place_use_case.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:turbo/boostrap.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:core/core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -40,7 +38,6 @@ class _BusinessDetailsScreenState extends State<BusinessDetailsScreen> {
   String _userName = "explorador";
   String _userPhotoUrl = "";
   final prefs = AppPreferences();
-  late final ReviewCubit _reviewCubit;
 
   @override
   void initState() {
@@ -55,20 +52,6 @@ class _BusinessDetailsScreenState extends State<BusinessDetailsScreen> {
 
     // Cargar datos del usuario
     _loadUserData();
-
-    // Inicializar el ReviewCubit
-    final reviewRepository = ReviewRepository(
-      reviewService: ReviewService(firestore: FirebaseFirestore.instance),
-    );
-    _reviewCubit = ReviewCubit(
-      addReviewUseCase: AddReviewUseCase(reviewRepository: reviewRepository),
-      getAllReviewsUseCase: GetAllReviewsUseCase(
-        reviewRepository: reviewRepository,
-      ),
-      getReviewsFromAPlaceUseCase: GetReviewsFromAPlaceUseCase(
-        reviewRepository: reviewRepository,
-      ),
-    );
   }
 
   Future<void> _loadUserData() async {
@@ -105,7 +88,6 @@ class _BusinessDetailsScreenState extends State<BusinessDetailsScreen> {
   @override
   void dispose() {
     _scrollController.dispose();
-    _reviewCubit.close();
     super.dispose();
   }
 
@@ -123,11 +105,9 @@ class _BusinessDetailsScreenState extends State<BusinessDetailsScreen> {
         await launchUrl(Uri.parse(googleUrl));
       } else {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('No se pudo abrir la aplicación de mapas'),
-            ),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(context.l10n.errorGeneric)));
         }
       }
     }
@@ -140,11 +120,9 @@ class _BusinessDetailsScreenState extends State<BusinessDetailsScreen> {
       await launchUrl(Uri.parse(phoneNumber));
     } else {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('No se pudo realizar la llamada telefónica'),
-          ),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(context.l10n.errorGeneric)));
       }
     }
   }
@@ -168,7 +146,7 @@ class _BusinessDetailsScreenState extends State<BusinessDetailsScreen> {
             orElse:
                 () => Place(
                   id: '',
-                  name: 'No encontrado',
+                  name: 'Not found',
                   description: '',
                   address: '',
                   averagePrice: 0,
@@ -180,14 +158,12 @@ class _BusinessDetailsScreenState extends State<BusinessDetailsScreen> {
 
           if (place.id.isEmpty) {
             return Scaffold(
-              body: Center(
-                child: Text('No se encontró el negocio con ID: ${widget.id}'),
-              ),
+              body: Center(child: Text(context.l10n.errorNotFound)),
             );
           }
 
           return BlocProvider.value(
-            value: _reviewCubit,
+            value: sl<ReviewCubit>(),
             child: Scaffold(
               body: CustomScrollView(
                 controller: _scrollController,
@@ -225,9 +201,9 @@ class _BusinessDetailsScreenState extends State<BusinessDetailsScreen> {
                                     decoration: BoxDecoration(
                                       gradient: LinearGradient(
                                         colors: [
-                                          Styles.turboRed,
+                                          TurboColors.primary,
                                           Theme.of(context).colorScheme.primary
-                                              .withOpacity(0.9),
+                                              .withValues(alpha: 0.9),
                                         ],
                                         begin: Alignment.topLeft,
                                         end: Alignment.bottomRight,
@@ -238,7 +214,7 @@ class _BusinessDetailsScreenState extends State<BusinessDetailsScreen> {
                                           color: Theme.of(context)
                                               .colorScheme
                                               .primary
-                                              .withOpacity(0.3),
+                                              .withValues(alpha: 0.3),
                                           blurRadius: 8,
                                           offset: const Offset(0, 4),
                                         ),
@@ -259,9 +235,9 @@ class _BusinessDetailsScreenState extends State<BusinessDetailsScreen> {
                                               ScaffoldMessenger.of(
                                                 context,
                                               ).showSnackBar(
-                                                const SnackBar(
+                                                SnackBar(
                                                   content: Text(
-                                                    'No se pudo abrir el menú',
+                                                    context.l10n.errorGeneric,
                                                   ),
                                                 ),
                                               );
@@ -284,7 +260,7 @@ class _BusinessDetailsScreenState extends State<BusinessDetailsScreen> {
                                                 ),
                                                 decoration: BoxDecoration(
                                                   color: Colors.white
-                                                      .withOpacity(0.2),
+                                                      .withValues(alpha: 0.2),
                                                   shape: BoxShape.circle,
                                                 ),
                                                 child: const Icon(
@@ -294,9 +270,9 @@ class _BusinessDetailsScreenState extends State<BusinessDetailsScreen> {
                                                 ),
                                               ),
                                               const SizedBox(width: 12),
-                                              const Text(
-                                                'Ver Menú',
-                                                style: TextStyle(
+                                              Text(
+                                                context.l10n.placeMenu,
+                                                style: const TextStyle(
                                                   color: Colors.white,
                                                   fontSize: 18,
                                                   fontWeight: FontWeight.bold,
@@ -309,7 +285,7 @@ class _BusinessDetailsScreenState extends State<BusinessDetailsScreen> {
                                                 ),
                                                 decoration: BoxDecoration(
                                                   color: Colors.white
-                                                      .withOpacity(0.2),
+                                                      .withValues(alpha: 0.2),
                                                   shape: BoxShape.circle,
                                                 ),
                                                 child: const Icon(
@@ -388,7 +364,7 @@ class _BusinessDetailsScreenState extends State<BusinessDetailsScreen> {
                   const Icon(Icons.error_outline, size: 60, color: Colors.red),
                   const SizedBox(height: 16),
                   Text(
-                    'Error al cargar la información',
+                    context.l10n.errorOccurred,
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   const SizedBox(height: 8),
@@ -399,8 +375,8 @@ class _BusinessDetailsScreenState extends State<BusinessDetailsScreen> {
                   ),
                   const SizedBox(height: 20),
                   ElevatedButton(
-                    onPressed: () => context.router.pop(),
-                    child: const Text('Volver'),
+                    onPressed: () => context.router.maybePop(),
+                    child: Text(context.l10n.commonBack),
                   ),
                 ],
               ),
@@ -442,7 +418,7 @@ class BottomActionBar extends StatelessWidget {
           color: Theme.of(context).colorScheme.surface,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 10,
               offset: const Offset(0, -5),
             ),
@@ -455,7 +431,7 @@ class BottomActionBar extends StatelessWidget {
               Expanded(
                 child: ElevatedButton.icon(
                   icon: const Icon(Icons.call, size: 18),
-                  label: const Text('Llamar'),
+                  label: Text(context.l10n.placeCallNow),
                   onPressed: onCall,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.grey.shade600,
@@ -472,7 +448,7 @@ class BottomActionBar extends StatelessWidget {
               Expanded(
                 child: ElevatedButton.icon(
                   icon: const Icon(Icons.directions, size: 18),
-                  label: const Text('Ir'),
+                  label: Text(context.l10n.placeGetDirections),
                   onPressed: onNavigate,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.grey.shade600,
@@ -489,7 +465,7 @@ class BottomActionBar extends StatelessWidget {
               Expanded(
                 child: ElevatedButton.icon(
                   icon: const Icon(Icons.calendar_today, size: 18),
-                  label: const Text('Reservar'),
+                  label: Text(context.l10n.bookingTitle),
                   onPressed: () {
                     // Navegar a la pantalla de reservas
                     context.router.push(

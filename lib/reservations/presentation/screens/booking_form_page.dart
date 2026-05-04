@@ -3,10 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:core/core.dart';
+import 'package:turbo/app/l10n/l10n.dart';
 import 'package:turbo/reservations/state_management/booking_form_cubit/booking_form_cubit.dart';
 import 'package:turbo/reservations/state_management/booking_form_cubit/booking_form_state.dart';
 import 'package:turbo/reservations/presentation/widgets/reservation_summary_card.dart';
-import 'package:turbo/authentication/presentation/widgets/custom_textfield.dart';
+import 'package:turbo/app/routes/router/app_router.gr.dart';
 
 @RoutePage()
 class BookingFormPage extends StatefulWidget {
@@ -52,9 +53,10 @@ class _BookingFormPageState extends State<BookingFormPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Confirmar Reserva'),
+        title: Text(l10n.bookingConfirm),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
@@ -62,8 +64,11 @@ class _BookingFormPageState extends State<BookingFormPage> {
         listener: (context, state) {
           if (state.success && state.createdReservation != null) {
             // Navegar a página de confirmación
-            context.router.pushPath(
-              '/reservation-details/${state.createdReservation!.id}',
+            context.router.push(
+              ReservationDetailsRoute(
+                reservationId: state.createdReservation!.id,
+                reservation: state.createdReservation,
+              ),
             );
           } else if (state.error != null) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -100,7 +105,7 @@ class _BookingFormPageState extends State<BookingFormPage> {
 
                       // Información del cliente
                       Text(
-                        'Información de contacto',
+                        l10n.bookingContactInfo,
                         style: Theme.of(context).textTheme.titleMedium
                             ?.copyWith(fontWeight: FontWeight.w600),
                       ),
@@ -110,14 +115,14 @@ class _BookingFormPageState extends State<BookingFormPage> {
                       // Nombre
                       TextFormField(
                         controller: _nameController,
-                        decoration: const InputDecoration(
-                          labelText: 'Nombre completo',
-                          prefixIcon: Icon(Icons.person),
-                          border: OutlineInputBorder(),
+                        decoration: InputDecoration(
+                          labelText: l10n.bookingFullName,
+                          prefixIcon: const Icon(Icons.person),
+                          border: const OutlineInputBorder(),
                         ),
                         validator: (value) {
                           if (value?.isEmpty ?? true) {
-                            return 'El nombre es requerido';
+                            return l10n.bookingNameRequired;
                           }
                           return null;
                         },
@@ -128,20 +133,20 @@ class _BookingFormPageState extends State<BookingFormPage> {
                       // Email
                       TextFormField(
                         controller: _emailController,
-                        decoration: const InputDecoration(
-                          labelText: 'Correo electrónico',
-                          prefixIcon: Icon(Icons.email),
-                          border: OutlineInputBorder(),
+                        decoration: InputDecoration(
+                          labelText: l10n.bookingEmail,
+                          prefixIcon: const Icon(Icons.email),
+                          border: const OutlineInputBorder(),
                         ),
                         keyboardType: TextInputType.emailAddress,
                         validator: (value) {
                           if (value?.isEmpty ?? true) {
-                            return 'El correo es requerido';
+                            return l10n.bookingEmailRequired;
                           }
                           if (!RegExp(
                             r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
                           ).hasMatch(value!)) {
-                            return 'Correo inválido';
+                            return l10n.bookingEmailInvalid;
                           }
                           return null;
                         },
@@ -152,15 +157,15 @@ class _BookingFormPageState extends State<BookingFormPage> {
                       // Teléfono
                       TextFormField(
                         controller: _phoneController,
-                        decoration: const InputDecoration(
-                          labelText: 'Número de teléfono',
-                          prefixIcon: Icon(Icons.phone),
-                          border: OutlineInputBorder(),
+                        decoration: InputDecoration(
+                          labelText: l10n.bookingPhone,
+                          prefixIcon: const Icon(Icons.phone),
+                          border: const OutlineInputBorder(),
                         ),
                         keyboardType: TextInputType.phone,
                         validator: (value) {
                           if (value?.isEmpty ?? true) {
-                            return 'El teléfono es requerido';
+                            return l10n.bookingPhoneRequired;
                           }
                           return null;
                         },
@@ -170,7 +175,7 @@ class _BookingFormPageState extends State<BookingFormPage> {
 
                       // Solicitudes especiales
                       Text(
-                        'Solicitudes especiales (opcional)',
+                        l10n.bookingSpecialRequestsOptional,
                         style: Theme.of(context).textTheme.titleMedium
                             ?.copyWith(fontWeight: FontWeight.w600),
                       ),
@@ -180,8 +185,7 @@ class _BookingFormPageState extends State<BookingFormPage> {
                       TextFormField(
                         controller: _specialRequestsController,
                         decoration: InputDecoration(
-                          hintText:
-                              'Ej: Mesa cerca de la ventana, celebración especial...',
+                          hintText: l10n.bookingSpecialRequestsHint,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -211,11 +215,12 @@ class _BookingFormPageState extends State<BookingFormPage> {
   }
 
   Widget _buildPartySizeSelector() {
+    final l10n = context.l10n;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '¿Para cuántas personas?',
+          l10n.bookingPartySize,
           style: Theme.of(
             context,
           ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
@@ -234,7 +239,7 @@ class _BookingFormPageState extends State<BookingFormPage> {
             children: [
               const Icon(Icons.people, color: Colors.grey),
               const SizedBox(width: 16),
-              const Text('Número de personas:'),
+              Text(l10n.bookingPeopleCount),
               const Spacer(),
 
               // Botón menos
@@ -285,6 +290,7 @@ class _BookingFormPageState extends State<BookingFormPage> {
   }
 
   Widget _buildCancellationPolicy() {
+    final l10n = context.l10n;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -300,7 +306,7 @@ class _BookingFormPageState extends State<BookingFormPage> {
               Icon(Icons.info, color: Colors.blue.shade700, size: 20),
               const SizedBox(width: 8),
               Text(
-                'Política de cancelación',
+                l10n.bookingCancellationPolicy,
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
                   color: Colors.blue.shade700,
@@ -310,7 +316,7 @@ class _BookingFormPageState extends State<BookingFormPage> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Puedes cancelar tu reserva hasta 2 horas antes del horario programado sin costo alguno.',
+            l10n.bookingCancellationPolicyText,
             style: TextStyle(color: Colors.blue.shade600, fontSize: 14),
           ),
         ],
@@ -319,13 +325,14 @@ class _BookingFormPageState extends State<BookingFormPage> {
   }
 
   Widget _buildConfirmButton() {
+    final l10n = context.l10n;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, -2),
           ),
@@ -345,10 +352,10 @@ class _BookingFormPageState extends State<BookingFormPage> {
               ),
               child:
                   state.isCreating
-                      ? const Row(
+                      ? Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             width: 20,
                             height: 20,
                             child: CircularProgressIndicator(
@@ -356,11 +363,11 @@ class _BookingFormPageState extends State<BookingFormPage> {
                               color: Colors.white,
                             ),
                           ),
-                          SizedBox(width: 12),
-                          Text('Confirmando reserva...'),
+                          const SizedBox(width: 12),
+                          Text(l10n.bookingConfirming),
                         ],
                       )
-                      : const Text('Confirmar Reserva'),
+                      : Text(l10n.bookingConfirm),
             ),
           );
         },
@@ -373,9 +380,7 @@ class _BookingFormPageState extends State<BookingFormPage> {
       final user = FirebaseAuth.instance.currentUser;
       if (user == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Debes iniciar sesión para hacer una reserva'),
-          ),
+          SnackBar(content: Text(context.l10n.bookingLoginRequired)),
         );
         return;
       }

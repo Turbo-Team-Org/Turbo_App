@@ -17,13 +17,6 @@ class ReservationsModule {
   static void setup() {
     final getIt = GetIt.instance;
 
-    // Repository (debería venir del core package)
-    if (!getIt.isRegistered<ReservationRepository>()) {
-      getIt.registerLazySingleton<ReservationRepository>(
-        () => ReservationRepository(),
-      );
-    }
-
     // Use Cases
     getIt.registerLazySingleton<GetAvailableSlotsUseCase>(
       () => GetAvailableSlotsUseCase(getIt<ReservationRepository>()),
