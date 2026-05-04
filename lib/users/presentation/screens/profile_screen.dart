@@ -7,7 +7,6 @@ import 'package:turbo/app/routes/router/app_router.gr.dart';
 import 'package:turbo/authentication/state_management/auth_cubit/cubit/auth_cubit_cubit.dart';
 import 'package:turbo/authentication/state_management/sign_out_cubit/cubit/sign_out_cubit.dart';
 import 'package:turbo/places/presentation/widgets/feed_widgets.dart';
-import 'package:turbo/mock_data/data_loader_manager.dart';
 import 'package:turbo/theme_selector/theme_selector.dart';
 
 import '../../../app/view/widgets/global_widgets.dart';
@@ -18,7 +17,6 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dataLoaderManager = DataLoaderManager();
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -61,41 +59,6 @@ class ProfileScreen extends StatelessWidget {
                   elevation: 0,
                   centerTitle: true,
                   actions: [
-                    // Menú para gestionar datos de prueba (solo desarrollo)
-                    PopupMenuButton<String>(
-                      icon: Icon(
-                        Icons.data_array,
-                        color: colorScheme.primary,
-                      ),
-                      onSelected: (value) {
-                        switch (value) {
-                          case 'places':
-                            _showLoadPlacesDialog(context, dataLoaderManager);
-                            break;
-                          case 'categories':
-                            _showLoadCategoriesDialog(
-                                context, dataLoaderManager);
-                            break;
-                          case 'additional':
-                            dataLoaderManager.showDataLoaderOptions(context);
-                            break;
-                        }
-                      },
-                      itemBuilder: (BuildContext context) => [
-                        const PopupMenuItem<String>(
-                          value: 'places',
-                          child: Text('Cargar lugares'),
-                        ),
-                        const PopupMenuItem<String>(
-                          value: 'categories',
-                          child: Text('Cargar categorías'),
-                        ),
-                        const PopupMenuItem<String>(
-                          value: 'additional',
-                          child: Text('Cargar datos adicionales'),
-                        ),
-                      ],
-                    ),
                     IconButton(
                       icon: Icon(
                         Icons.logout,
@@ -302,53 +265,5 @@ class ProfileScreen extends StatelessWidget {
 
   Widget _buildDivider() {
     return const Divider(height: 1, indent: TurboSpacing.base, endIndent: TurboSpacing.base);
-  }
-
-  void _showLoadPlacesDialog(
-      BuildContext context, DataLoaderManager dataLoaderManager) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(context.l10n.loadingData),
-        content: Text(context.l10n.commonConfirm),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(context.l10n.commonCancel),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              dataLoaderManager.loadPlaces();
-            },
-            child: Text(context.l10n.commonConfirm),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showLoadCategoriesDialog(
-      BuildContext context, DataLoaderManager dataLoaderManager) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(context.l10n.loadingData),
-        content: Text(context.l10n.commonConfirm),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(context.l10n.commonCancel),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              dataLoaderManager.loadCategories();
-            },
-            child: Text(context.l10n.commonConfirm),
-          ),
-        ],
-      ),
-    );
   }
 }

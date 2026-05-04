@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
@@ -35,8 +34,10 @@ import '../../authentication/state_management/sign_in_cubit/cubit/sign_in_cubit.
 import '../../favorites/module/get_favorites_use_case.dart';
 import '../../favorites/state_management/cubit/favorite_cubit.dart';
 import '../../reviews/module/add_review_use_case.dart';
+import '../../reviews/module/delete_review_use_case.dart';
 import '../../reviews/module/get_all_reviews_use_case.dart';
 import '../../reviews/module/get_reviews_from_a_place_use_case.dart';
+import '../../reviews/module/update_review_use_case.dart';
 import '../../reviews/state_management/cubit/review_cubit.dart';
 import '../utils/app_preferences.dart';
 import 'package:turbo/app/core/theme/theme_cubit.dart';
@@ -59,7 +60,7 @@ import 'package:turbo/places/module/search_nearby_places_use_case.dart';
 FutureOr<void> initDependencies(GetIt sl) async {
   await AppPreferences.init();
   //final db = DatabaseHelper();
-  final firebaseInstance = await Firebase.initializeApp(
+  await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
@@ -79,9 +80,7 @@ FutureOr<void> initDependencies(GetIt sl) async {
   sl.registerSingleton<CacheManager>(cacheManager);
 
   sl
-    ..registerLazySingleton<NotificationService>(
-      () => NotificationService(firestore: sl<FirebaseFirestore>()),
-    )
+    ..registerLazySingleton<NotificationService>(() => NotificationService())
     ..registerLazySingleton<SignInWithGoogleUseCase>(
       () => SignInWithGoogleUseCase(
         authenticationRepository: sl<AuthenticationRepository>(),
@@ -183,11 +182,19 @@ FutureOr<void> initDependencies(GetIt sl) async {
     ..registerLazySingleton<AddReviewUseCase>(
       () => AddReviewUseCase(reviewRepository: sl<ReviewRepository>()),
     )
+    ..registerLazySingleton<UpdateReviewUseCase>(
+      () => UpdateReviewUseCase(reviewRepository: sl<ReviewRepository>()),
+    )
+    ..registerLazySingleton<DeleteReviewUseCase>(
+      () => DeleteReviewUseCase(reviewRepository: sl<ReviewRepository>()),
+    )
     ..registerLazySingleton<ReviewCubit>(
       () => ReviewCubit(
         addReviewUseCase: sl<AddReviewUseCase>(),
         getAllReviewsUseCase: sl<GetAllReviewsUseCase>(),
         getReviewsFromAPlaceUseCase: sl<GetReviewsFromAPlaceUseCase>(),
+        updateReviewUseCase: sl<UpdateReviewUseCase>(),
+        deleteReviewUseCase: sl<DeleteReviewUseCase>(),
       ),
     )
     ..registerLazySingleton<GetFavoritesUseCase>(
