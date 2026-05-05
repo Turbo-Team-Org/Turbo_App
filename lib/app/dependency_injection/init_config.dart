@@ -54,6 +54,10 @@ import 'package:turbo/reservations/module/reservations_module.dart';
 import 'package:turbo/places/module/search_places_use_case.dart';
 import 'package:turbo/places/module/get_places_by_location_use_case.dart';
 import 'package:turbo/places/module/search_nearby_places_use_case.dart';
+import 'package:turbo/users/module/get_user_profile_use_case.dart';
+import 'package:turbo/users/module/get_user_reviews_use_case.dart';
+import 'package:turbo/users/module/update_user_profile_use_case.dart';
+import 'package:turbo/users/state_management/profile_cubit/profile_cubit.dart';
 
 ///The init order of dependencies is Service/ Repository/ Use Cases (Module)/ State Managament(Cubit or Bloc)
 
@@ -291,6 +295,29 @@ FutureOr<void> initDependencies(GetIt sl) async {
     )
     ..registerLazySingleton(
       () => ImageManagementCubit(repository: sl<ImageManagementRepository>()),
+    )
+    ..registerLazySingleton<GetUserProfileUseCase>(
+      () => GetUserProfileUseCase(
+        authenticationRepository: sl<AuthenticationRepository>(),
+        reservationRepository: sl<ReservationRepository>(),
+        reviewRepository: sl<ReviewRepository>(),
+      ),
+    )
+    ..registerLazySingleton<GetUserReviewsUseCase>(
+      () => GetUserReviewsUseCase(
+        reviewRepository: sl<ReviewRepository>(),
+      ),
+    )
+    ..registerLazySingleton<UpdateUserProfileUseCase>(
+      () => UpdateUserProfileUseCase(
+        authenticationRepository: sl<AuthenticationRepository>(),
+      ),
+    )
+    ..registerLazySingleton<ProfileCubit>(
+      () => ProfileCubit(
+        getUserProfileUseCase: sl<GetUserProfileUseCase>(),
+        updateUserProfileUseCase: sl<UpdateUserProfileUseCase>(),
+      ),
     );
 
   ///Initializing reservations module

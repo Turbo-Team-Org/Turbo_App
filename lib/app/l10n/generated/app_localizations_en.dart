@@ -604,6 +604,42 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileLoginPrompt => 'Log in to access all features';
 
   @override
+  String get profileEditTitle => 'Edit profile';
+
+  @override
+  String get profileEditNameLabel => 'Display name';
+
+  @override
+  String get profileEditSave => 'Save';
+
+  @override
+  String get profileStatsFavorites => 'Favorites';
+
+  @override
+  String get profileStatsReservations => 'Bookings';
+
+  @override
+  String get profileStatsReviews => 'Reviews';
+
+  @override
+  String get profileUpdateSuccess => 'Profile updated';
+
+  @override
+  String get profileNameMinLength => 'Name must be at least 2 characters';
+
+  @override
+  String get profileMyReviews => 'My reviews';
+
+  @override
+  String get profileMyReviewsDesc => 'Reviews you wrote';
+
+  @override
+  String get profileFeatureSoon => 'Coming soon';
+
+  @override
+  String get commonRetry => 'Retry';
+
+  @override
   String get favoritesTitle => 'Favorites';
 
   @override

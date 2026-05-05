@@ -6,14 +6,30 @@ import 'package:turbo/app/l10n/l10n.dart';
 import 'package:turbo/app/routes/router/app_router.gr.dart';
 import 'package:turbo/authentication/state_management/auth_cubit/cubit/auth_cubit_cubit.dart';
 import 'package:turbo/authentication/state_management/sign_out_cubit/cubit/sign_out_cubit.dart';
-import 'package:turbo/places/presentation/widgets/feed_widgets.dart';
 import 'package:turbo/theme_selector/theme_selector.dart';
+import 'package:turbo/users/presentation/widgets/profile_stats_widget.dart';
+import 'package:turbo/users/presentation/widgets/user_profile_avatar.dart';
+import 'package:turbo/users/state_management/profile_cubit/profile_cubit.dart';
 
 import '../../../app/view/widgets/global_widgets.dart';
 
 @RoutePage()
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context.read<ProfileCubit>().loadProfile();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +40,7 @@ class ProfileScreen extends StatelessWidget {
       listener: (context, signoutstate) {
         switch (signoutstate) {
           case Success():
-              showDialog(
+            showDialog(
               context: context,
               builder: (_) => SuccessDialog(
                 title: context.l10n.authLogoutSuccess,
@@ -32,13 +48,17 @@ class ProfileScreen extends StatelessWidget {
               ),
             );
             Future.delayed(const Duration(seconds: 2), () {
+              if (!context.mounted) return;
               context.replaceRoute(SignInRoute());
             });
             break;
           case Error(:final error):
             showDialog(
               context: context,
-              builder: (_) => ErrorDialog(title: context.l10n.commonError, message: error!),
+              builder: (_) => ErrorDialog(
+                title: context.l10n.commonError,
+                message: error ?? '',
+              ),
             );
             break;
           default:
@@ -46,88 +66,151 @@ class ProfileScreen extends StatelessWidget {
         }
       },
       child: BlocBuilder<AuthCubit, AuthCubitState>(
-        builder: (context, state) {
-          switch (state) {
-            case Authenticated(:final user):
-              return Scaffold(
-                appBar: AppBar(
-                  title: Text(
-                    context.l10n.profileTitle,
-                    style: theme.textTheme.titleLarge,
-                  ),
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
-                  centerTitle: true,
-                  actions: [
-                    IconButton(
-                      icon: Icon(
-                        Icons.logout,
-                        color: colorScheme.onSurface,
-                      ),
-                      onPressed: () {
-                        context.read<SignOutCubit>().signOut();
-                      },
-                    ),
-                  ],
-                ),
-                body: SingleChildScrollView(
-                  padding: const EdgeInsets.all(TurboSpacing.base),
-                  child: Column(
-                    children: [
-                      // Avatar del perfil
-                      ProfileAvatar(),
-                      const SizedBox(height: TurboSpacing.lg),
-
-                      // Nombre del usuario
-                      Text(
-                        user.displayName ?? context.l10n.profileGuest,
-                        style: theme.textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
+        builder: (context, authState) {
+          switch (authState) {
+            case Authenticated():
+              return BlocConsumer<ProfileCubit, ProfileState>(
+                listener: (context, profileState) {
+                  if (profileState is ProfileError) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(profileState.message)),
+                    );
+                  }
+                },
+                builder: (context, profileState) {
+                  Widget body;
+                  if (profileState is ProfileInitial ||
+                      profileState is ProfileLoading ||
+                      profileState is ProfileUpdating) {
+                    body = const Center(
+                      child: CircularProgressIndicator.adaptive(),
+                    );
+                  } else if (profileState is ProfileError) {
+                    body = Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(TurboSpacing.base),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(profileState.message),
+                            const SizedBox(height: TurboSpacing.md),
+                            FilledButton(
+                              onPressed: () =>
+                                  context.read<ProfileCubit>().loadProfile(),
+                              child: Text(context.l10n.commonRetry),
+                            ),
+                          ],
                         ),
                       ),
-                      const SizedBox(height: TurboSpacing.xs),
+                    );
+                  } else if (profileState is ProfileLoaded ||
+                      profileState is ProfileUpdateSuccess) {
+                    final profile = switch (profileState) {
+                      ProfileLoaded(:final profile) => profile,
+                      ProfileUpdateSuccess(:final profile) => profile,
+                      _ => null,
+                    };
+                    body = profile == null
+                        ? const Center(
+                            child: CircularProgressIndicator.adaptive(),
+                          )
+                        : SingleChildScrollView(
+                            padding: const EdgeInsets.all(TurboSpacing.base),
+                            child: Column(
+                              children: [
+                                UserProfileAvatar(profile: profile),
+                                const SizedBox(height: TurboSpacing.lg),
+                                Text(
+                                  profile.displayName ??
+                                      context.l10n.profileGuest,
+                                  style:
+                                      theme.textTheme.headlineSmall?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: TurboSpacing.xs),
+                                Text(
+                                  profile.email,
+                                  style: theme.textTheme.bodyMedium?.copyWith(
+                                    color: colorScheme.onSurfaceVariant,
+                                  ),
+                                ),
+                                ProfileStatsWidget(
+                                  profile: profile,
+                                  favoritesLabel:
+                                      context.l10n.profileStatsFavorites,
+                                  reservationsLabel:
+                                      context.l10n.profileStatsReservations,
+                                  reviewsLabel:
+                                      context.l10n.profileStatsReviews,
+                                ),
+                                const SizedBox(height: TurboSpacing.xl),
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: ElevatedButton.icon(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: colorScheme.primary,
+                                      foregroundColor: colorScheme.onPrimary,
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: TurboSpacing.md,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: TurboRadius.button,
+                                      ),
+                                    ),
+                                    icon: const Icon(Icons.edit),
+                                    label: Text(context.l10n.profileEdit),
+                                    onPressed: () {
+                                      context.router.push(
+                                        const EditProfileRoute(),
+                                      );
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(height: TurboSpacing.xl),
+                                _buildOptionsSection(
+                                  context,
+                                  theme,
+                                  colorScheme,
+                                ),
+                              ],
+                            ),
+                          );
+                  } else {
+                    body = const Center(
+                      child: CircularProgressIndicator.adaptive(),
+                    );
+                  }
 
-                      // Email
-                      Text(
-                        user.email,
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: colorScheme.onSurfaceVariant,
-                        ),
+                  return Scaffold(
+                    appBar: AppBar(
+                      title: Text(
+                        context.l10n.profileTitle,
+                        style: theme.textTheme.titleLarge,
                       ),
-                      const SizedBox(height: TurboSpacing.xl),
-
-                      // Botón editar perfil
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton.icon(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: colorScheme.primary,
-                            foregroundColor: colorScheme.onPrimary,
-                            padding: const EdgeInsets.symmetric(
-                              vertical: TurboSpacing.md,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: TurboRadius.button,
-                            ),
+                      backgroundColor: Colors.transparent,
+                      elevation: 0,
+                      centerTitle: true,
+                      actions: [
+                        IconButton(
+                          icon: Icon(
+                            Icons.logout,
+                            color: colorScheme.onSurface,
                           ),
-                          icon: const Icon(Icons.edit),
-                          label: Text(context.l10n.profileEdit),
                           onPressed: () {
-                            // TODO: Navegar a pantalla de edición
+                            context.read<SignOutCubit>().signOut();
                           },
                         ),
-                      ),
-                      const SizedBox(height: TurboSpacing.xl),
-
-                      // Sección de opciones
-                      _buildOptionsSection(context, theme, colorScheme),
-                    ],
-                  ),
-                ),
+                      ],
+                    ),
+                    body: body,
+                  );
+                },
               );
-
             default:
-              return const Center(child: CircularProgressIndicator.adaptive());
+              return const Center(
+                child: CircularProgressIndicator.adaptive(),
+              );
           }
         },
       ),
@@ -154,7 +237,6 @@ class ProfileScreen extends StatelessWidget {
       ),
       child: Column(
         children: [
-          // Mis Reservas
           _buildOptionTile(
             context: context,
             icon: Icons.calendar_today,
@@ -163,43 +245,36 @@ class ProfileScreen extends StatelessWidget {
             subtitle: context.l10n.profileMyReservationsDesc,
             onTap: () => context.router.push(const MyReservationsRoute()),
           ),
-
           _buildDivider(),
-
-          // Selector de Tema (usando nuestro nuevo ThemeSelectorTile)
           const ThemeSelectorTile(),
-
           _buildDivider(),
-
-          // Notificaciones
+          _buildOptionTile(
+            context: context,
+            icon: Icons.rate_review_outlined,
+            iconColor: TurboColors.primary,
+            title: context.l10n.profileMyReviews,
+            subtitle: context.l10n.profileMyReviewsDesc,
+            onTap: () => context.router.push(const MyReviewsRoute()),
+          ),
+          _buildDivider(),
           _buildOptionTile(
             context: context,
             icon: Icons.notifications_outlined,
             iconColor: TurboColors.amber,
             title: context.l10n.profileNotifications,
             subtitle: context.l10n.profileNotificationsDesc,
-            onTap: () {
-              // TODO: Navegar a configuración de notificaciones
-            },
+            onTap: () {},
           ),
-
           _buildDivider(),
-
-          // Ayuda
           _buildOptionTile(
             context: context,
             icon: Icons.help_outline,
             iconColor: TurboColors.blue,
             title: context.l10n.profileHelp,
             subtitle: context.l10n.profileHelpDesc,
-            onTap: () {
-              // TODO: Navegar a ayuda
-            },
+            onTap: () {},
           ),
-
           _buildDivider(),
-
-          // Cerrar Sesión
           _buildOptionTile(
             context: context,
             icon: Icons.logout,
@@ -264,6 +339,10 @@ class ProfileScreen extends StatelessWidget {
   }
 
   Widget _buildDivider() {
-    return const Divider(height: 1, indent: TurboSpacing.base, endIndent: TurboSpacing.base);
+    return const Divider(
+      height: 1,
+      indent: TurboSpacing.base,
+      endIndent: TurboSpacing.base,
+    );
   }
 }

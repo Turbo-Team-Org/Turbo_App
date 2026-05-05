@@ -31,6 +31,8 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: BookingRoute.page, path: '/booking'),
     AutoRoute(page: BookingFormRoute.page, path: '/booking-form'),
     AutoRoute(page: MyReservationsRoute.page, path: '/my-reservations'),
+    AutoRoute(page: MyReviewsRoute.page, path: '/my-reviews'),
+    AutoRoute(page: EditProfileRoute.page, path: '/edit-profile'),
     AutoRoute(
       page: ReservationDetailsRoute.page,
       path: '/reservation-details/:reservationId',

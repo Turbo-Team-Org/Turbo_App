@@ -604,6 +604,42 @@ class AppLocalizationsEs extends AppLocalizations {
   String get profileLoginPrompt => 'Inicia sesión para acceder a todas las funciones';
 
   @override
+  String get profileEditTitle => 'Editar perfil';
+
+  @override
+  String get profileEditNameLabel => 'Nombre visible';
+
+  @override
+  String get profileEditSave => 'Guardar';
+
+  @override
+  String get profileStatsFavorites => 'Favoritos';
+
+  @override
+  String get profileStatsReservations => 'Reservas';
+
+  @override
+  String get profileStatsReviews => 'Reseñas';
+
+  @override
+  String get profileUpdateSuccess => 'Perfil actualizado';
+
+  @override
+  String get profileNameMinLength => 'El nombre debe tener al menos 2 caracteres';
+
+  @override
+  String get profileMyReviews => 'Mis reseñas';
+
+  @override
+  String get profileMyReviewsDesc => 'Reseñas que escribiste';
+
+  @override
+  String get profileFeatureSoon => 'Próximamente';
+
+  @override
+  String get commonRetry => 'Reintentar';
+
+  @override
   String get favoritesTitle => 'Favoritos';
 
   @override

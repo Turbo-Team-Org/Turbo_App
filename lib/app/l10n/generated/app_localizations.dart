@@ -1211,6 +1211,78 @@ abstract class AppLocalizations {
   /// **'Inicia sesión para acceder a todas las funciones'**
   String get profileLoginPrompt;
 
+  /// No description provided for @profileEditTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Editar perfil'**
+  String get profileEditTitle;
+
+  /// No description provided for @profileEditNameLabel.
+  ///
+  /// In es, this message translates to:
+  /// **'Nombre visible'**
+  String get profileEditNameLabel;
+
+  /// No description provided for @profileEditSave.
+  ///
+  /// In es, this message translates to:
+  /// **'Guardar'**
+  String get profileEditSave;
+
+  /// No description provided for @profileStatsFavorites.
+  ///
+  /// In es, this message translates to:
+  /// **'Favoritos'**
+  String get profileStatsFavorites;
+
+  /// No description provided for @profileStatsReservations.
+  ///
+  /// In es, this message translates to:
+  /// **'Reservas'**
+  String get profileStatsReservations;
+
+  /// No description provided for @profileStatsReviews.
+  ///
+  /// In es, this message translates to:
+  /// **'Reseñas'**
+  String get profileStatsReviews;
+
+  /// No description provided for @profileUpdateSuccess.
+  ///
+  /// In es, this message translates to:
+  /// **'Perfil actualizado'**
+  String get profileUpdateSuccess;
+
+  /// No description provided for @profileNameMinLength.
+  ///
+  /// In es, this message translates to:
+  /// **'El nombre debe tener al menos 2 caracteres'**
+  String get profileNameMinLength;
+
+  /// No description provided for @profileMyReviews.
+  ///
+  /// In es, this message translates to:
+  /// **'Mis reseñas'**
+  String get profileMyReviews;
+
+  /// No description provided for @profileMyReviewsDesc.
+  ///
+  /// In es, this message translates to:
+  /// **'Reseñas que escribiste'**
+  String get profileMyReviewsDesc;
+
+  /// No description provided for @profileFeatureSoon.
+  ///
+  /// In es, this message translates to:
+  /// **'Próximamente'**
+  String get profileFeatureSoon;
+
+  /// No description provided for @commonRetry.
+  ///
+  /// In es, this message translates to:
+  /// **'Reintentar'**
+  String get commonRetry;
+
   /// No description provided for @favoritesTitle.
   ///
   /// In es, this message translates to:

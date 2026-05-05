@@ -142,3 +142,8 @@ flutter:
           weight: 900
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+# Monorepo: Core local (perfil / Supabase). CI puede usar solo la entrada git de `dependencies`.
+dependency_overrides:
+  core:
+    path: ../Turbo_Core/core
