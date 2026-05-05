@@ -23,6 +23,7 @@ class EditProfileScreen extends StatefulWidget {
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _nameController;
+  var _shouldPopOnSuccess = false;
 
   @override
   void initState() {
@@ -58,6 +59,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     if (!valid) {
       return;
     }
+    _shouldPopOnSuccess = true;
     await context.read<ProfileCubit>().updateProfile(
           UpdateUserProfileParams(displayName: _nameController.text.trim()),
         );
@@ -94,9 +96,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text(l10n.profileUpdateSuccess)),
                 );
-                context.router.maybePop();
+                if (_shouldPopOnSuccess) {
+                  _shouldPopOnSuccess = false;
+                  context.router.maybePop();
+                }
               case ProfileError(:final message):
                 if (!context.mounted) return;
+                _shouldPopOnSuccess = false;
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text(message)),
                 );

@@ -34,10 +34,22 @@ class ProfileCubit extends Cubit<ProfileState> {
   }
 
   Future<void> updateProfile(UpdateUserProfileParams params) async {
+    final previousProfile = switch (state) {
+      ProfileLoaded(:final profile) => profile,
+      ProfileUpdateSuccess(:final profile) => profile,
+      _ => null,
+    };
     emit(const ProfileState.updating());
     try {
       final profile = await _updateUserProfileUseCase(params);
-      emit(ProfileState.updateSuccess(profile: profile));
+      final mergedProfile = previousProfile == null
+          ? profile
+          : profile.copyWith(
+              favoritesCount: previousProfile.favoritesCount,
+              reservationsCount: previousProfile.reservationsCount,
+              reviewsCount: previousProfile.reviewsCount,
+            );
+      emit(ProfileState.updateSuccess(profile: mergedProfile));
     } catch (e) {
       emit(ProfileState.error(message: e.toString()));
     }

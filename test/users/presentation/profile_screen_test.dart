@@ -86,4 +86,62 @@ void main() {
     expect(find.text('Tester'), findsOneWidget);
     expect(find.text('e@test.com'), findsOneWidget);
   });
+
+  testWidgets(
+    'mantiene contenido visible durante ProfileUpdating',
+    (tester) async {
+      final profileCubit = MockProfileCubit();
+      when(() => profileCubit.loadProfile()).thenAnswer((_) async {});
+      when(() => profileCubit.state).thenReturn(
+        ProfileState.loaded(profile: profile),
+      );
+      when(() => profileCubit.stream).thenAnswer(
+        (_) => Stream.fromIterable([
+          ProfileState.loaded(profile: profile),
+          const ProfileState.updating(),
+        ]),
+      );
+
+      final auth = MockAuthCubit();
+      when(() => auth.state)
+          .thenReturn(AuthCubitState.authenticated(authUser));
+      when(() => auth.stream).thenAnswer(
+        (_) => Stream.value(AuthCubitState.authenticated(authUser)),
+      );
+
+      final signOut = MockSignOutCubit();
+      when(() => signOut.state).thenReturn(const SignOutState.initial());
+      when(() => signOut.stream).thenAnswer(
+        (_) => Stream.value(const SignOutState.initial()),
+      );
+
+      final themeBloc = MockThemeBloc();
+      when(() => themeBloc.state).thenReturn(const ThemeState());
+      when(() => themeBloc.stream).thenAnswer(
+        (_) => Stream.value(const ThemeState()),
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          locale: const Locale('es'),
+          home: MultiBlocProvider(
+            providers: [
+              BlocProvider<ProfileCubit>.value(value: profileCubit),
+              BlocProvider<AuthCubit>.value(value: auth),
+              BlocProvider<SignOutCubit>.value(value: signOut),
+              BlocProvider<ThemeBloc>.value(value: themeBloc),
+            ],
+            child: const ProfileScreen(),
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.pump();
+
+      expect(find.text('Tester'), findsOneWidget);
+      expect(find.byType(LinearProgressIndicator), findsOneWidget);
+    },
+  );
 }

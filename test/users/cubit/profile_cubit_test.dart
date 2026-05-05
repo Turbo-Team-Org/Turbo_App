@@ -115,5 +115,64 @@ void main() {
         isA<ProfileError>(),
       ],
     );
+
+    blocTest<ProfileCubit, ProfileState>(
+      'preserves stats when updateProfile succeeds after loaded state',
+      build: () {
+        when(() => mockGet()).thenAnswer((_) async => sampleProfile);
+        when(() => mockUpdate(any())).thenAnswer(
+          (_) async => const UserProfile(
+            uid: 'u1',
+            email: 'a@b.com',
+            displayName: 'Ana Updated',
+            photoUrl: 'https://new-avatar',
+            favoritesCount: 0,
+            reservationsCount: 0,
+            reviewsCount: 0,
+          ),
+        );
+        return ProfileCubit(
+          getUserProfileUseCase: mockGet,
+          updateUserProfileUseCase: mockUpdate,
+        );
+      },
+      act: (c) async {
+        await c.loadProfile();
+        await c.updateProfile(
+          const UpdateUserProfileParams(displayName: 'Ana Updated'),
+        );
+      },
+      expect: () => [
+        const ProfileState.loading(),
+        ProfileState.loaded(profile: sampleProfile),
+        const ProfileState.updating(),
+        isA<ProfileUpdateSuccess>()
+            .having(
+              (s) => s.profile.favoritesCount,
+              'favoritesCount',
+              sampleProfile.favoritesCount,
+            )
+            .having(
+              (s) => s.profile.reservationsCount,
+              'reservationsCount',
+              sampleProfile.reservationsCount,
+            )
+            .having(
+              (s) => s.profile.reviewsCount,
+              'reviewsCount',
+              sampleProfile.reviewsCount,
+            )
+            .having(
+              (s) => s.profile.displayName,
+              'displayName',
+              'Ana Updated',
+            )
+            .having(
+              (s) => s.profile.photoUrl,
+              'photoUrl',
+              'https://new-avatar',
+            ),
+      ],
+    );
   });
 }

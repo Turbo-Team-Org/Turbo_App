@@ -7,6 +7,7 @@ import 'package:turbo/app/routes/router/app_router.gr.dart';
 import 'package:turbo/authentication/state_management/auth_cubit/cubit/auth_cubit_cubit.dart';
 import 'package:turbo/authentication/state_management/sign_out_cubit/cubit/sign_out_cubit.dart';
 import 'package:turbo/theme_selector/theme_selector.dart';
+import 'package:turbo/users/domain/user_profile.dart';
 import 'package:turbo/users/presentation/widgets/profile_stats_widget.dart';
 import 'package:turbo/users/presentation/widgets/user_profile_avatar.dart';
 import 'package:turbo/users/state_management/profile_cubit/profile_cubit.dart';
@@ -22,6 +23,8 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  UserProfile? _lastStableProfile;
+
   @override
   void initState() {
     super.initState();
@@ -71,6 +74,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
             case Authenticated():
               return BlocConsumer<ProfileCubit, ProfileState>(
                 listener: (context, profileState) {
+                  switch (profileState) {
+                    case ProfileLoaded(:final profile):
+                    case ProfileUpdateSuccess(:final profile):
+                      _lastStableProfile = profile;
+                    default:
+                      break;
+                  }
                   if (profileState is ProfileError) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text(profileState.message)),
@@ -80,11 +90,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 builder: (context, profileState) {
                   Widget body;
                   if (profileState is ProfileInitial ||
-                      profileState is ProfileLoading ||
-                      profileState is ProfileUpdating) {
+                      profileState is ProfileLoading) {
                     body = const Center(
                       child: CircularProgressIndicator.adaptive(),
                     );
+                  } else if (profileState is ProfileUpdating) {
+                    final profile = _lastStableProfile;
+                    body = profile == null
+                        ? const Center(
+                            child: CircularProgressIndicator.adaptive(),
+                          )
+                        : Stack(
+                            children: [
+                              _buildProfileContent(
+                                context: context,
+                                profile: profile,
+                                theme: theme,
+                                colorScheme: colorScheme,
+                              ),
+                              const Positioned(
+                                top: 0,
+                                left: 0,
+                                right: 0,
+                                child: LinearProgressIndicator(minHeight: 2),
+                              ),
+                            ],
+                          );
                   } else if (profileState is ProfileError) {
                     body = Center(
                       child: Padding(
@@ -114,67 +145,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ? const Center(
                             child: CircularProgressIndicator.adaptive(),
                           )
-                        : SingleChildScrollView(
-                            padding: const EdgeInsets.all(TurboSpacing.base),
-                            child: Column(
-                              children: [
-                                UserProfileAvatar(profile: profile),
-                                const SizedBox(height: TurboSpacing.lg),
-                                Text(
-                                  profile.displayName ??
-                                      context.l10n.profileGuest,
-                                  style:
-                                      theme.textTheme.headlineSmall?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const SizedBox(height: TurboSpacing.xs),
-                                Text(
-                                  profile.email,
-                                  style: theme.textTheme.bodyMedium?.copyWith(
-                                    color: colorScheme.onSurfaceVariant,
-                                  ),
-                                ),
-                                ProfileStatsWidget(
-                                  profile: profile,
-                                  favoritesLabel:
-                                      context.l10n.profileStatsFavorites,
-                                  reservationsLabel:
-                                      context.l10n.profileStatsReservations,
-                                  reviewsLabel:
-                                      context.l10n.profileStatsReviews,
-                                ),
-                                const SizedBox(height: TurboSpacing.xl),
-                                SizedBox(
-                                  width: double.infinity,
-                                  child: ElevatedButton.icon(
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: colorScheme.primary,
-                                      foregroundColor: colorScheme.onPrimary,
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: TurboSpacing.md,
-                                      ),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: TurboRadius.button,
-                                      ),
-                                    ),
-                                    icon: const Icon(Icons.edit),
-                                    label: Text(context.l10n.profileEdit),
-                                    onPressed: () {
-                                      context.router.push(
-                                        const EditProfileRoute(),
-                                      );
-                                    },
-                                  ),
-                                ),
-                                const SizedBox(height: TurboSpacing.xl),
-                                _buildOptionsSection(
-                                  context,
-                                  theme,
-                                  colorScheme,
-                                ),
-                              ],
-                            ),
+                        : _buildProfileContent(
+                            context: context,
+                            profile: profile,
+                            theme: theme,
+                            colorScheme: colorScheme,
                           );
                   } else {
                     body = const Center(
@@ -213,6 +188,67 @@ class _ProfileScreenState extends State<ProfileScreen> {
               );
           }
         },
+      ),
+    );
+  }
+
+  Widget _buildProfileContent({
+    required BuildContext context,
+    required UserProfile profile,
+    required ThemeData theme,
+    required ColorScheme colorScheme,
+  }) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(TurboSpacing.base),
+      child: Column(
+        children: [
+          UserProfileAvatar(profile: profile),
+          const SizedBox(height: TurboSpacing.lg),
+          Text(
+            profile.displayName ?? context.l10n.profileGuest,
+            style: theme.textTheme.headlineSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: TurboSpacing.xs),
+          Text(
+            profile.email,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: colorScheme.onSurfaceVariant,
+            ),
+          ),
+          ProfileStatsWidget(
+            profile: profile,
+            favoritesLabel: context.l10n.profileStatsFavorites,
+            reservationsLabel: context.l10n.profileStatsReservations,
+            reviewsLabel: context.l10n.profileStatsReviews,
+          ),
+          const SizedBox(height: TurboSpacing.xl),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: colorScheme.primary,
+                foregroundColor: colorScheme.onPrimary,
+                padding: const EdgeInsets.symmetric(
+                  vertical: TurboSpacing.md,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: TurboRadius.button,
+                ),
+              ),
+              icon: const Icon(Icons.edit),
+              label: Text(context.l10n.profileEdit),
+              onPressed: () {
+                context.router.push(
+                  const EditProfileRoute(),
+                );
+              },
+            ),
+          ),
+          const SizedBox(height: TurboSpacing.xl),
+          _buildOptionsSection(context, theme, colorScheme),
+        ],
       ),
     );
   }
