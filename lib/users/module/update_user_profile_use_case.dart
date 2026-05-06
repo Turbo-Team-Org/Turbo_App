@@ -20,10 +20,24 @@ class UpdateUserProfileUseCase {
   final AuthenticationRepository _authenticationRepository;
 
   Future<UserProfile> call(UpdateUserProfileParams params) async {
-    final auth = await _authenticationRepository.updateUserProfile(
-      displayName: params.displayName,
-      photoUrl: params.photoUrl,
-    );
-    return UserProfile.fromAuthUser(auth);
+    final dynamic repository = _authenticationRepository;
+    try {
+      final auth = await repository.updateUserProfile(
+        displayName: params.displayName,
+        photoUrl: params.photoUrl,
+      ) as AuthUser;
+      return UserProfile.fromAuthUser(auth);
+    } on NoSuchMethodError {
+      // Backward compatibility for core refs that still expose only updateDisplayName().
+      final displayName = params.displayName?.trim();
+      if (displayName != null && displayName.isNotEmpty) {
+        await _authenticationRepository.updateDisplayName(displayName);
+      }
+      final auth = await _authenticationRepository.getCurrentUser();
+      if (auth == null) {
+        throw Exception('No authenticated user');
+      }
+      return UserProfile.fromAuthUser(auth);
+    }
   }
 }
