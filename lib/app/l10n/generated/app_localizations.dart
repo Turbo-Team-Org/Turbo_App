@@ -62,7 +62,8 @@ import 'app_localizations_es.dart';
 /// be consistent with the languages listed in the AppLocalizations.supportedLocales
 /// property.
 abstract class AppLocalizations {
-  AppLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+  AppLocalizations(String locale)
+    : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -70,7 +71,8 @@ abstract class AppLocalizations {
     return Localizations.of<AppLocalizations>(context, AppLocalizations)!;
   }
 
-  static const LocalizationsDelegate<AppLocalizations> delegate = _AppLocalizationsDelegate();
+  static const LocalizationsDelegate<AppLocalizations> delegate =
+      _AppLocalizationsDelegate();
 
   /// A list of this localizations delegate along with the default localizations
   /// delegates.
@@ -82,17 +84,18 @@ abstract class AppLocalizations {
   /// Additional delegates can be added by appending to this list in
   /// MaterialApp. This list does not have to be used at all if a custom list
   /// of delegates is preferred or required.
-  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = <LocalizationsDelegate<dynamic>>[
-    delegate,
-    GlobalMaterialLocalizations.delegate,
-    GlobalCupertinoLocalizations.delegate,
-    GlobalWidgetsLocalizations.delegate,
-  ];
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
+      <LocalizationsDelegate<dynamic>>[
+        delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ];
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
     Locale('en'),
-    Locale('es')
+    Locale('es'),
   ];
 
   /// Nombre de la aplicación
@@ -1211,6 +1214,78 @@ abstract class AppLocalizations {
   /// **'Inicia sesión para acceder a todas las funciones'**
   String get profileLoginPrompt;
 
+  /// No description provided for @profileEditTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Editar perfil'**
+  String get profileEditTitle;
+
+  /// No description provided for @profileEditNameLabel.
+  ///
+  /// In es, this message translates to:
+  /// **'Nombre visible'**
+  String get profileEditNameLabel;
+
+  /// No description provided for @profileEditSave.
+  ///
+  /// In es, this message translates to:
+  /// **'Guardar'**
+  String get profileEditSave;
+
+  /// No description provided for @profileStatsFavorites.
+  ///
+  /// In es, this message translates to:
+  /// **'Favoritos'**
+  String get profileStatsFavorites;
+
+  /// No description provided for @profileStatsReservations.
+  ///
+  /// In es, this message translates to:
+  /// **'Reservas'**
+  String get profileStatsReservations;
+
+  /// No description provided for @profileStatsReviews.
+  ///
+  /// In es, this message translates to:
+  /// **'Reseñas'**
+  String get profileStatsReviews;
+
+  /// No description provided for @profileUpdateSuccess.
+  ///
+  /// In es, this message translates to:
+  /// **'Perfil actualizado'**
+  String get profileUpdateSuccess;
+
+  /// No description provided for @profileNameMinLength.
+  ///
+  /// In es, this message translates to:
+  /// **'El nombre debe tener al menos 2 caracteres'**
+  String get profileNameMinLength;
+
+  /// No description provided for @profileMyReviews.
+  ///
+  /// In es, this message translates to:
+  /// **'Mis reseñas'**
+  String get profileMyReviews;
+
+  /// No description provided for @profileMyReviewsDesc.
+  ///
+  /// In es, this message translates to:
+  /// **'Reseñas que escribiste'**
+  String get profileMyReviewsDesc;
+
+  /// No description provided for @profileFeatureSoon.
+  ///
+  /// In es, this message translates to:
+  /// **'Próximamente'**
+  String get profileFeatureSoon;
+
+  /// No description provided for @commonRetry.
+  ///
+  /// In es, this message translates to:
+  /// **'Reintentar'**
+  String get commonRetry;
+
   /// No description provided for @favoritesTitle.
   ///
   /// In es, this message translates to:
@@ -1913,6 +1988,36 @@ abstract class AppLocalizations {
   /// **'Mayor precio'**
   String get filterHighestPrice;
 
+  /// No description provided for @filterSearchTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Filtros de búsqueda'**
+  String get filterSearchTitle;
+
+  /// No description provided for @filterMinRating.
+  ///
+  /// In es, this message translates to:
+  /// **'Calificación mínima'**
+  String get filterMinRating;
+
+  /// No description provided for @placesFoundCount.
+  ///
+  /// In es, this message translates to:
+  /// **'{count} lugares'**
+  String placesFoundCount(int count);
+
+  /// No description provided for @filterActiveRating.
+  ///
+  /// In es, this message translates to:
+  /// **'Calificación {rating}+'**
+  String filterActiveRating(String rating);
+
+  /// No description provided for @filterSortChip.
+  ///
+  /// In es, this message translates to:
+  /// **'Orden: {sortBy}'**
+  String filterSortChip(String sortBy);
+
   /// No description provided for @commonCancel.
   ///
   /// In es, this message translates to:
@@ -2430,7 +2535,8 @@ abstract class AppLocalizations {
   String get reviewsCancel;
 }
 
-class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
+class _AppLocalizationsDelegate
+    extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();
 
   @override
@@ -2439,25 +2545,26 @@ class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> 
   }
 
   @override
-  bool isSupported(Locale locale) => <String>['en', 'es'].contains(locale.languageCode);
+  bool isSupported(Locale locale) =>
+      <String>['en', 'es'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
 }
 
 AppLocalizations lookupAppLocalizations(Locale locale) {
-
-
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
-    case 'en': return AppLocalizationsEn();
-    case 'es': return AppLocalizationsEs();
+    case 'en':
+      return AppLocalizationsEn();
+    case 'es':
+      return AppLocalizationsEs();
   }
 
   throw FlutterError(
     'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
     'an issue with the localizations generation tool. Please file an issue '
     'on GitHub with a reproducible sample app and the gen-l10n configuration '
-    'that was used.'
+    'that was used.',
   );
 }

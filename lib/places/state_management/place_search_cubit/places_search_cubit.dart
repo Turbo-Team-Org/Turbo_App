@@ -6,6 +6,7 @@ import 'package:turbo/categories/module/get_places_by_category_use_case.dart';
 import 'package:turbo/places/module/search_places_use_case.dart';
 import 'package:turbo/places/module/get_places_by_location_use_case.dart';
 import 'package:turbo/places/module/search_nearby_places_use_case.dart';
+import 'package:turbo/places/module/params/search_filters_params.dart';
 import 'package:turbo/places/module/params/search_places_params.dart';
 import 'dart:async';
 
@@ -215,6 +216,28 @@ class PlacesSearchCubit extends Cubit<PlacesSearchState> {
         showOnlyWithPhotos: false,
         showOnlyRecommended: false,
         searchType: PlaceSearchType.nearby,
+        isLoading: true,
+      ),
+    );
+    _loadPlaces();
+  }
+
+  void applyFilters(SearchFiltersParams params) {
+    emit(
+      state.copyWith(
+        minRating: params.minRating,
+        maxDistance: params.maxDistance,
+        sortBy: params.sortBy,
+        showOnlyOpenNow: params.showOnlyOpenNow,
+        selectedAmenities: params.selectedAmenities,
+        maxPrice: params.maxPrice,
+        minPrice: params.minPrice,
+        showOnlyWithReviews:
+            params.showOnlyWithReviews ?? state.showOnlyWithReviews,
+        showOnlyWithPhotos: params.showOnlyWithPhotos ?? state.showOnlyWithPhotos,
+        showOnlyRecommended:
+            params.showOnlyRecommended ?? state.showOnlyRecommended,
+        resultsLimit: params.resultsLimit ?? state.resultsLimit,
         isLoading: true,
       ),
     );

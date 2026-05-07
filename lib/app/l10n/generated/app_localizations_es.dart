@@ -202,13 +202,15 @@ class AppLocalizationsEs extends AppLocalizations {
   String get reservationConfirmTitle => 'Confirmar Reserva';
 
   @override
-  String get reservationConfirmMessage => '¿Estás seguro de realizar esta reserva?';
+  String get reservationConfirmMessage =>
+      '¿Estás seguro de realizar esta reserva?';
 
   @override
   String get reservationCancelTitle => 'Cancelar Reserva';
 
   @override
-  String get reservationCancelMessage => '¿Estás seguro de cancelar esta reserva?';
+  String get reservationCancelMessage =>
+      '¿Estás seguro de cancelar esta reserva?';
 
   @override
   String get reservationSuccess => '¡Reserva realizada con éxito!';
@@ -244,7 +246,8 @@ class AppLocalizationsEs extends AppLocalizations {
   String get promoTitle => '¡Oferta especial!';
 
   @override
-  String get promoDescription => 'Disfruta 20% de descuento en tours por La Habana';
+  String get promoDescription =>
+      'Disfruta 20% de descuento en tours por La Habana';
 
   @override
   String get promoButton => 'Ver Oferta';
@@ -464,16 +467,19 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get locationNotAvailable => 'Ubicación no disponible. Mostrando todos los lugares.';
+  String get locationNotAvailable =>
+      'Ubicación no disponible. Mostrando todos los lugares.';
 
   @override
-  String get requestingLocation => 'Solicitando tu ubicación para mostrar lugares cercanos...';
+  String get requestingLocation =>
+      'Solicitando tu ubicación para mostrar lugares cercanos...';
 
   @override
   String get locationPermissionTitle => 'Permiso de ubicación';
 
   @override
-  String get locationPermissionMessage => 'Necesitamos acceso a tu ubicación para mostrarte los lugares más cercanos';
+  String get locationPermissionMessage =>
+      'Necesitamos acceso a tu ubicación para mostrarte los lugares más cercanos';
 
   @override
   String get locationPermissionAllow => 'Permitir';
@@ -488,7 +494,8 @@ class AppLocalizationsEs extends AppLocalizations {
   String get locationDenied => 'Permiso de ubicación denegado';
 
   @override
-  String get locationDisabled => 'Los servicios de ubicación están desactivados';
+  String get locationDisabled =>
+      'Los servicios de ubicación están desactivados';
 
   @override
   String get themeSystem => 'Sistema';
@@ -560,7 +567,8 @@ class AppLocalizationsEs extends AppLocalizations {
   String get profileLogout => 'Cerrar Sesión';
 
   @override
-  String get profileLogoutConfirm => '¿Estás seguro de que deseas cerrar sesión?';
+  String get profileLogoutConfirm =>
+      '¿Estás seguro de que deseas cerrar sesión?';
 
   @override
   String get profileSettings => 'Configuración';
@@ -601,7 +609,45 @@ class AppLocalizationsEs extends AppLocalizations {
   String get profileGuest => 'Invitado';
 
   @override
-  String get profileLoginPrompt => 'Inicia sesión para acceder a todas las funciones';
+  String get profileLoginPrompt =>
+      'Inicia sesión para acceder a todas las funciones';
+
+  @override
+  String get profileEditTitle => 'Editar perfil';
+
+  @override
+  String get profileEditNameLabel => 'Nombre visible';
+
+  @override
+  String get profileEditSave => 'Guardar';
+
+  @override
+  String get profileStatsFavorites => 'Favoritos';
+
+  @override
+  String get profileStatsReservations => 'Reservas';
+
+  @override
+  String get profileStatsReviews => 'Reseñas';
+
+  @override
+  String get profileUpdateSuccess => 'Perfil actualizado';
+
+  @override
+  String get profileNameMinLength =>
+      'El nombre debe tener al menos 2 caracteres';
+
+  @override
+  String get profileMyReviews => 'Mis reseñas';
+
+  @override
+  String get profileMyReviewsDesc => 'Reseñas que escribiste';
+
+  @override
+  String get profileFeatureSoon => 'Próximamente';
+
+  @override
+  String get commonRetry => 'Reintentar';
 
   @override
   String get favoritesTitle => 'Favoritos';
@@ -690,7 +736,8 @@ class AppLocalizationsEs extends AppLocalizations {
   String get eventsWelcomeTitle => '¡Descubre los mejores eventos!';
 
   @override
-  String get eventsWelcomeSubtitle => 'No te pierdas los eventos más destacados de Cuba';
+  String get eventsWelcomeSubtitle =>
+      'No te pierdas los eventos más destacados de Cuba';
 
   @override
   String get eventsWelcomeButton => 'Ver Eventos';
@@ -771,7 +818,8 @@ class AppLocalizationsEs extends AppLocalizations {
   String get authInvalidEmail => 'Correo electrónico inválido';
 
   @override
-  String get authInvalidPassword => 'La contraseña debe tener al menos 6 caracteres';
+  String get authInvalidPassword =>
+      'La contraseña debe tener al menos 6 caracteres';
 
   @override
   String get authPasswordMismatch => 'Las contraseñas no coinciden';
@@ -792,7 +840,8 @@ class AppLocalizationsEs extends AppLocalizations {
   String get authResetPassword => 'Restablecer contraseña';
 
   @override
-  String get authResetPasswordSent => 'Se ha enviado un correo para restablecer tu contraseña';
+  String get authResetPasswordSent =>
+      'Se ha enviado un correo para restablecer tu contraseña';
 
   @override
   String get authContinueAsGuest => 'Continuar como invitado';
@@ -873,10 +922,12 @@ class AppLocalizationsEs extends AppLocalizations {
   String get bookingPhoneRequired => 'El teléfono es requerido';
 
   @override
-  String get bookingSpecialRequestsOptional => 'Solicitudes especiales (opcional)';
+  String get bookingSpecialRequestsOptional =>
+      'Solicitudes especiales (opcional)';
 
   @override
-  String get bookingSpecialRequestsHint => 'Ej: Mesa cerca de la ventana, celebración especial...';
+  String get bookingSpecialRequestsHint =>
+      'Ej: Mesa cerca de la ventana, celebración especial...';
 
   @override
   String get bookingPartySize => '¿Para cuántas personas?';
@@ -888,13 +939,15 @@ class AppLocalizationsEs extends AppLocalizations {
   String get bookingCancellationPolicy => 'Política de cancelación';
 
   @override
-  String get bookingCancellationPolicyText => 'Puedes cancelar tu reserva hasta 2 horas antes del horario programado sin costo alguno.';
+  String get bookingCancellationPolicyText =>
+      'Puedes cancelar tu reserva hasta 2 horas antes del horario programado sin costo alguno.';
 
   @override
   String get bookingConfirming => 'Confirmando reserva...';
 
   @override
-  String get bookingLoginRequired => 'Debes iniciar sesión para hacer una reserva';
+  String get bookingLoginRequired =>
+      'Debes iniciar sesión para hacer una reserva';
 
   @override
   String get mapTitle => 'Mapa';
@@ -961,6 +1014,27 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get filterHighestPrice => 'Mayor precio';
+
+  @override
+  String get filterSearchTitle => 'Filtros de búsqueda';
+
+  @override
+  String get filterMinRating => 'Calificación mínima';
+
+  @override
+  String placesFoundCount(int count) {
+    return '$count lugares';
+  }
+
+  @override
+  String filterActiveRating(String rating) {
+    return 'Calificación $rating+';
+  }
+
+  @override
+  String filterSortChip(String sortBy) {
+    return 'Orden: $sortBy';
+  }
 
   @override
   String get commonCancel => 'Cancelar';
@@ -1169,25 +1243,29 @@ class AppLocalizationsEs extends AppLocalizations {
   String get onboarding1Title => 'Descubre Cuba';
 
   @override
-  String get onboarding1Subtitle => 'Explora los mejores restaurantes, bares, hoteles y experiencias que Cuba tiene para ofrecer';
+  String get onboarding1Subtitle =>
+      'Explora los mejores restaurantes, bares, hoteles y experiencias que Cuba tiene para ofrecer';
 
   @override
   String get onboarding2Title => 'Reserva Fácilmente';
 
   @override
-  String get onboarding2Subtitle => 'Haz reservaciones en segundos. Sin llamadas, sin esperas. Tu mesa te espera con un solo toque';
+  String get onboarding2Subtitle =>
+      'Haz reservaciones en segundos. Sin llamadas, sin esperas. Tu mesa te espera con un solo toque';
 
   @override
   String get onboarding3Title => 'Eventos Únicos';
 
   @override
-  String get onboarding3Subtitle => 'No te pierdas los eventos más exclusivos. Música en vivo, gastronomía, arte y cultura cubana';
+  String get onboarding3Subtitle =>
+      'No te pierdas los eventos más exclusivos. Música en vivo, gastronomía, arte y cultura cubana';
 
   @override
   String get onboarding4Title => 'Guarda tus Favoritos';
 
   @override
-  String get onboarding4Subtitle => 'Crea tu propia colección de lugares favoritos y accede a ellos cuando quieras';
+  String get onboarding4Subtitle =>
+      'Crea tu propia colección de lugares favoritos y accede a ellos cuando quieras';
 
   @override
   String get onboardingWelcome => 'Bienvenido a';

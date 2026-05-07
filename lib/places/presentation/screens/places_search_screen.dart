@@ -4,9 +4,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:core/core.dart';
+import 'package:turbo/app/l10n/l10n.dart';
+import 'package:turbo/places/module/params/search_filters_params.dart';
 import 'package:turbo/places/state_management/place_search_cubit/places_search_cubit.dart';
 import 'package:turbo/places/presentation/widgets/places_search_bar.dart';
 import 'package:turbo/places/presentation/widgets/place_compact_card.dart';
+import 'package:turbo/places/presentation/widgets/search_filters_sheet.dart';
 import 'dart:math' as math;
 
 @RoutePage()
@@ -44,7 +47,6 @@ class _PlacesSearchScreenState extends State<PlacesSearchScreen>
 
   // Estado para el lugar seleccionado
   Place? _selectedPlace;
-  Set<Marker> _markers = {};
 
   // Posición inicial del mapa (La Habana, Cuba)
   static const CameraPosition _initialPosition = CameraPosition(
@@ -144,6 +146,7 @@ class _PlacesSearchScreenState extends State<PlacesSearchScreen>
   }
 
   Widget _buildMapView(PlacesSearchState state) {
+    final l10n = context.l10n;
     return Stack(
       children: [
         // Google Maps
@@ -203,14 +206,14 @@ class _PlacesSearchScreenState extends State<PlacesSearchScreen>
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withValues(alpha: 0.1),
                     blurRadius: 4,
                     offset: const Offset(0, 2),
                   ),
                 ],
               ),
               child: Text(
-                '${state.places.length} lugares',
+                l10n.placesFoundCount(state.places.length),
                 style: const TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
@@ -219,6 +222,14 @@ class _PlacesSearchScreenState extends State<PlacesSearchScreen>
             ),
           ),
         ),
+
+        if (_hasActiveFilters(state))
+          Positioned(
+            top: MediaQuery.of(context).padding.top + 120,
+            left: 16,
+            right: 16,
+            child: _buildActiveFiltersChips(state),
+          ),
 
         // Overlay de información del lugar seleccionado
         if (_selectedPlace != null)
@@ -237,7 +248,7 @@ class _PlacesSearchScreenState extends State<PlacesSearchScreen>
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
+                        color: Colors.black.withValues(alpha: 0.2),
                         blurRadius: 8,
                         offset: const Offset(0, 4),
                       ),
@@ -257,7 +268,7 @@ class _PlacesSearchScreenState extends State<PlacesSearchScreen>
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
-                              _selectedPlace!.name ?? 'Lugar sin nombre',
+                              _selectedPlace!.name,
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
@@ -277,32 +288,28 @@ class _PlacesSearchScreenState extends State<PlacesSearchScreen>
                           ),
                         ],
                       ),
-                      if (_selectedPlace!.address != null) ...[
-                        const SizedBox(height: 4),
-                        Text(
-                          _selectedPlace!.address!,
-                          style: TextStyle(
-                            color: Colors.grey.shade600,
-                            fontSize: 14,
-                          ),
+                      const SizedBox(height: 4),
+                      Text(
+                        _selectedPlace!.address,
+                        style: TextStyle(
+                          color: Colors.grey.shade600,
+                          fontSize: 14,
                         ),
-                      ],
-                      if (_selectedPlace!.rating != null) ...[
-                        const SizedBox(height: 8),
-                        Row(
-                          children: [
-                            Icon(Icons.star, color: Colors.amber, size: 16),
-                            const SizedBox(width: 4),
-                            Text(
-                              '${_selectedPlace!.rating!.toStringAsFixed(1)}',
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w500,
-                                fontSize: 14,
-                              ),
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          const Icon(Icons.star, color: Colors.amber, size: 16),
+                          const SizedBox(width: 4),
+                          Text(
+                            _selectedPlace!.rating.toStringAsFixed(1),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 14,
                             ),
-                          ],
-                        ),
-                      ],
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                 ),
@@ -373,7 +380,7 @@ class _PlacesSearchScreenState extends State<PlacesSearchScreen>
             Icon(Icons.location_off, size: 64, color: Colors.grey.shade400),
             const SizedBox(height: 16),
             Text(
-              'No se encontraron lugares',
+              context.l10n.searchNoResults,
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w500,
@@ -382,7 +389,7 @@ class _PlacesSearchScreenState extends State<PlacesSearchScreen>
             ),
             const SizedBox(height: 8),
             Text(
-              'Intenta con otra categoría o búsqueda',
+              context.l10n.tryAnotherSearch,
               style: TextStyle(color: Colors.grey.shade500),
             ),
           ],
@@ -444,17 +451,15 @@ class _PlacesSearchScreenState extends State<PlacesSearchScreen>
     final markers = <Marker>{};
 
     for (final place in places) {
-      if (place.latitude == null || place.longitude == null) continue;
-
       final isSelected = _selectedPlace?.id == place.id;
 
       markers.add(
         Marker(
-          markerId: MarkerId(place.id ?? ''),
-          position: LatLng(place.latitude!, place.longitude!),
+          markerId: MarkerId(place.id),
+          position: LatLng(place.latitude, place.longitude),
           infoWindow: InfoWindow(
-            title: place.name ?? 'Lugar sin nombre',
-            snippet: place.address ?? '',
+            title: place.name,
+            snippet: place.address,
           ),
           onTap: () => _selectPlace(place),
           // Marcador especial para el lugar seleccionado
@@ -488,13 +493,9 @@ class _PlacesSearchScreenState extends State<PlacesSearchScreen>
       } else {
         // Si no hay centro específico, usar el primer lugar
         final firstPlace = state.places.first;
-        if (firstPlace.latitude != null && firstPlace.longitude != null) {
-          _mapController!.animateCamera(
-            CameraUpdate.newLatLng(
-              LatLng(firstPlace.latitude!, firstPlace.longitude!),
-            ),
-          );
-        }
+        _mapController!.animateCamera(
+          CameraUpdate.newLatLng(LatLng(firstPlace.latitude, firstPlace.longitude)),
+        );
       }
     }
   }
@@ -509,9 +510,7 @@ class _PlacesSearchScreenState extends State<PlacesSearchScreen>
     });
 
     // Animar cámara al lugar seleccionado con efecto de zoom suave
-    if (_mapController != null &&
-        place.latitude != null &&
-        place.longitude != null) {
+    if (_mapController != null) {
       // Crear una animación de zoom más sofisticada
       _animateToPlace(place);
     }
@@ -524,12 +523,9 @@ class _PlacesSearchScreenState extends State<PlacesSearchScreen>
 
   /// Anima la cámara hacia un lugar específico con efectos visuales
   void _animateToPlace(Place place) {
-    if (_mapController == null ||
-        place.latitude == null ||
-        place.longitude == null)
-      return;
+    if (_mapController == null) return;
 
-    final targetPosition = LatLng(place.latitude!, place.longitude!);
+    final targetPosition = LatLng(place.latitude, place.longitude);
 
     // Obtener la posición actual de la cámara
     _mapController!.getVisibleRegion().then((bounds) {
@@ -634,44 +630,85 @@ class _PlacesSearchScreenState extends State<PlacesSearchScreen>
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
-      builder:
-          (context) => Container(
-            height: MediaQuery.of(context).size.height * 0.7,
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-            ),
-            child: Column(
-              children: [
-                // Handle del bottom sheet
-                Container(
-                  width: 40,
-                  height: 4,
-                  margin: const EdgeInsets.symmetric(vertical: 12),
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade300,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
+      builder: (context) {
+        final state = context.read<PlacesSearchCubit>().state;
+        final initialFilters = SearchFiltersParams(
+          minRating: state.minRating,
+          maxDistance: state.maxDistance,
+          sortBy: state.sortBy,
+          showOnlyOpenNow: state.showOnlyOpenNow,
+          selectedAmenities: state.selectedAmenities,
+          maxPrice: state.maxPrice,
+          minPrice: state.minPrice,
+          showOnlyWithReviews: state.showOnlyWithReviews,
+          showOnlyWithPhotos: state.showOnlyWithPhotos,
+          showOnlyRecommended: state.showOnlyRecommended,
+          resultsLimit: state.resultsLimit,
+        );
 
-                // Título
-                Text(
-                  'Filtros de búsqueda',
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-
-                const SizedBox(height: 20),
-
-                // TODO: Implementar filtros
-                const Expanded(
-                  child: Center(child: Text('Filtros próximamente...')),
-                ),
-              ],
-            ),
+        return Container(
+          height: MediaQuery.of(context).size.height * 0.7,
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
           ),
+          child: SearchFiltersSheet(
+            initialFilters: initialFilters,
+            onApply: (filters) {
+              context.read<PlacesSearchCubit>().applyFilters(filters);
+              Navigator.of(context).maybePop();
+            },
+            onClear: () {
+              context.read<PlacesSearchCubit>().clearFilters();
+              Navigator.of(context).maybePop();
+            },
+          ),
+        );
+      },
     );
+  }
+
+  bool _hasActiveFilters(PlacesSearchState state) {
+    return state.minRating > 0.0 ||
+        state.showOnlyOpenNow ||
+        state.sortBy != 'distance';
+  }
+
+  Widget _buildActiveFiltersChips(PlacesSearchState state) {
+    final l10n = context.l10n;
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: [
+        if (state.minRating > 0.0)
+          _buildFilterChip(
+            l10n.filterActiveRating(state.minRating.toStringAsFixed(1)),
+          ),
+        if (state.showOnlyOpenNow) _buildFilterChip(l10n.filterOpenNow),
+        if (state.sortBy != 'distance')
+          _buildFilterChip(l10n.filterSortChip(_sortLabel(state.sortBy, l10n))),
+        ActionChip(
+          label: Text(l10n.filterClear),
+          onPressed: () => context.read<PlacesSearchCubit>().clearFilters(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFilterChip(String label) {
+    return Chip(
+      label: Text(label),
+      backgroundColor: Colors.white,
+      side: BorderSide(color: Colors.grey.shade300),
+    );
+  }
+
+  String _sortLabel(String sortBy, AppLocalizations l10n) {
+    return switch (sortBy) {
+      'rating' => l10n.filterHighestRated,
+      'price' => l10n.filterLowestPrice,
+      _ => l10n.filterNearest,
+    };
   }
 }
 
@@ -684,7 +721,6 @@ class GoogleMapsTestScreen extends StatefulWidget {
 }
 
 class _GoogleMapsTestScreenState extends State<GoogleMapsTestScreen> {
-  GoogleMapController? _mapController;
   String _status = "🔄 Inicializando Google Maps...";
 
   static const CameraPosition _laHabana = CameraPosition(
@@ -721,7 +757,6 @@ class _GoogleMapsTestScreenState extends State<GoogleMapsTestScreen> {
           Expanded(
             child: GoogleMap(
               onMapCreated: (GoogleMapController controller) {
-                _mapController = controller;
                 setState(() {
                   _status = "✅ Google Maps cargado correctamente!";
                 });

@@ -24,6 +24,7 @@ import 'package:turbo/theme_selector/theme_selector.dart';
 import '../../../boostrap.dart';
 import '../../../favorites/state_management/cubit/favorite_cubit.dart';
 import '../../../reviews/state_management/cubit/review_cubit.dart';
+import '../../../users/state_management/profile_cubit/profile_cubit.dart';
 import '../../routes/router/app_router.dart';
 
 class MyApp extends StatelessWidget {
@@ -38,6 +39,7 @@ class MyApp extends StatelessWidget {
         BlocProvider.value(value: sl<PlaceCubit>()..getPlaces()),
         BlocProvider(create: (context) => sl<PlacesSearchCubit>()),
         BlocProvider.value(value: sl<ReviewCubit>()),
+        BlocProvider.value(value: sl<ProfileCubit>()),
         BlocProvider.value(value: sl<FavoriteCubit>()),
         BlocProvider.value(value: sl<SignOutCubit>()),
         BlocProvider.value(value: sl<SignUpCubit>()),

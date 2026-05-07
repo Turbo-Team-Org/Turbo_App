@@ -213,6 +213,18 @@
   "profileWelcome": "¡Bienvenido!",
   "profileGuest": "Invitado",
   "profileLoginPrompt": "Inicia sesión para acceder a todas las funciones",
+  "profileEditTitle": "Editar perfil",
+  "profileEditNameLabel": "Nombre visible",
+  "profileEditSave": "Guardar",
+  "profileStatsFavorites": "Favoritos",
+  "profileStatsReservations": "Reservas",
+  "profileStatsReviews": "Reseñas",
+  "profileUpdateSuccess": "Perfil actualizado",
+  "profileNameMinLength": "El nombre debe tener al menos 2 caracteres",
+  "profileMyReviews": "Mis reseñas",
+  "profileMyReviewsDesc": "Reseñas que escribiste",
+  "profileFeatureSoon": "Próximamente",
+  "commonRetry": "Reintentar",
 
   "favoritesTitle": "Favoritos",
   "favoritesEmpty": "No tienes favoritos",
@@ -336,6 +348,32 @@
   "filterHighestRated": "Mejor valorado",
   "filterLowestPrice": "Menor precio",
   "filterHighestPrice": "Mayor precio",
+  "filterSearchTitle": "Filtros de búsqueda",
+  "filterMinRating": "Calificación mínima",
+  "placesFoundCount": "{count} lugares",
+  "@placesFoundCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "filterActiveRating": "Calificación {rating}+",
+  "@filterActiveRating": {
+    "placeholders": {
+      "rating": {
+        "type": "String"
+      }
+    }
+  },
+  "filterSortChip": "Orden: {sortBy}",
+  "@filterSortChip": {
+    "placeholders": {
+      "sortBy": {
+        "type": "String"
+      }
+    }
+  },
 
   "commonCancel": "Cancelar",
   "commonConfirm": "Confirmar",
