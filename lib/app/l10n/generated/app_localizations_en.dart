@@ -202,13 +202,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reservationConfirmTitle => 'Confirm Reservation';
 
   @override
-  String get reservationConfirmMessage => 'Are you sure you want to make this reservation?';
+  String get reservationConfirmMessage =>
+      'Are you sure you want to make this reservation?';
 
   @override
   String get reservationCancelTitle => 'Cancel Reservation';
 
   @override
-  String get reservationCancelMessage => 'Are you sure you want to cancel this reservation?';
+  String get reservationCancelMessage =>
+      'Are you sure you want to cancel this reservation?';
 
   @override
   String get reservationSuccess => 'Reservation made successfully!';
@@ -464,16 +466,19 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get locationNotAvailable => 'Location not available. Showing all places.';
+  String get locationNotAvailable =>
+      'Location not available. Showing all places.';
 
   @override
-  String get requestingLocation => 'Requesting your location to show nearby places...';
+  String get requestingLocation =>
+      'Requesting your location to show nearby places...';
 
   @override
   String get locationPermissionTitle => 'Location Permission';
 
   @override
-  String get locationPermissionMessage => 'We need access to your location to show you nearby places';
+  String get locationPermissionMessage =>
+      'We need access to your location to show you nearby places';
 
   @override
   String get locationPermissionAllow => 'Allow';
@@ -912,7 +917,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bookingSpecialRequestsOptional => 'Special requests (optional)';
 
   @override
-  String get bookingSpecialRequestsHint => 'E.g.: Table by the window, special celebration...';
+  String get bookingSpecialRequestsHint =>
+      'E.g.: Table by the window, special celebration...';
 
   @override
   String get bookingPartySize => 'How many guests?';
@@ -924,7 +930,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bookingCancellationPolicy => 'Cancellation policy';
 
   @override
-  String get bookingCancellationPolicyText => 'You can cancel your reservation up to 2 hours before the scheduled time at no cost.';
+  String get bookingCancellationPolicyText =>
+      'You can cancel your reservation up to 2 hours before the scheduled time at no cost.';
 
   @override
   String get bookingConfirming => 'Confirming booking...';
@@ -1205,25 +1212,29 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onboarding1Title => 'Discover Cuba';
 
   @override
-  String get onboarding1Subtitle => 'Explore the best restaurants, bars, hotels and experiences that Cuba has to offer';
+  String get onboarding1Subtitle =>
+      'Explore the best restaurants, bars, hotels and experiences that Cuba has to offer';
 
   @override
   String get onboarding2Title => 'Book Easily';
 
   @override
-  String get onboarding2Subtitle => 'Make reservations in seconds. No calls, no waiting. Your table awaits with just one tap';
+  String get onboarding2Subtitle =>
+      'Make reservations in seconds. No calls, no waiting. Your table awaits with just one tap';
 
   @override
   String get onboarding3Title => 'Unique Events';
 
   @override
-  String get onboarding3Subtitle => 'Don\'t miss the most exclusive events. Live music, gastronomy, art and Cuban culture';
+  String get onboarding3Subtitle =>
+      'Don\'t miss the most exclusive events. Live music, gastronomy, art and Cuban culture';
 
   @override
   String get onboarding4Title => 'Save your Favorites';
 
   @override
-  String get onboarding4Subtitle => 'Create your own collection of favorite places and access them whenever you want';
+  String get onboarding4Subtitle =>
+      'Create your own collection of favorite places and access them whenever you want';
 
   @override
   String get onboardingWelcome => 'Welcome to';
