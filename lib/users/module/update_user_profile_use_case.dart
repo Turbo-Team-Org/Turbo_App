@@ -25,19 +25,29 @@ class UpdateUserProfileUseCase {
       final auth = await repository.updateUserProfile(
         displayName: params.displayName,
         photoUrl: params.photoUrl,
-      ) as AuthUser;
+      );
+      if (auth is! AuthUser) {
+        throw StateError('Invalid user response when updating profile');
+      }
       return UserProfile.fromAuthUser(auth);
     } on NoSuchMethodError {
-      // Backward compatibility for core refs that still expose only updateDisplayName().
-      final displayName = params.displayName?.trim();
-      if (displayName != null && displayName.isNotEmpty) {
-        await _authenticationRepository.updateDisplayName(displayName);
-      }
-      final auth = await _authenticationRepository.getCurrentUser();
-      if (auth == null) {
-        throw Exception('No authenticated user');
-      }
-      return UserProfile.fromAuthUser(auth);
+      return _fallbackUpdate(params);
+    } on TypeError {
+      return _fallbackUpdate(params);
+    } on StateError {
+      return _fallbackUpdate(params);
     }
+  }
+
+  Future<UserProfile> _fallbackUpdate(UpdateUserProfileParams params) async {
+    final displayName = params.displayName?.trim();
+    if (displayName != null && displayName.isNotEmpty) {
+      await _authenticationRepository.updateDisplayName(displayName);
+    }
+    final auth = await _authenticationRepository.getCurrentUser();
+    if (auth == null) {
+      throw Exception('No authenticated user');
+    }
+    return UserProfile.fromAuthUser(auth);
   }
 }

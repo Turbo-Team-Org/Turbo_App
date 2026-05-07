@@ -16,13 +16,7 @@ class GetUserProfileUseCase {
   final ReviewRepository _reviewRepository;
 
   Future<UserProfile?> call() async {
-    final dynamic repository = _authenticationRepository;
-    AuthUser? auth;
-    try {
-      auth = await repository.getCurrentProfile() as AuthUser?;
-    } on NoSuchMethodError {
-      auth = await _authenticationRepository.getCurrentUser();
-    }
+    final auth = await _authenticationRepository.getCurrentUser();
     if (auth == null) {
       return null;
     }
