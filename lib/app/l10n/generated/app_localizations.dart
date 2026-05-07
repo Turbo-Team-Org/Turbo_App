@@ -1988,6 +1988,36 @@ abstract class AppLocalizations {
   /// **'Mayor precio'**
   String get filterHighestPrice;
 
+  /// No description provided for @filterSearchTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Filtros de búsqueda'**
+  String get filterSearchTitle;
+
+  /// No description provided for @filterMinRating.
+  ///
+  /// In es, this message translates to:
+  /// **'Calificación mínima'**
+  String get filterMinRating;
+
+  /// No description provided for @placesFoundCount.
+  ///
+  /// In es, this message translates to:
+  /// **'{count} lugares'**
+  String placesFoundCount(int count);
+
+  /// No description provided for @filterActiveRating.
+  ///
+  /// In es, this message translates to:
+  /// **'Calificación {rating}+'**
+  String filterActiveRating(String rating);
+
+  /// No description provided for @filterSortChip.
+  ///
+  /// In es, this message translates to:
+  /// **'Orden: {sortBy}'**
+  String filterSortChip(String sortBy);
+
   /// No description provided for @commonCancel.
   ///
   /// In es, this message translates to:

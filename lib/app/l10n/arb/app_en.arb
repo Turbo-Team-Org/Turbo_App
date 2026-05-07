@@ -345,6 +345,32 @@
   "filterHighestRated": "Highest rated",
   "filterLowestPrice": "Lowest price",
   "filterHighestPrice": "Highest price",
+  "filterSearchTitle": "Search filters",
+  "filterMinRating": "Minimum rating",
+  "placesFoundCount": "{count} places",
+  "@placesFoundCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "filterActiveRating": "Rating {rating}+",
+  "@filterActiveRating": {
+    "placeholders": {
+      "rating": {
+        "type": "String"
+      }
+    }
+  },
+  "filterSortChip": "Sort: {sortBy}",
+  "@filterSortChip": {
+    "placeholders": {
+      "sortBy": {
+        "type": "String"
+      }
+    }
+  },
 
   "commonCancel": "Cancel",
   "commonConfirm": "Confirm",

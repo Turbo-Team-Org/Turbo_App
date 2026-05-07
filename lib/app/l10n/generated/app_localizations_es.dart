@@ -1016,6 +1016,27 @@ class AppLocalizationsEs extends AppLocalizations {
   String get filterHighestPrice => 'Mayor precio';
 
   @override
+  String get filterSearchTitle => 'Filtros de búsqueda';
+
+  @override
+  String get filterMinRating => 'Calificación mínima';
+
+  @override
+  String placesFoundCount(int count) {
+    return '$count lugares';
+  }
+
+  @override
+  String filterActiveRating(String rating) {
+    return 'Calificación $rating+';
+  }
+
+  @override
+  String filterSortChip(String sortBy) {
+    return 'Orden: $sortBy';
+  }
+
+  @override
   String get commonCancel => 'Cancelar';
 
   @override
