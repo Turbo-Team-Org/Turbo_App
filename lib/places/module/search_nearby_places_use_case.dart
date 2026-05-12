@@ -33,7 +33,7 @@ class SearchNearbyPlacesUseCase
 
       // Búsqueda con Google Places API (si está configurado)
       try {
-        final googlePlaces = await _locationRepository.searchNearbyPlaces(
+        await _locationRepository.searchNearbyPlaces(
           location: locationData,
           radius: params.radius,
           keyword: params.keyword,
@@ -55,27 +55,24 @@ class SearchNearbyPlacesUseCase
       if (params.minRating != null) {
         filteredResults =
             filteredResults
-                .where((place) => (place.rating ?? 0) >= params.minRating!)
+                .where((place) => place.rating >= params.minRating!)
                 .toList();
       }
 
       // Ordenar por distancia
       filteredResults.sort((a, b) {
-        if (a.latitude == null || a.longitude == null) return 1;
-        if (b.latitude == null || b.longitude == null) return -1;
-
         final distanceA = _locationRepository.calculateDistanceHaversine(
           lat1: params.location.latitude,
           lon1: params.location.longitude,
-          lat2: a.latitude!,
-          lon2: a.longitude!,
+          lat2: a.latitude,
+          lon2: a.longitude,
         );
 
         final distanceB = _locationRepository.calculateDistanceHaversine(
           lat1: params.location.latitude,
           lon1: params.location.longitude,
-          lat2: b.latitude!,
-          lon2: b.longitude!,
+          lat2: b.latitude,
+          lon2: b.longitude,
         );
 
         return distanceA.compareTo(distanceB);
@@ -101,13 +98,11 @@ class SearchNearbyPlacesUseCase
 
     List<Place> nearbyPlaces =
         allPlaces.where((place) {
-          if (place.latitude == null || place.longitude == null) return false;
-
           final distance = _locationRepository.calculateDistanceHaversine(
             lat1: params.location.latitude,
             lon1: params.location.longitude,
-            lat2: place.latitude!,
-            lon2: place.longitude!,
+            lat2: place.latitude,
+            lon2: place.longitude,
           );
 
           return distance <= params.radius;
@@ -126,12 +121,9 @@ class SearchNearbyPlacesUseCase
       final keyword = params.keyword!.toLowerCase();
       nearbyPlaces =
           nearbyPlaces.where((place) {
-            final nameMatch =
-                place.name?.toLowerCase().contains(keyword) ?? false;
-            final descriptionMatch =
-                place.description?.toLowerCase().contains(keyword) ?? false;
-            final addressMatch =
-                place.address?.toLowerCase().contains(keyword) ?? false;
+            final nameMatch = place.name.toLowerCase().contains(keyword);
+            final descriptionMatch = place.description.toLowerCase().contains(keyword);
+            final addressMatch = place.address.toLowerCase().contains(keyword);
 
             return nameMatch || descriptionMatch || addressMatch;
           }).toList();
@@ -146,8 +138,8 @@ class SearchNearbyPlacesUseCase
     final uniquePlaces = <Place>[];
 
     for (final place in places) {
-      if (place.id != null && !seen.contains(place.id)) {
-        seen.add(place.id!);
+      if (!seen.contains(place.id)) {
+        seen.add(place.id);
         uniquePlaces.add(place);
       }
     }
@@ -155,19 +147,4 @@ class SearchNearbyPlacesUseCase
     return uniquePlaces;
   }
 
-  /// Mapea categoría interna a tipo de Google Places
-  String? _getCategoryType(String? categoryId) {
-    if (categoryId == null) return null;
-
-    const categoryMapping = {
-      'restaurants': 'restaurant',
-      'bars': 'bar',
-      'cafes': 'cafe',
-      'hotels': 'lodging',
-      'shops': 'store',
-      'services': 'establishment',
-    };
-
-    return categoryMapping[categoryId];
-  }
 }

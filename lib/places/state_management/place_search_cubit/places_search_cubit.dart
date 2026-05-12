@@ -103,7 +103,7 @@ class PlacesSearchCubit extends Cubit<PlacesSearchState> {
     emit(
       state.copyWith(
         selectedPlace: place,
-        mapCenter: LatLng(place.latitude ?? 0, place.longitude ?? 0),
+        mapCenter: LatLng(place.latitude, place.longitude),
       ),
     );
   }
@@ -325,7 +325,6 @@ class PlacesSearchCubit extends Cubit<PlacesSearchState> {
           break;
 
         case PlaceSearchType.all:
-        default:
           // Fallback a búsqueda general si hay ubicación
           if (state.userLocation != null) {
             places = await _getPlacesByLocationUseCase(
@@ -354,10 +353,8 @@ class PlacesSearchCubit extends Cubit<PlacesSearchState> {
           isLoading: false,
           mapCenter:
               state.mapCenter ??
-              (places.isNotEmpty &&
-                      places.first.latitude != null &&
-                      places.first.longitude != null
-                  ? LatLng(places.first.latitude!, places.first.longitude!)
+              (places.isNotEmpty
+                  ? LatLng(places.first.latitude, places.first.longitude)
                   : const LatLng(23.1136, -82.3666)), // La Habana por defecto
         ),
       );
@@ -397,12 +394,10 @@ class PlacesSearchCubit extends Cubit<PlacesSearchState> {
           isLoading: false,
           mapCenter:
               state.mapCenter ??
-              (filteredPlaces.isNotEmpty &&
-                      filteredPlaces.first.latitude != null &&
-                      filteredPlaces.first.longitude != null
+              (filteredPlaces.isNotEmpty
                   ? LatLng(
-                    filteredPlaces.first.latitude!,
-                    filteredPlaces.first.longitude!,
+                    filteredPlaces.first.latitude,
+                    filteredPlaces.first.longitude,
                   )
                   : const LatLng(23.1136, -82.3666)), // La Habana por defecto
         ),
@@ -423,23 +418,17 @@ class PlacesSearchCubit extends Cubit<PlacesSearchState> {
 
     // Filtro: solo con reseñas
     if (state.showOnlyWithReviews) {
-      filtered =
-          filtered
-              .where((place) => place.reviews?.isNotEmpty ?? false)
-              .toList();
+      filtered = filtered.where((place) => place.reviews.isNotEmpty).toList();
     }
 
     // Filtro: solo con fotos
     if (state.showOnlyWithPhotos) {
-      filtered =
-          filtered
-              .where((place) => place.imageUrls?.isNotEmpty ?? false)
-              .toList();
+      filtered = filtered.where((place) => place.imageUrls.isNotEmpty).toList();
     }
 
     // Filtro: solo recomendados (rating >= 4.0)
     if (state.showOnlyRecommended) {
-      filtered = filtered.where((place) => (place.rating ?? 0) >= 4.0).toList();
+      filtered = filtered.where((place) => place.rating >= 4.0).toList();
     }
 
     // TODO: Implementar filtro de lugares abiertos cuando tengamos horarios

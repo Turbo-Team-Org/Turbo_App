@@ -17,10 +17,16 @@
 - **`doc/AGENTIC_DEVELOPMENT.md`** — documentación del sistema agéntico.
 - **`doc/TDD_GUIDE.md`** — guía operativa de TDD del proyecto.
 - **`doc/CONVENTIONS.md`** — convenciones detalladas de código.
+- **S2-T2 `search-filters` (hardening de calidad):**
+  - tests adicionales de cubit para combinaciones y edge-cases de `applyFilters`
+  - tests de módulo para `SearchPlacesUseCase` / `SearchPlacesByVoiceUseCase` / `SearchPlacesByLocationUseCase`
+  - limpieza de null-checks/casts redundantes en `PlacesSearchCubit`
 
 ### Changed
+- `places_search_screen.dart` elimina pantalla temporal de test de Google Maps (debug-only) para evitar literales fuera de l10n.
 
 ### Fixed
+- warnings de analyze en `places_search_cubit.dart` relacionados a `null-aware`, `!` innecesario y `switch default` redundante.
 
 ### Removed
 

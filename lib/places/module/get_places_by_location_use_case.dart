@@ -27,7 +27,7 @@ class GetPlacesByLocationUseCase
 
       // Usar el método optimizado del LocationRepository si está disponible
       try {
-        final nearbyResults = await _locationRepository.findPlacesWithinRadius(
+        await _locationRepository.findPlacesWithinRadius(
           center: locationData,
           radiusMeters: params.radius,
           categories: params.categoryId != null ? [params.categoryId!] : null,
@@ -46,13 +46,11 @@ class GetPlacesByLocationUseCase
 
       List<Place> filteredPlaces =
           allPlaces.where((place) {
-            if (place.latitude == null || place.longitude == null) return false;
-
             final distance = _locationRepository.calculateDistanceHaversine(
               lat1: params.location.latitude,
               lon1: params.location.longitude,
-              lat2: place.latitude!,
-              lon2: place.longitude!,
+              lat2: place.latitude,
+              lon2: place.longitude,
             );
 
             return distance <= params.radius;
@@ -69,25 +67,21 @@ class GetPlacesByLocationUseCase
       if (params.minRating != null) {
         filteredPlaces =
             filteredPlaces
-                .where((place) => (place.rating ?? 0) >= params.minRating!)
+                .where((place) => place.rating >= params.minRating!)
                 .toList();
       }
 
       if (params.minPrice != null) {
         filteredPlaces =
             filteredPlaces
-                .where((place) => (place.averagePrice ?? 0) >= params.minPrice!)
+                .where((place) => place.averagePrice >= params.minPrice!)
                 .toList();
       }
 
       if (params.maxPrice != null) {
         filteredPlaces =
             filteredPlaces
-                .where(
-                  (place) =>
-                      (place.averagePrice ?? double.infinity) <=
-                      params.maxPrice!,
-                )
+                .where((place) => place.averagePrice <= params.maxPrice!)
                 .toList();
       }
 
@@ -98,27 +92,27 @@ class GetPlacesByLocationUseCase
             final distanceA = _locationRepository.calculateDistanceHaversine(
               lat1: params.location.latitude,
               lon1: params.location.longitude,
-              lat2: a.latitude!,
-              lon2: a.longitude!,
+              lat2: a.latitude,
+              lon2: a.longitude,
             );
 
             final distanceB = _locationRepository.calculateDistanceHaversine(
               lat1: params.location.latitude,
               lon1: params.location.longitude,
-              lat2: b.latitude!,
-              lon2: b.longitude!,
+              lat2: b.latitude,
+              lon2: b.longitude,
             );
 
             return distanceA.compareTo(distanceB);
 
           case 'rating':
-            return (b.rating ?? 0).compareTo(a.rating ?? 0);
+            return b.rating.compareTo(a.rating);
 
           case 'price':
-            return (a.averagePrice ?? 0).compareTo(b.averagePrice ?? 0);
+            return a.averagePrice.compareTo(b.averagePrice);
 
           default:
-            return (b.rating ?? 0).compareTo(a.rating ?? 0);
+            return b.rating.compareTo(a.rating);
         }
       });
 
