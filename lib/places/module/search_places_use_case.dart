@@ -14,17 +14,10 @@ class SearchPlacesUseCase
   @override
   Future<List<Place>> call(SearchPlacesParams params) async {
     try {
+      // TODO(core-sync): cuando Turbo_App apunte a un Core con los métodos
+      // avanzados (`intelligentSearch`), delegar aquí y eliminar fallback.
+      final _ = _placeRepository;
       return [];
-      /*
-      // Usar el nuevo método de búsqueda inteligente del Core
-      return await _placeRepository.intelligentSearch(
-        params.query,
-        categoryId: params.categoryId,
-        minRating: params.minRating,
-        maxPrice: params.maxPrice,
-            minPrice: params.minPrice,
-        limit: 50, 
-      ); */
     } catch (e) {
       throw Exception('Error al buscar lugares: ${e.toString()}');
     }
@@ -42,17 +35,10 @@ class SearchPlacesByVoiceUseCase
   @override
   Future<List<Place>> call(SearchPlacesParams params) async {
     try {
-      // Usar el nuevo método de búsqueda por voz del Core
+      // TODO(core-sync): delegar en búsqueda por voz del Core cuando esté
+      // disponible en la versión consumida por Turbo_App.
+      final _ = _placeRepository;
       return [];
-      /*
-      return await _placeRepository.searchPlacesByVoice(  
-        params.query, 
-      /* categoryId: params.categoryId,
-      minRating: params.minRating,
-      maxPrice: params.maxPrice,
-        minPrice: params.minPrice, */
-        limit: 50,
-      ); */
     } catch (e) {
       throw Exception('Error al buscar lugares por voz: ${e.toString()}');
     }
@@ -73,19 +59,10 @@ class SearchPlacesByLocationUseCase
       if (params.location == null) {
         throw Exception('Ubicación requerida para búsqueda por ubicación');
       }
+      // TODO(core-sync): delegar en búsqueda por ubicación del Core cuando
+      // esté disponible en la versión consumida por Turbo_App.
+      final _ = _placeRepository;
       return [];
-      /*
-      // Usar el nuevo método de búsqueda por ubicación del Core
-      return await _placeRepository.searchPlacesByLocation(
-        latitude: params.location!.latitude,
-        longitude: params.location!.longitude,
-        radiusKm: (params.maxDistance ?? 5000) / 1000, // Convertir metros a km
-        categoryId: params.categoryId,
-        minRating: params.minRating,
-        maxPrice: params.maxPrice,
-        minPrice: params.minPrice,
-        limit: 50,
-      );  */
     } catch (e) {
       throw Exception('Error al buscar lugares por ubicación: ${e.toString()}');
     }
