@@ -5,6 +5,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:core/core.dart';
 import 'package:turbo_ui/turbo_ui.dart';
+import 'package:turbo/app/core/extensions/place_extensions.dart';
 import 'package:turbo/app/l10n/l10n.dart';
 import 'package:turbo/authentication/state_management/auth_cubit/cubit/auth_cubit_cubit.dart';
 import 'package:turbo/favorites/state_management/cubit/favorite_cubit.dart';

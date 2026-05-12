@@ -1,4 +1,5 @@
 import 'package:core/core.dart';
+import 'package:turbo/app/core/extensions/place_extensions.dart';
 import 'package:turbo/app/core/use_case.dart';
 import 'package:turbo/places/module/params/search_places_params.dart';
 

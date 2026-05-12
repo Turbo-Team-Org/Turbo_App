@@ -15,12 +15,12 @@ class ImageManagementCubit extends Cubit<ImageManagementState> {
        _imagePicker = imagePicker ?? ImagePicker(),
        super(const ImageManagementState.initial());
 
-  Future<void> pickAndCompressImage() async {
+  Future<void> pickAndCompressImage(ImageSource source) async {
     try {
       emit(const ImageManagementState.loading());
 
       final XFile? image = await _imagePicker.pickImage(
-        source: ImageSource.gallery,
+        source: source,
         imageQuality: 100,
       );
 

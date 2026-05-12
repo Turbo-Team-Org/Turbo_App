@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:core/core.dart';
+import 'package:turbo/app/core/extensions/place_extensions.dart';
 
 class PlaceCompactCard extends StatelessWidget {
   final Place place;
@@ -142,11 +143,11 @@ class PlaceCompactCard extends StatelessWidget {
               const SizedBox(width: 12),
             ],
 
-            // Precio promedio
-            if (place.averagePrice != null) ...[
+            // Precio promedio (derivado de priceLevel cuando aplique)
+            if (place.averagePrice > 0) ...[
               Icon(Icons.attach_money, size: 16, color: Colors.green.shade600),
               Text(
-                '\$${place.averagePrice!.toStringAsFixed(0)}',
+                '\$${place.averagePrice.toStringAsFixed(0)}',
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,

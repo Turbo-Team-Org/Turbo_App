@@ -622,6 +622,15 @@ class AppLocalizationsEs extends AppLocalizations {
   String get profileEditSave => 'Guardar';
 
   @override
+  String get profileEditPhotoSourceTitle => 'Cambiar foto de perfil';
+
+  @override
+  String get profileEditPhotoSourceGallery => 'Galería';
+
+  @override
+  String get profileEditPhotoSourceCamera => 'Cámara';
+
+  @override
   String get profileStatsFavorites => 'Favoritos';
 
   @override

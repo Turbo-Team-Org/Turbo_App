@@ -1,4 +1,5 @@
 import 'package:core/core.dart';
+import 'package:turbo/app/core/extensions/place_extensions.dart';
 import 'package:turbo/app/core/use_case.dart';
 import 'package:turbo/places/module/params/search_places_params.dart';
 
@@ -35,18 +36,14 @@ class GetPlacesByCategoryUseCase
       if (params.minPrice != null) {
         filteredPlaces =
             filteredPlaces
-                .where((place) => (place.averagePrice ?? 0) >= params.minPrice!)
+                .where((place) => place.averagePrice >= params.minPrice!)
                 .toList();
       }
 
       if (params.maxPrice != null) {
         filteredPlaces =
             filteredPlaces
-                .where(
-                  (place) =>
-                      (place.averagePrice ?? double.infinity) <=
-                      params.maxPrice!,
-                )
+                .where((place) => place.averagePrice <= params.maxPrice!)
                 .toList();
       }
 
@@ -102,7 +99,7 @@ class GetPlacesByCategoryUseCase
             return (b.rating ?? 0).compareTo(a.rating ?? 0);
 
           case 'price':
-            return (a.averagePrice ?? 0).compareTo(b.averagePrice ?? 0);
+            return a.averagePrice.compareTo(b.averagePrice);
 
           default:
             return (b.rating ?? 0).compareTo(a.rating ?? 0);

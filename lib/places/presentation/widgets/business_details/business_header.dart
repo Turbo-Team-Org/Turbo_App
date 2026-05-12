@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:core/core.dart';
+import 'package:turbo/app/core/extensions/place_extensions.dart';
 import 'package:turbo/app/core/theme/text_styles.dart';
 import 'package:animate_do/animate_do.dart';
 
@@ -10,7 +11,8 @@ class BusinessHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Quitamos el nombre del negocio ya que lo mostramos en la imagen
+    final daySchedule =
+        place.scheduleForWeekday(DateTime.now().weekday);
     return FadeInUp(
       duration: const Duration(milliseconds: 400),
       child: Column(
@@ -39,14 +41,12 @@ class BusinessHeader extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 place.isOpen
-                    ? place.schedules.isNotEmpty &&
-                            DateTime.now().weekday - 1 < place.schedules.length
-                        ? 'Cierra a las ${place.schedules[DateTime.now().weekday - 1].closing}'
-                        : 'Abierto ahora'
-                    : place.schedules.isNotEmpty &&
-                        DateTime.now().weekday - 1 < place.schedules.length
-                    ? 'Abre a las ${place.schedules[DateTime.now().weekday - 1].opening}'
-                    : 'Cerrado ahora',
+                    ? (daySchedule != null && daySchedule.closing.isNotEmpty
+                        ? 'Cierra a las ${daySchedule.closing}'
+                        : 'Abierto ahora')
+                    : (daySchedule != null && daySchedule.opening.isNotEmpty
+                        ? 'Abre a las ${daySchedule.opening}'
+                        : 'Cerrado ahora'),
                 style: AppTextStyles.bodyLarge(context).copyWith(
                   color:
                       place.isOpen

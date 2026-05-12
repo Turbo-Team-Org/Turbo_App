@@ -618,6 +618,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileEditSave => 'Save';
 
   @override
+  String get profileEditPhotoSourceTitle => 'Change profile photo';
+
+  @override
+  String get profileEditPhotoSourceGallery => 'Gallery';
+
+  @override
+  String get profileEditPhotoSourceCamera => 'Camera';
+
+  @override
   String get profileStatsFavorites => 'Favorites';
 
   @override

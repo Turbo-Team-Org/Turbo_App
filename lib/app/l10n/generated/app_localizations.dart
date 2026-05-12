@@ -1232,6 +1232,24 @@ abstract class AppLocalizations {
   /// **'Guardar'**
   String get profileEditSave;
 
+  /// No description provided for @profileEditPhotoSourceTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Cambiar foto de perfil'**
+  String get profileEditPhotoSourceTitle;
+
+  /// No description provided for @profileEditPhotoSourceGallery.
+  ///
+  /// In es, this message translates to:
+  /// **'Galería'**
+  String get profileEditPhotoSourceGallery;
+
+  /// No description provided for @profileEditPhotoSourceCamera.
+  ///
+  /// In es, this message translates to:
+  /// **'Cámara'**
+  String get profileEditPhotoSourceCamera;
+
   /// No description provided for @profileStatsFavorites.
   ///
   /// In es, this message translates to:

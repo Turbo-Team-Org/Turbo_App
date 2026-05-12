@@ -9,6 +9,7 @@ import 'package:turbo/app/image_management/presentation/cubit/image_management_s
     as img;
 import 'package:turbo/users/domain/user_profile.dart';
 import 'package:turbo/users/module/update_user_profile_use_case.dart';
+import 'package:turbo/users/presentation/widgets/profile_photo_source_sheet.dart';
 import 'package:turbo/users/presentation/widgets/user_profile_avatar.dart';
 import 'package:turbo/users/state_management/profile_cubit/profile_cubit.dart';
 
@@ -24,6 +25,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _nameController;
   var _shouldPopOnSuccess = false;
+  var _hasSyncedInitialNameFromState = false;
 
   @override
   void initState() {
@@ -51,7 +53,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Future<void> _onAvatarTap() async {
-    await context.read<ImageManagementCubit>().pickAndCompressImage();
+    final source = await ProfilePhotoSourceSheet.show(context);
+    if (!context.mounted || source == null) {
+      return;
+    }
+    await context.read<ImageManagementCubit>().pickAndCompressImage(source);
   }
 
   Future<void> _save() async {
@@ -90,6 +96,24 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         ),
         BlocListener<ProfileCubit, ProfileState>(
           listener: (context, state) {
+            if (state case ProfileLoaded(:final profile) ||
+                ProfileUpdateSuccess(:final profile)) {
+              final currentText = _nameController.text.trim();
+              final profileName = profile.displayName?.trim() ?? '';
+              // Sync once when profile arrives asynchronously to avoid an empty
+              // initial input while respecting user edits already made.
+              if (!_hasSyncedInitialNameFromState &&
+                  currentText.isEmpty &&
+                  profileName.isNotEmpty) {
+                _nameController.value = _nameController.value.copyWith(
+                  text: profileName,
+                  selection: TextSelection.collapsed(
+                    offset: profileName.length,
+                  ),
+                );
+                _hasSyncedInitialNameFromState = true;
+              }
+            }
             switch (state) {
               case ProfileUpdateSuccess():
                 if (!context.mounted) return;

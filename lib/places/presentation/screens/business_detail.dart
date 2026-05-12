@@ -149,10 +149,9 @@ class _BusinessDetailsScreenState extends State<BusinessDetailsScreen> {
                   name: 'Not found',
                   description: '',
                   address: '',
-                  averagePrice: 0,
-                  imageUrls: [],
+                  imageUrls: const [],
                   rating: 0,
-                  reviews: [],
+                  reviews: const [],
                 ),
           );
 

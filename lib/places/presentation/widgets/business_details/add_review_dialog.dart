@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:turbo/app/core/theme/text_styles.dart';
 import 'package:turbo/app/utils/app_preferences.dart';
@@ -333,7 +334,9 @@ class _AddReviewDialogState extends State<AddReviewDialog> {
                                     () =>
                                         context
                                             .read<ImageManagementCubit>()
-                                            .pickAndCompressImage(),
+                                            .pickAndCompressImage(
+                                              ImageSource.gallery,
+                                            ),
                                 child: Container(
                                   width: 80,
                                   height: 80,

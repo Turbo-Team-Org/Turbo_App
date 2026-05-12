@@ -21,6 +21,11 @@
   - tests adicionales de cubit para combinaciones y edge-cases de `applyFilters`
   - tests de módulo para `SearchPlacesUseCase` / `SearchPlacesByVoiceUseCase` / `SearchPlacesByLocationUseCase`
   - limpieza de null-checks/casts redundantes en `PlacesSearchCubit`
+- **S2-T3 `profile-edit` (selector de foto):**
+  - bottom sheet en editar perfil para elegir **galería o cámara**; textos en l10n (`profileEditPhotoSource*`)
+  - `ImageManagementCubit.pickAndCompressImage(ImageSource)` con tests de cubit, sheet y pantalla
+  - **iOS:** `NSCameraUsageDescription` y `NSPhotoLibraryUsageDescription` en `ios/Runner/Info.plist`
+  - **Android:** permisos `CAMERA`, `READ_MEDIA_IMAGES` y `READ_EXTERNAL_STORAGE` (maxSdkVersion 32) en `AndroidManifest.xml`
 
 ### Changed
 - `places_search_screen.dart` elimina pantalla temporal de test de Google Maps (debug-only) para evitar literales fuera de l10n.

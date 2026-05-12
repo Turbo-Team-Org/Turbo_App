@@ -64,6 +64,10 @@
 	<string>Esta aplicación necesita acceso a tu ubicación para mostrarte lugares cercanos.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>Esta aplicación necesita acceso al reconocimiento de voz para permitirte buscar lugares usando comandos de voz.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Turbo necesita acceso a la cámara para que puedas tomar una foto y usarla como imagen de perfil o en tus reseñas.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Turbo necesita acceso a tu galería para que puedas elegir una foto de perfil o imágenes al publicar una reseña.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>

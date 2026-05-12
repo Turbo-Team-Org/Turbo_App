@@ -1,135 +1,94 @@
-# Feature Plan: google-places-api
+# Feature Plan: google-places-api (cierre S2-T1)
 
 ## Objetivo
-Completar la integracion de Google Places para el flujo de ubicaciones con enfoque Core-first, eliminando stubs en `Turbo_Core` y conectando `Turbo-Admin` para autocompletado y seleccion de direccion sin llamadas HTTP directas en la UI.
+Cerrar los pendientes de Sprint 2 T1 enfocados en UX final de autocompletado en `Turbo-Admin`, validacion manual en staging y verificacion final de calidad con `/review`.
 
-## Contexto actual verificado
-- `Turbo_Core/core/lib/src/turbo_core_repositories/location_repository/service/location_service_supabase.dart` mantiene stubs en:
-  - `searchPlaces()`
-  - `getPlaceDetails()`
-  - `autocompletePlaces()`
-  - `searchNearbyPlaces()`
-  - `geocodeAddress()`
-- `Turbo_Core/core/lib/src/turbo_core_repositories/location_repository/service/location_service.dart` (Firebase) ya tiene implementacion real contra Google Places y se usara como referencia funcional.
-- `Turbo-Admin/lib/features/places/pages/place_form_page.dart` realiza llamadas HTTP directas a Google Places y tiene API key hardcodeada en la UI.
+## Contexto de entrada (segun SPRINT_2)
+- Core de Google Places ya esta implementado y probado.
+- Hardening inicial en Admin ya esta aplicado.
+- Pendientes activos:
+  1. Integrar flujo end-to-end de autocompletado desde Cubit/Repository en `PlaceFormPage`.
+  2. Ejecutar QA manual con API key real en staging.
+  3. Ejecutar `/review` final y marcar DoD de S2-T1.
 
-## Alcance (in)
-1. Implementar Google Places en `LocationServiceSupabase` (Core).
-2. Tipar errores de ubicacion en Core para evitar `Exception` generica.
-3. Exponer configuracion de API key por entorno (sin hardcode).
-4. Migrar `Turbo-Admin` para usar repositorio/cubit en lugar de llamadas HTTP directas en `place_form_page.dart`.
-5. Agregar pruebas RED->GREEN en Core y Admin para endpoints y UX principal de autocompletado.
+## Alcance de este plan (in)
+1. Completar integracion UI + estado para sugerencias y seleccion de direccion en `PlaceFormPage`.
+2. Cubrir el flujo con tests RED->GREEN en cubit/widget del modulo `places`.
+3. Definir protocolo QA manual con criterios verificables en staging.
+4. Cerrar con evidencia de `/review` y decision de DoD.
 
 ## Fuera de alcance (out)
-- Refactor completo del modulo de mapas en Admin.
-- Cambios de UX grandes fuera de autocompletado + seleccion.
-- Migracion de App movil en este ticket (solo Core + Admin segun Sprint 2 T1).
+- Reescribir el modulo de places completo.
+- Cambios de producto fuera del formulario de direccion.
+- Nuevos endpoints o cambios estructurales en Core si no son estrictamente necesarios para el flujo.
 
-## Arquitectura propuesta (Clean + Core-first)
+## Arquitectura objetivo (feature-first + Clean)
 
-### Capa Core (Turbo_Core)
-- **Data service**: implementar `LocationServiceSupabase` con cliente HTTP reutilizable.
-- **Error model**: crear `LocationException` (codigos: network, unauthorized, rate_limit, invalid_request, upstream, unknown).
-- **Config**: agregar getter en `Env` para `GOOGLE_MAPS_API_KEY`.
-- **Repository**: `LocationRepository` ya enruta por interfaz, mantener API publica.
+### Turbo-Admin (principal)
+- `cubit`: orquesta entrada de texto, debounce, carga de sugerencias, seleccion de item, y propagacion a campos del form.
+- `pages`: `PlaceFormPage` solo renderiza estados y despacha eventos al cubit.
+- `widgets` (si aplica): extraer lista de sugerencias para mantener pagina limpia y testeable.
 
-### Capa Admin (Turbo-Admin)
-- **Presentation/state**: mover logica de autocompletado y seleccion al `PlaceFormCubit`.
-- **UI**: `PlaceFormPage` solo renderiza y delega eventos.
-- **Debounce**: mantener debounce de entrada en cubit/handler para no saturar API.
+### Turbo_Core (sin cambios mayores esperados)
+- Consumir `LocationRepository` ya integrado (sin HTTP directo en UI).
+- Mantener errores tipados para feedback controlado en estado/UI.
 
-## Archivos a crear
+## Archivos a modificar (estimados)
+- `Turbo-Admin/lib/features/places/cubit/place_form_cubit.dart`
+- `Turbo-Admin/lib/features/places/cubit/place_form_state.dart`
+- `Turbo-Admin/lib/features/places/pages/place_form_page.dart`
 
-### Turbo_Core
-- `core/lib/src/turbo_core_repositories/location_repository/exceptions/location_exception.dart`
-- `core/test/src/turbo_core_repositories/location_repository/service/location_service_supabase_test.dart`
+## Archivos a crear (si faltan)
+- `Turbo-Admin/test/features/places/cubit/place_form_cubit_google_places_test.dart`
+- `Turbo-Admin/test/features/places/pages/place_form_page_autocomplete_test.dart`
 
-### Turbo-Admin
-- `test/features/places/cubit/place_form_cubit_google_places_test.dart`
-- `test/features/places/pages/place_form_page_autocomplete_test.dart`
+## Plan de ejecucion (RED -> GREEN -> REFACTOR)
 
-## Archivos a modificar
+### Fase 1 - RED (tests obligatorios)
+1. Test cubit: al escribir direccion (con debounce) dispara carga de sugerencias y emite estado de loading->success.
+2. Test cubit: al seleccionar sugerencia se cargan direccion final y coordenadas en el estado.
+3. Test cubit: error del repositorio produce estado de error controlado (sin crash).
+4. Test widget: `PlaceFormPage` muestra sugerencias y permite seleccionarlas.
 
-### Turbo_Core
-- `core/lib/src/turbo_core_repositories/location_repository/service/location_service_supabase.dart`
-- `core/lib/src/monorepo_utils/environments.dart`
-- `core/env.example`
-- `core/.env_no_rls`
-- `core/.env_with_rls`
+### Fase 2 - GREEN (implementacion minima)
+1. Implementar/ajustar handlers en `PlaceFormCubit`:
+   - `onAddressInputChanged(String value)`
+   - `onAddressSuggestionSelected(...)`
+2. Garantizar debounce y descarte de requests obsoletos.
+3. Vincular `PlaceFormPage` al estado del cubit para:
+   - Render de lista de sugerencias
+   - Tap en sugerencia
+   - Actualizacion de direccion/lat/lng en formulario
+4. Mantener toda llamada a Places via Core repository (sin hardcode ni HTTP en UI).
 
-### Turbo-Admin
-- `lib/features/places/cubit/place_form_cubit.dart`
-- `lib/features/places/cubit/place_form_state.dart`
-- `lib/features/places/pages/place_form_page.dart`
-
-## Plan de implementacion por fases
-
-### Fase 1 - RED (tests en Core)
-1. Crear tests para `LocationServiceSupabase` con mock HTTP client:
-   - `searchPlaces` mapea `results` a `GooglePlace`.
-   - `getPlaceDetails` mapea `result`.
-   - `autocompletePlaces` usa `predictions` + resolucion de detalles.
-   - errores HTTP/timeouts -> `LocationException`.
-2. Confirmar fallos iniciales (RED).
-
-### Fase 2 - GREEN (Core)
-1. Implementar helper interno de request + parse de estado Google (`OK`, `ZERO_RESULTS`, `OVER_QUERY_LIMIT`, etc.).
-2. Implementar metodos:
-   - `searchPlaces`
-   - `getPlaceDetails`
-   - `autocompletePlaces`
-   - `searchNearbyPlaces`
-   - `geocodeAddress`
-3. Añadir `Env.googleMapsApiKey`.
-4. Validar que si falta API key se lanza `LocationException.invalidRequest`.
-
-### Fase 3 - RED/GREEN (Admin)
-1. Introducir en `PlaceFormCubit` acciones para:
-   - `onAddressInputChanged(String input)` con debounce.
-   - `selectAutocompletePlace(String placeId)`.
-2. Actualizar estado para exponer:
-   - `autocompleteSuggestions`
-   - `isAutocompleteLoading`
-   - `autocompleteError`
-3. Refactor de `PlaceFormPage`:
-   - eliminar llamadas HTTP directas y API key hardcodeada.
-   - bindear UI a estado del cubit.
-4. Tests de cubit y widget para flujo de sugerencias y seleccion.
-
-### Fase 4 - Verificacion
-1. `dart analyze` en Core y Admin.
-2. `flutter test`/`dart test` de los nuevos casos.
-3. Smoke manual: crear/editar lugar en Admin con sugerencias reales.
-
-## Tests obligatorios (minimo 3, propuestos 6)
-1. `location_service_supabase_test`: `searchPlaces` exitoso retorna lista con campos mapeados.
-2. `location_service_supabase_test`: `getPlaceDetails` exitoso retorna `GooglePlace`.
-3. `location_service_supabase_test`: `autocompletePlaces` retorna maximo esperado y resuelve detalles.
-4. `location_service_supabase_test`: timeout/4xx/5xx lanza `LocationException` tipada.
-5. `place_form_cubit_google_places_test`: debounce + carga de sugerencias.
-6. `place_form_page_autocomplete_test`: al seleccionar sugerencia se actualizan direccion y coordenadas.
-
-## Riesgos y mitigaciones
-- **Cuotas/rate limit Google Places**: manejar `OVER_QUERY_LIMIT` y mostrar feedback amigable.
-- **Latencia en autocomplete**: debounce (300-500ms) + cancelacion de requests previas.
-- **Regresion en formulario Admin**: tests widget + fallback visual en error.
-- **Configuracion incompleta en entornos**: validar `GOOGLE_MAPS_API_KEY` al inicio del flujo.
-- **Acoplamiento UI-data**: mantener llamadas en cubit/use-case, no en widget.
+### Fase 3 - REFACTOR + QA
+1. Limpieza de estado y mensajes de error para UX consistente.
+2. QA manual en staging con key real:
+   - Escribir direccion parcial -> aparecen sugerencias relevantes.
+   - Seleccionar sugerencia -> campos direccion + coordenadas se completan.
+   - Simular error de red -> feedback visible y flujo recuperable.
+3. Ejecutar `/review` final y adjuntar evidencia.
 
 ## Estimacion de esfuerzo
-- Core (servicio + excepciones + tests): **1.0 dia**
-- Admin (refactor cubit/page + tests): **0.75 dia**
-- Verificacion/analyze/manual QA: **0.25 dia**
-- **Total:** ~**2 dias** (alineado a Sprint 2 T1)
+- Integracion cubit/page: **0.5 dia**
+- Tests RED/GREEN + ajustes: **0.5 dia**
+- QA manual + `/review`: **0.25 dia**
+- **Total estimado:** **1.25 dias**
 
-## Criterios de aceptacion
-- `searchPlaces("Restaurante La Habana")` devuelve `List<GooglePlace>` no vacia cuando API responde OK.
-- `getPlaceDetails(placeId)` retorna direccion formateada y coordenadas.
-- `geocodeAddress("Obispo 123, La Habana")` retorna `LocationData`.
-- En Admin, al escribir direccion aparecen sugerencias y al seleccionar se actualizan direccion + lat/lng.
-- Errores de red/API se tipan como `LocationException` y se muestran mensajes controlados.
+## Riesgos y mitigaciones
+- **Race conditions por tecleo rapido** -> debounce + invalidacion de respuesta vieja.
+- **Cuotas/rate limit** -> mapear error y mostrar mensaje no bloqueante.
+- **Regresion en form** -> test widget de seleccion + smoke manual en alta/edicion.
+- **Datos inconsistentes (direccion sin coords)** -> validar seleccion atomica (direccion + lat/lng).
 
-## Handoff para /tdd
-- Empezar por `Turbo_Core` (RED->GREEN).
-- Luego integrar `Turbo-Admin` sobre API del repositorio ya estable.
-- Ejecutar verify final antes de abrir PR hacia `develop`.
+## Definition of Done (S2-T1)
+- [ ] Autocompletado end-to-end operativo desde `PlaceFormCubit`/`LocationRepository` en `PlaceFormPage`.
+- [ ] Tests nuevos/ajustados en verde para cubit y pagina.
+- [ ] QA staging completado con evidencia.
+- [ ] `/review` final en estado APTO.
+- [ ] S2-T1 marcado como cerrado en `SPRINT_2.md`.
+
+## Handoff propuesto para /tdd
+- Empezar por RED en `Turbo-Admin/test/features/places/...`.
+- Implementar GREEN en `cubit` y `page` sin tocar Core salvo bloqueo puntual.
+- Cerrar con REFACTOR, QA manual y `/review` final.
